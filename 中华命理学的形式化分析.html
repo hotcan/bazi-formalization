@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中华命理学的形式化分析</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '$', right: '$', display: false}]});"></script>
+<style>
+  :root {
+    --bg: #faf9f6; --fg: #1a1a1a;
+    --accent: #8b4513; --accent2: #2e5a3a;
+    --border: #d4c5a9; --block-bg: #f0ece3;
+    --table-head: #3a3226; --table-head-fg: #f0ece3;
+    --wood: #4a7c59; --fire: #c0392b; --earth: #b8860b; --metal: #7f8c8d; --water: #2471a3;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:"Noto Serif SC","Source Han Serif CN","Songti SC",Georgia,serif; background:var(--bg); color:var(--fg); line-height:1.9; max-width:920px; margin:0 auto; padding:60px 40px; }
+  h1 { font-size:2.2em; text-align:center; margin-bottom:6px; color:var(--accent); letter-spacing:.15em; }
+  .subtitle { text-align:center; color:#888; font-size:.95em; margin-bottom:50px; font-style:italic; }
+  .ch-title { text-align:center; border-bottom:none!important; font-size:1.6em!important; margin-top:60px!important; margin-bottom:4px!important; }
+  h2 { font-size:1.4em; color:var(--accent); margin-top:55px; margin-bottom:16px; padding-bottom:6px; border-bottom:2px solid var(--border); }
+  h3 { font-size:1.15em; color:var(--accent2); margin-top:30px; margin-bottom:10px; }
+  p { margin-bottom:14px; text-align:justify; }
+  .def-block,.thm-block,.rmk-block,.exm-block,.algo-block { background:var(--block-bg); border-left:4px solid var(--accent); padding:18px 22px; margin:20px 0; border-radius:0 6px 6px 0; }
+  .thm-block { border-left-color:var(--accent2); }
+  .rmk-block { border-left-color:#b8860b; background:#fdf8ec; }
+  .exm-block { border-left-color:var(--water); background:#eaf2f8; }
+  .algo-block { border-left-color:#6366f1; background:#eef0fe; }
+  .def-block .label,.thm-block .label,.rmk-block .label,.exm-block .label,.algo-block .label { font-weight:bold; display:block; margin-bottom:8px; }
+  .def-block .label { color:var(--accent); }
+  .thm-block .label { color:var(--accent2); }
+  .rmk-block .label { color:#b8860b; }
+  .exm-block .label { color:var(--water); }
+  .algo-block .label { color:#6366f1; }
+  table { width:100%; border-collapse:collapse; margin:20px 0; font-size:.92em; }
+  th { background:var(--table-head); color:var(--table-head-fg); padding:10px 12px; text-align:center; }
+  td { padding:8px 12px; border:1px solid var(--border); text-align:center; }
+  tr:nth-child(even) td { background:#f5f0e6; }
+  .yang { color:#c0392b; font-weight:bold; }
+  .yin { color:#2471a3; font-weight:bold; }
+  .toc { margin:30px 0 40px; padding:20px 30px; background:var(--block-bg); border-radius:8px; }
+  .toc-title { font-weight:bold; color:var(--accent); margin-bottom:10px; font-size:1.1em; }
+  .toc ul { list-style:none; padding-left:0; }
+  .toc li { margin:4px 0; }
+  .toc li.ch { font-weight:bold; margin-top:12px; }
+  .toc li.sec { padding-left:28px; font-weight:normal; }
+  .toc a { color:var(--accent2); text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+  .note { font-size:.9em; color:#666; font-style:italic; margin:10px 0; }
+  .katex-display { margin:16px 0!important; }
+  .sep { text-align:center; margin:40px 0; color:var(--border); letter-spacing:1em; }
+  td.left { text-align:left; }
+  code { background:#f0ece3; padding:1px 5px; border-radius:3px; font-size:.9em; font-family:"SF Mono","Menlo","Consolas",monospace; }
+  @media(max-width:600px){ body{padding:20px 16px;} }
+</style>
+</head>
+<body>
+
+<h1>中华命理学的形式化分析</h1>
+<p class="subtitle">A Mathematical Formalization of Chinese Astrological Destiny Analysis</p>
+
+<p style="text-align:center;color:#666;margin-bottom:40px;font-size:0.95em;">v2.2 · 2026 年 4 月</p>
+
+<h2 class="ch-title" id="preface">引言</h2>
+
+<p>上个月笔者有幸在复旦大学&quot;哲学课堂&quot;上修习王德峰教授开设的 <strong>《中华命理学》</strong>课程。王教授以深厚的哲学功底和独到的人文视角，将八字命理学从民间技艺提升为一套可以严肃讨论的知识体系。课程中，天干地支的阴阳五行配属、藏干旺衰的量化推演、十神格局的逻辑判断，处处蕴含着精巧的组合结构——这些结构与现代代数学中的循环群、陪集分解、线性映射有着天然的对应关系。</p>
+
+<p>出于对这一传统知识体系的兴趣，也出于数学训练的本能，笔者尝试用形式化的数学语言重新表述八字命理的核心理论，并将其实现为可验证的算法。本文的目标并非"证明"命理学的科学性，而是<strong>将其内部逻辑结构显式化</strong>：当我们把阴阳定义为 $\mathbb{Z}/2\mathbb{Z}$、五行定义为 $\mathbb{Z}/5\mathbb{Z}$、天干和地支分别定义为 $\mathbb{Z}/10\mathbb{Z}$ 和 $\mathbb{Z}/12\mathbb{Z}$ 之后，许多传统口诀（如五虎遁、五鼠遁、合冲害的关系）便自然地化为可验证的代数等式，而非需要死记硬背的经验规则。</p>
+
+<p><strong>预备知识。</strong>本文主要使用：模运算与循环群（$\mathbb{Z}/n\mathbb{Z}$）、向量空间与线性映射、矩阵运算、基本优化概念。大致对应理工科本科一、二年级的<strong>线性代数</strong>与<strong>抽象代数初步</strong>。</p>
+
+<p>全文共八章。第一章定义阴阳、五行、天干、地支、六十甲子，建立基于太阳黄经和真太阳时的天文学输入接口并新增晚子时派别的显式选择；第二章展开地支藏干并建立包含位置权重与空亡折损的五行量化向量；第三章刻画五行生克关系与四时旺衰修正；第四章形式化干支合冲刑害；第五章量化日主强弱与用神选取，并建立真假神、格局保护与源流评级等辅助判定；第六章给出十神判定、八正格与格局气质画像；第七章建立大运流年的动态模型，加入软饱和与置信区间；第八章将前七章整合为一套六步论命算法。附录列出符号总表，致谢殿后。</p>
+
+<div class="toc">
+  <div class="toc-title">目录</div>
+  <ul>
+    <li class="ch"><a href="#preface">引言</a></li>
+    <li class="ch"><a href="#ch1">第一章 &nbsp; 阴阳五行与干支</a></li>
+    <li class="sec"><a href="#s11">1.1 阴阳</a> · <a href="#s12">1.2 五行</a> · <a href="#s13">1.3 天干</a> · <a href="#s14">1.4 地支</a> · <a href="#s15">1.5 六十甲子</a> · <a href="#s16">1.6 四柱与八字</a> · <a href="#s17">1.7 排盘公式</a> · <a href="#s18">1.8 晚子时派别</a></li>
+    <li class="ch"><a href="#ch2">第二章 &nbsp; 地支藏干与五行量化</a></li>
+    <li class="sec"><a href="#s21">2.1 天干的五行与阴阳</a> · <a href="#s22">2.2 地支与天干对应</a> · <a href="#s23">2.3 地支藏干</a> · <a href="#s24">2.4 位置权重</a> · <a href="#s25">2.5 空亡折损</a> · <a href="#s26">2.6 五行总向量</a></li>
+    <li class="ch"><a href="#ch3">第三章 &nbsp; 五行生克与四时旺衰</a></li>
+    <li class="sec"><a href="#s31">3.1 相生</a> · <a href="#s32">3.2 相克</a> · <a href="#s33">3.3 同党异党</a> · <a href="#s34">3.4 四时用事</a> · <a href="#s35">3.5 月令旺衰修正</a> · <a href="#s36">3.6 十二长生宫</a> · <a href="#s37">3.7 地支六气</a></li>
+    <li class="ch"><a href="#ch4">第四章 &nbsp; 干支合冲刑害</a></li>
+    <li class="sec"><a href="#s41">4.1 天干五合</a> · <a href="#s42">4.2 地支六合六冲六害</a> · <a href="#s43">4.3 三合三会</a> · <a href="#s44">4.4 相刑</a> · <a href="#s45">4.5 合冲刑害量化</a> · <a href="#s46">4.6 优先级规则</a></li>
+    <li class="ch"><a href="#ch5">第五章 &nbsp; 日主强弱与用神</a></li>
+    <li class="sec"><a href="#s51">5.1 日主强弱</a> · <a href="#s52">5.2 扶抑用神</a> · <a href="#s53">5.3 调候用神</a> · <a href="#s54">5.4 泄秀格与印旺夺食</a> · <a href="#s55">5.5 相战成象与通关</a> · <a href="#s56">5.6 特殊格局</a> · <a href="#s57">5.7 十干性情修正</a> · <a href="#s58">5.8 真假神分型</a> · <a href="#s59">5.9 源流气-力评估</a> · <a href="#s510">5.10 用神选取总则</a></li>
+    <li class="ch"><a href="#ch6">第六章 &nbsp; 十神与格局</a></li>
+    <li class="sec"><a href="#s61">6.1 十神定义</a> · <a href="#s62">6.2 十神判定</a> · <a href="#s63">6.3 地支十神</a> · <a href="#s64">6.4 格局判定</a> · <a href="#s65">6.5 格局气质画像</a></li>
+    <li class="ch"><a href="#ch7">第七章 &nbsp; 大运与流年</a></li>
+    <li class="sec"><a href="#s71">7.1 大运起法</a> · <a href="#s72">7.2 流年增量</a> · <a href="#s73">7.3 综合系数 F</a> · <a href="#s74">7.4 软饱和与置信区间</a></li>
+    <li class="ch"><a href="#ch8">第八章 &nbsp; 论命算法</a></li>
+    <li class="sec"><a href="#s81">六步流程</a></li>
+    <li class="ch"><a href="#appendix">附录 &nbsp; 符号总表</a></li>
+    <li class="ch"><a href="#ack">致谢</a></li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════ 第一章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch1">第一章 &nbsp; 阴阳五行与干支</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 1 · Yin-Yang, Five Elements, Stems and Branches</p>
+
+<p>本章建立八字命理所需的全部基本代数对象，并给出从出生时间到四柱的排盘算法。</p>
+
+<h2 id="s11">1.1 &nbsp; 阴阳</h2>
+<div class="def-block"><span class="label">定义 1.1（阴阳群）</span>
+  <p>$Y = (\mathbb{Z}/2\mathbb{Z}, +, \cdot) = \{0, 1\}$，约定 $\boxed{1 \triangleq \text{阳}, \; 0 \triangleq \text{阴}}$。</p>
+</div>
+
+<h2 id="s12">1.2 &nbsp; 五行</h2>
+<div class="def-block"><span class="label">定义 1.2（五行环）</span>
+  <p>$W = \mathbb{Z}/5\mathbb{Z} = \{0, 1, 2, 3, 4\}$，依次为 木、火、土、金、水。编码同时使<strong>相生循环对应 $+1$</strong>、<strong>相克循环对应 $+2$</strong>：</p>
+  <p style="text-align:center"><strong>相生（$+1$）：</strong>$\text{木}(0) \to \text{火}(1) \to \text{土}(2) \to \text{金}(3) \to \text{水}(4) \to \text{木}$</p>
+  <p style="text-align:center"><strong>相克（$+2$）：</strong>$\text{木}(0) \to \text{土}(2) \to \text{水}(4) \to \text{火}(1) \to \text{金}(3) \to \text{木}$</p>
+  <p>因 $\gcd(2, 5) = 1$，加 $2$ 在 $\mathbb{Z}/5\mathbb{Z}$ 中亦为五元循环置换；这正是"五行相克"恰好遍历五个元素的代数缘由。相生映射 $\Sigma(w) = w+1$、相克映射 $\mathcal{K}(w) = w+2$ 的形式化展开见 §3.1、§3.2。</p>
+</div>
+
+<h2 id="s13">1.3 &nbsp; 天干</h2>
+<div class="def-block"><span class="label">定义 1.3（天干群）</span>
+  <p>$T = \mathbb{Z}/10\mathbb{Z}$：甲(0) 乙(1) 丙(2) 丁(3) 戊(4) 己(5) 庚(6) 辛(7) 壬(8) 癸(9)。</p>
+  <p>五行映射 $\varphi_T: T \to W$, $\varphi_T(t) = \lfloor t/2 \rfloor$；阴阳映射 $\psi: T \to Y$, $\psi(t) = 1 - (t \bmod 2)$。</p>
+</div>
+
+<h2 id="s14">1.4 &nbsp; 地支</h2>
+<div class="def-block"><span class="label">定义 1.4（地支群）</span>
+  <p>$D = \mathbb{Z}/12\mathbb{Z}$：子(0) 丑(1) 寅(2) 卯(3) 辰(4) 巳(5) 午(6) 未(7) 申(8) 酉(9) 戌(10) 亥(11)。</p>
+  <p>地支的主五行与阴阳由下表给出（子午当阳、寅申当阳、辰戌当阳、丑未当阴、卯酉当阴、巳亥当阴）。</p>
+</div>
+
+<h2 id="s15">1.5 &nbsp; 六十甲子</h2>
+<div class="def-block"><span class="label">定义 1.5（甲子群）</span>
+  <p>$G = \{(t, d) \in T \times D : t \equiv d \pmod 2\}$，$|G| = 60$。同构于 $\mathbb{Z}/60\mathbb{Z}$。</p>
+  <p>甲子序号 $n \in \{0, 1, \ldots, 59\}$ 与 $(t, d)$ 的映射：$t = n \bmod 10$，$d = n \bmod 12$（中国剩余定理确保双射）。</p>
+</div>
+
+<h2 id="s16">1.6 &nbsp; 四柱与八字</h2>
+<div class="def-block"><span class="label">定义 1.6（四柱与八字）</span>
+  <p>一个人的四柱 $B = (P_y, P_m, P_d, P_h)$，其中每柱 $P_i = (t_i, d_i) \in G$。</p>
+  <p>八字向量 $\vec{B} = (t_y, d_y, t_m, d_m, t_d, d_d, t_h, d_h) \in T^4 \times D^4$。</p>
+  <p>日柱的天干 $t_d$ 称为<strong>日主</strong>（记作 $t_0$），其五行 $w_0 = \varphi_T(t_0)$ 是全部用神推演的基准。</p>
+</div>
+
+<h2 id="s17">1.7 &nbsp; 排盘公式</h2>
+
+<h3>年柱（立春分界）</h3>
+<p>设公历年份 $Y$，以立春为界确定排盘年份 $\tilde Y$：</p>
+$$\tilde Y = \begin{cases} Y, & \mathrm{JD}_\text{出生} \geq \mathrm{JD}_\text{立春}(Y) \\ Y - 1, & \text{否则} \end{cases}$$
+<p>其中 $\mathrm{JD}_\text{出生}$ 为出生时刻的儒略日，$\mathrm{JD}_\text{立春}(Y)$ 为 $Y$ 年立春时刻。年柱干支序 $n_Y = (\tilde Y - 4) \bmod 60$（甲子年公元 4 年为基准）。</p>
+
+<h3>月柱（节气定月）</h3>
+<p>以十二节气（非中气）划月：立春到惊蛰为寅月、惊蛰到清明为卯月……每月用对应太阳黄经区间：寅月 $\lambda_\odot \in [315°, 345°)$，以此类推。月干由"五虎遁"给出：</p>
+<div class="thm-block"><span class="label">定理 1.1（五虎遁）</span>
+  <p>$t_m = (2 t_y + 2 + k_m) \bmod 10$，其中 $k_m$ 为月序偏移（月支相对寅 = 2 的偏移：寅 $k_m = 0$，卯 $k_m = 1$，辰 $k_m = 2$，……，丑 $k_m = 11$）。</p>
+</div>
+
+<h3>日柱（儒略日）</h3>
+<p>$n_d = (\mathrm{JDN} + 49) \bmod 60$，其中儒略日号（JDN，Julian Day Number）从公元前 4713 年 1 月 1 日起计。偏移量 49 使 JDN=0 对应甲子日。</p>
+
+<h3>时柱（五鼠遁）</h3>
+<p>$t_h = (2(t_d \bmod 5) + d_h) \bmod 10$，其中 $d_h$ 为时支（子时 $d_h = 0$，丑时 $d_h = 1$ …）。</p>
+
+<h3>真太阳时修正</h3>
+<p>命理取真太阳时而非北京时。真太阳时 = 北京时 + 经度差修正 + 均时差（EoT，Equation of Time）：</p>
+$$\Delta t = (\mathrm{经度} - 120) \times 4\text{ 分钟} \quad + \quad \text{均时差}(\mathrm{JD})$$
+<p>均时差使用近似公式：$\text{EoT}(B) = 9.87 \sin(2B) - 7.53 \cos(B) - 1.5 \sin(B)$，其中 $B = 2\pi(N - 81)/365$，$N$ 为一年中的日序（1 月 1 日为 1）。修正后的小时分钟 $(\text{时}', \text{分}')$ 用于判定时辰 $d_h$。</p>
+
+<h3>夏令时与其他时区</h3>
+<p>实际录入的"出生时间"未必直接对应北京标准时（CST，UTC+8），还需考虑以下两种偏移：</p>
+
+<p><strong>① 夏令时（DST，Daylight Saving Time）。</strong>中华人民共和国曾在 <strong>1986–1991</strong> 年间施行夏令时（每年 4 月中旬至 9 月中旬把时钟拨快 1 小时）。这一时段出生者，户口本/医院记录登记的时间通常是<strong>夏令时本地钟面时间</strong>，需先回退 1 小时还原为标准时（CST），再做真太阳时修正：</p>
+$$t_\text{标准} = t_\text{记录} - 1\text{ 小时} \quad (\text{若 } t_\text{记录} \in \text{DST 区间})$$
+<p>具体施行区间逐年不同，系统内置 <code>dst</code> 检测表逐日精确判定。一个常见的副作用：在 DST 切换日的边界附近（如 5 月 4 日 1:30）对外标记的时间在标准时下回退到前一日，可能导致<strong>日柱直接换天</strong>，进而八字全盘改变。</p>
+
+<p><strong>② 非中国大陆出生（其他时区）。</strong>命理意义上的"时辰"基于<strong>当地真太阳时</strong>，与所在国家行政时区无关。海外出生者需按以下流程：</p>
+<ol>
+  <li>取出生时刻 $t_\text{当地}$（出生证明所记的当地钟面时间）；</li>
+  <li>按出生地行政时区 UTC 偏移换算为 UTC：$t_\text{UTC} = t_\text{当地} - \mathrm{TZ}_\text{当地}$（如纽约冬季 $\mathrm{TZ}=-5$，东京 $\mathrm{TZ}=+9$）；</li>
+  <li>转换到出生地<strong>真太阳时</strong>：$t_\text{真太阳} = t_\text{UTC} + \mathrm{lon}_\text{当地} \times 4\text{ 分钟} + \text{均时差}$；</li>
+  <li>用 $t_\text{真太阳}$ 判定时支 $d_h$ 与日柱。</li>
+</ol>
+<p>若仅给出"北京时间换算"（如海外华人填写时已折算到 UTC+8），则等价于先把当地时刻换成 UTC 再加 8 小时；本系统将其视为北京时输入，再按出生地经度做经度差修正。<strong>注意</strong>：海外出生时录入"北京时间"是常见误区——例如美国西海岸（约 lon=−122°）出生者，若用北京时输入再扣 $(−122 − 120) \times 4 = −968$ 分钟（约 −16 小时），即等效于直接用 UTC 起算；与正确流程结果一致，但在 DST 等情形下易出错。建议外籍/海外用户直接录入<strong>当地标准时 + 当地经度 + 当地时区偏移</strong>。</p>
+
+<p><strong>③ 真太阳时跨日。</strong>经度修正可能把某个时刻拉到前一天 23:xx 或后一天 0:xx。系统在判定日柱与晚子时（§1.8）时，使用的是修正后的真太阳时所在日，而非原录入日期。</p>
+
+<h2 id="s18">1.8 &nbsp; 晚子时派别</h2>
+<div class="def-block"><span class="label">定义 1.7（晚子时与日柱归属）</span>
+  <p>真太阳时落在 $[23:00, 00:00)$ 区间的子时，称为<strong>晚子时</strong>（或夜子时）。日柱归属存在两派：</p>
+  <ul>
+    <li><strong>晚子时归本日派</strong>（参数 <code>sameDay</code>，主流）：日柱不推进，时柱从当日日干推算。</li>
+    <li><strong>子初换日派</strong>（参数 <code>nextDay</code>）：儒略日号加 1（$\mathrm{JDN} \gets \mathrm{JDN}+1$），日柱用次日，时柱从新日干推算。</li>
+  </ul>
+  <p>两派结论可能完全不同。系统显式提供晚子时模式选项 $\ell \in \{\text{归本日}, \text{换日}\}$，默认"归本日"。</p>
+</div>
+
+<!-- ═══════════════════════ 第二章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch2">第二章 &nbsp; 地支藏干与五行量化</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 2 · Hidden Stems and Five-Element Vectorization</p>
+
+<h2 id="s21">2.1 &nbsp; 天干的五行与阴阳</h2>
+<table>
+  <tr><th>天干</th><td>甲</td><td>乙</td><td>丙</td><td>丁</td><td>戊</td><td>己</td><td>庚</td><td>辛</td><td>壬</td><td>癸</td></tr>
+  <tr><th>五行</th><td>木</td><td>木</td><td>火</td><td>火</td><td>土</td><td>土</td><td>金</td><td>金</td><td>水</td><td>水</td></tr>
+  <tr><th>阴阳</th><td class="yang">阳</td><td class="yin">阴</td><td class="yang">阳</td><td class="yin">阴</td><td class="yang">阳</td><td class="yin">阴</td><td class="yang">阳</td><td class="yin">阴</td><td class="yang">阳</td><td class="yin">阴</td></tr>
+</table>
+
+<h2 id="s22">2.2 &nbsp; 地支与天干对应</h2>
+<p>每个地支对应一个"本气"天干（该支当令时显于月令之气），如寅本气甲、卯本气乙、辰本气戊、巳本气丙、午本气丁、未本气己、申本气庚、酉本气辛、戌本气戊、亥本气壬、子本气癸、丑本气己。</p>
+
+<h2 id="s23">2.3 &nbsp; 地支藏干</h2>
+<div class="def-block"><span class="label">定义 2.1（地支藏干与系数）</span>
+  <p>每个地支藏若干天干，每个藏干有权重系数 $\alpha$，分本气、中气、余气三类（不一定三者俱全）：</p>
+  <ul>
+    <li>本气：$\alpha \in \{0.6, 0.7, 1.0\}$，依地支结构而定；</li>
+    <li>中气：$\alpha = 0.3$；</li>
+    <li>余气：$\alpha = 0.1$。</li>
+  </ul>
+  <p>所有地支系数之和均规一为 $1.0$。</p>
+</div>
+<table>
+  <tr><th>地支</th><th>本气</th><th>中气 $(\alpha=0.3)$</th><th>余气 $(\alpha=0.1)$</th></tr>
+  <tr><td>子</td><td>癸(1.0)</td><td>—</td><td>—</td></tr>
+  <tr><td>丑</td><td>己(0.6)</td><td>辛(0.3)</td><td>癸(0.1)</td></tr>
+  <tr><td>寅</td><td>甲(0.6)</td><td>丙(0.3)</td><td>戊(0.1)</td></tr>
+  <tr><td>卯</td><td>乙(1.0)</td><td>—</td><td>—</td></tr>
+  <tr><td>辰</td><td>戊(0.6)</td><td>乙(0.3)</td><td>癸(0.1)</td></tr>
+  <tr><td>巳</td><td>丙(0.6)</td><td>庚(0.3)</td><td>戊(0.1)</td></tr>
+  <tr><td>午</td><td>丁(0.7)</td><td>己(0.3)</td><td>—</td></tr>
+  <tr><td>未</td><td>己(0.6)</td><td>丁(0.3)</td><td>乙(0.1)</td></tr>
+  <tr><td>申</td><td>庚(0.6)</td><td>壬(0.3)</td><td>戊(0.1)</td></tr>
+  <tr><td>酉</td><td>辛(1.0)</td><td>—</td><td>—</td></tr>
+  <tr><td>戌</td><td>戊(0.6)</td><td>丁(0.3)</td><td>辛(0.1)</td></tr>
+  <tr><td>亥</td><td>壬(0.7)</td><td>甲(0.3)</td><td>—</td></tr>
+</table>
+<p class="note">子、卯、酉仅藏本气，系数为 1.0；午、亥仅藏本气与中气（无余气），本气取 0.7；其余地支三气俱全（0.6+0.3+0.1）。所有地支系数之和均为 1.0。</p>
+
+<h2 id="s24">2.4 &nbsp; 位置权重</h2>
+<div class="def-block"><span class="label">定义 2.2（位置权重）</span>
+  <p>四柱位置不等权。月柱为提纲、日柱为核心。定义：</p>
+  $$\lambda^T = (\lambda^T_y, \lambda^T_m, \lambda^T_d, \lambda^T_h) = (1.0, 1.2, 1.0, 1.0)$$
+  $$\lambda^D = (\lambda^D_y, \lambda^D_m, \lambda^D_d, \lambda^D_h) = (1.0, 1.5, 1.2, 1.0)$$
+  <p>$\lambda^T_i$ 用于天干、$\lambda^D_i$ 用于地支藏干。月柱地支权重最高 (1.5)，体现月令主导地位。</p>
+</div>
+
+<h2 id="s25">2.5 &nbsp; 空亡折损</h2>
+<div class="def-block"><span class="label">定义 2.3（旬空与空亡系数）</span>
+  <p>六十甲子以十日为一旬，每旬遗留两地支无天干相配，称<strong>旬空</strong>。以日柱所在旬确定空亡地支 $K \subset D$（$|K|=2$）。</p>
+  <p>空亡地支的藏干力量大幅折损：$\varepsilon_{\text{空}} = 0.1$。</p>
+  <p class="note">若空亡地支参与三会、三合、六合（会合填实），空亡被强制消除；详见 §4.6。</p>
+</div>
+
+<h2 id="s26">2.6 &nbsp; 五行总向量</h2>
+<div class="def-block"><span class="label">定义 2.4（命局五行向量 V）</span>
+  <p>命局的原始五行向量 $V \in \mathbb{R}^5$：</p>
+  $$V_w = \sum_{i=0}^{3} \lambda^T_i \cdot [\varphi_T(t_i) = w]
+      + \sum_{i=0}^{3} \lambda^D_i \cdot \varepsilon_i \cdot \sum_{(t',\alpha) \in \mathrm{cg}(d_i)} \alpha \cdot [\varphi_T(t') = w]$$
+  <p>其中 $\mathrm{cg}(d)$ 为地支 $d$ 的藏干集（含系数 $\alpha$），$\varepsilon_i = \varepsilon_{\text{空}}$ 若 $d_i \in K$（空亡集）否则取 $1$。$[\cdot]$ 为艾弗森括号（Iverson bracket，命题为真时取 1、否则取 0）。</p>
+</div>
+
+<p>向量 $V$ 是后续所有身强弱、用神、F 综推演的基础。</p>
+
+<!-- ═══════════════════════ 第三章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch3">第三章 &nbsp; 五行生克与四时旺衰</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 3 · Generation-Control and Seasonal Strength</p>
+
+<h2 id="s31">3.1 &nbsp; 相生</h2>
+<div class="def-block"><span class="label">定义 3.1（相生映射）</span>
+  <p>$\Sigma: W \to W$，$\Sigma(w) = (w + 1) \bmod 5$。木生火、火生土、土生金、金生水、水生木。</p>
+  <p class="note">使用希腊字母 $\Sigma$（生）以区别于 §1.5 的甲子群 $G$。</p>
+</div>
+
+<h2 id="s32">3.2 &nbsp; 相克</h2>
+<div class="def-block"><span class="label">定义 3.2（相克映射）</span>
+  <p>$\mathcal{K}: W \to W$，$\mathcal{K}(w) = (w + 2) \bmod 5$。木克土、火克金、土克水、金克木、水克火。</p>
+  <p class="note">使用花体 $\mathcal{K}$（克）以区别于 §2.5 的空亡地支集 $K$（直立体）。</p>
+</div>
+
+<h2 id="s33">3.3 &nbsp; 同党与异党</h2>
+<div class="def-block"><span class="label">定义 3.3（同党集 $A$ 与异党集 $O$）</span>
+  <p>对日主五行 $w_0$，定义：</p>
+  <p><strong>同党集</strong>（帮扶我）：$A(w_0) = \{w_0, \; \Sigma^{-1}(w_0)\} = \{\text{比劫}, \text{印绶}\}$</p>
+  <p><strong>异党集</strong>（克泄我）：$O(w_0) = W \setminus A(w_0) = \{\Sigma(w_0), \mathcal{K}(w_0), \mathcal{K}^{-1}(w_0)\} = \{\text{食伤}, \text{财星}, \text{官杀}\}$</p>
+</div>
+
+<h2 id="s34">3.4 &nbsp; 四时用事</h2>
+<p>月令所当的五行称为当令五行 $w_s(d_m)$：春寅卯=木、夏巳午=火、秋申酉=金、冬亥子=水、土令（辰戌丑未）=土。当令五行对命局五行权重作如下修正：</p>
+
+<h2 id="s35">3.5 &nbsp; 月令旺衰修正</h2>
+<div class="def-block"><span class="label">定义 3.4（月令旺衰系数 $\mu$）</span>
+  <p>以当令五行 $w_s$ 为基准，其它五行以相生距离 $d(w, w_s) = (w - w_s) \bmod 5$ 分五档：</p>
+</div>
+<table>
+  <tr><th>$d$</th><th>状态</th><th>$\mu(d)$</th><th>含义</th></tr>
+  <tr><td>0</td><td>旺（当令）</td><td>1.5</td><td>本气当令，五行 $w$ 与 $w_s$ 同</td></tr>
+  <tr><td>1</td><td>相（次旺）</td><td>1.2</td><td>当令所生之五行（$w_s$ 生 $w$）</td></tr>
+  <tr><td>2</td><td>死</td><td>0.5</td><td>被当令所克（$w_s$ 克 $w$）</td></tr>
+  <tr><td>3</td><td>囚</td><td>0.7</td><td>克当令者反受牵制（$w$ 克 $w_s$）</td></tr>
+  <tr><td>4</td><td>休</td><td>1.0</td><td>生当令者已退（$w$ 生 $w_s$）</td></tr>
+</table>
+<p>修正后 $V'_w = V_w \cdot \mu((w - w_s) \bmod 5)$。<span class="note">此排序对应代码 <code>WANG_SHUAI_MUL = [1.5, 1.2, 0.5, 0.7, 1.0]</code> 与 <code>WANG_SHUAI_NAME = ['旺', '相', '死', '囚', '休']</code>。</span></p>
+
+<h2 id="s36">3.6 &nbsp; 十二长生宫</h2>
+<p>每个天干对十二地支有"十二长生"状态：长生、沐浴、冠带、临官、帝旺、衰、病、死、墓、绝、胎、养。对应旺衰系数 $\gamma \in [0.05, 1.2]$：</p>
+<table style="font-size:.88em">
+  <tr><th>状态</th><td>长生</td><td>沐浴</td><td>冠带</td><td>临官</td><td>帝旺</td><td>衰</td><td>病</td><td>死</td><td>墓</td><td>绝</td><td>胎</td><td>养</td></tr>
+  <tr><th>$\gamma$</th><td>0.7</td><td>0.3</td><td>0.8</td><td>1.0</td><td>1.2</td><td>0.5</td><td>0.3</td><td>0.1</td><td>0.4</td><td>0.05</td><td>0.1</td><td>0.2</td></tr>
+</table>
+
+<h3>通根判定</h3>
+<p>日主 $t_0$ 在地支 $d_i$ 通根当且仅当：</p>
+$$\gamma(t_0, d_i) \geq 0.7 \;\land\; \exists (t', \alpha) \in \mathrm{cg}(d_i): \varphi_T(t') = w_0$$
+<p class="note">即该支处于长生/冠带/临官/帝旺之一 <strong>且</strong> 藏干中含日主同类五行。二者缺一不算有根。合化日主时 $w_0$ 取合化后的五行。</p>
+
+<h2 id="s37">3.7 &nbsp; 地支六气</h2>
+<p>地支按温度与湿燥分为六类（出自《五行结构论》）：</p>
+<table>
+  <tr><th>气</th><td>冷</td><td>温</td><td>热</td><td>凉</td><td>湿</td><td>燥</td></tr>
+  <tr><th>地支</th><td>亥子</td><td>寅卯</td><td>巳午</td><td>申酉</td><td>辰丑</td><td>戌未</td></tr>
+</table>
+<p>同气地支之间有相互帮扶的关系，供 Ch 5 辅助判定使用。</p>
+
+<!-- ═══════════════════════ 第四章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch4">第四章 &nbsp; 干支合冲刑害</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 4 · Unions, Clashes, Punishments, and Harms</p>
+
+<h2 id="s41">4.1 &nbsp; 天干五合</h2>
+<div class="def-block"><span class="label">定义 4.1（五合）</span>
+  <p>天干五合对：甲己(木土合化土)、乙庚(木金合化金)、丙辛(火金合化水)、丁壬(火水合化木)、戊癸(土水合化火)。定义为陪集 $\{(t, (t+5) \bmod 10)\}$。合化成功需月令或三支助力，详见 §4.5。</p>
+</div>
+
+<h2 id="s42">4.2 &nbsp; 地支六合、六冲与六害</h2>
+<table>
+  <tr><th>关系</th><th>配对</th></tr>
+  <tr><td>六合</td><td>子丑(土)、寅亥(木)、卯戌(火)、辰酉(金)、巳申(水)、午未(土火)</td></tr>
+  <tr><td>六冲</td><td>子午、丑未、寅申、卯酉、辰戌、巳亥</td></tr>
+  <tr><td>六害</td><td>子未、丑午、寅巳、卯辰、申亥、酉戌</td></tr>
+</table>
+
+<h2 id="s43">4.3 &nbsp; 三合三会</h2>
+<table>
+  <tr><th>类型</th><th>局</th></tr>
+  <tr><td>三合局</td><td>申子辰(水)、亥卯未(木)、寅午戌(火)、巳酉丑(金)</td></tr>
+  <tr><td>三会局</td><td>寅卯辰(木)、巳午未(火)、申酉戌(金)、亥子丑(水)</td></tr>
+  <tr><td>半三合</td><td>三合局去掉 1 支，保留 2 支（力量 0.6 于三合）</td></tr>
+</table>
+
+<h2 id="s44">4.4 &nbsp; 相刑</h2>
+<p>相刑包含无恩之刑（寅巳申）、恃势之刑（丑戌未）、无礼之刑（子卯）、自刑（辰辰、午午、酉酉、亥亥）。</p>
+
+<h2 id="s45">4.5 &nbsp; 合冲刑害量化</h2>
+
+<h3>六冲（冲战三级）</h3>
+<p>冲是最强力的地支关系，按冲的性质与双方力量差分三级：</p>
+<div class="def-block"><span class="label">定义 4.2（冲战三级）</span>
+  <p>设冲双方有效力量为 $e_1, e_2$（其中 $e_i = $ 地支本气藏干 $\times \lambda^D \times \mu$，即位置权重和月令旺衰修正后的力量），质量比 $r_m = \max(e_1, e_2)/\min(e_1, e_2)$。以日主阴阳区分外在/内在冲后：</p>
+  <ul>
+    <li><strong>众之战</strong>（$r_m > 5$，压倒性冲）：弱方力量 $\times 0.09$，强方 $\times 0.95$</li>
+    <li><strong>臣之战</strong>（$r_m \in [2, 5]$，中度对峙）：弱方 $\times 0.3$，强方 $\times 0.9$</li>
+    <li><strong>将之战</strong>（$r_m < 2$，势均力敌）：双方各 $\times 0.7$</li>
+  </ul>
+  <p>第 2 次及以后的同支冲，乘数按边际递减（$\times 0.95$ 的衰减因子）。天干相隔距离大时有距离衰减 $\times (0.9, 0.8)$。</p>
+</div>
+
+<h3>六合</h3>
+<p>六合力 $\times 0.85$（合力牵绊），距离衰减类似；若月令是合化五行或三支助化，成立合化：藏干 85% 转化为合化五行，成功后 $V$ 重分配。</p>
+
+<h3>相刑（v2.2 再校准）</h3>
+<div class="def-block"><span class="label">定义 4.3（刑的量化）</span>
+  <p>刑为"无礼之刑"，主要作用于心性/人际，对五行力量影响较轻：</p>
+  <ul>
+    <li>基础折损：受刑双方各 $\times 0.92$（原 v2.1 为 0.8，参照《三命通会》"刑不破根"修订）。</li>
+    <li>同支被多次刑时，第 2 次折损幅度 $\times 0.5$（边际递减）：若原应 $\times 0.92$，则第二次实际 $\times (1 - (1-0.92) \cdot 0.5) = \times 0.96$。</li>
+    <li>合解刑：被三会化解完全（$\times 1.00$），被三合/六合/半三合化解部分（$\times 0.98$）。</li>
+    <li>自刑：同元素内部摩擦，质量守恒（不减力），仅标记熵增。</li>
+  </ul>
+</div>
+
+<h3>六害</h3>
+<p>害的折损 $\times 0.9$（双方藏干各 $\times 0.9$），距离衰减。</p>
+
+<h2 id="s46">4.6 &nbsp; 优先级规则</h2>
+<p>当多种关系竞争同对地支时，优先级为：<strong>三会 &gt; 三合 &gt; 六合 &gt; 半三合 &gt; 六冲 &gt; 相刑 &gt; 六害</strong>。高级关系化解低级关系；会合填实消除空亡。</p>
+
+<!-- ═══════════════════════ 第五章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch5">第五章 &nbsp; 日主强弱与用神</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 5 · Day-Master Strength and Useful God</p>
+
+<h2 id="s51">5.1 &nbsp; 日主强弱</h2>
+
+<h3>寒暖指数 H</h3>
+<div class="def-block"><span class="label">定义 5.1（命局寒暖总分 H）</span>
+  <p>为每个天干、每个地支赋予寒暖权 $\eta$：</p>
+  <ul>
+    <li>天干 $\eta_T$（甲乙丙丁戊己庚辛壬癸）：$+3, +1, +6, +4, +5, -4, -1, -3, -5, -6$</li>
+    <li>地支 $\eta_D$（子丑寅卯辰巳午未申酉戌亥）：$-6, -4, +3, +1, -4, +5, +6, +3, -2, -3, +4, -5$</li>
+    <li>月支额外 $\eta_M$（季节主导）：$-8, -5, -1, +3, +6, +10, +12, +8, 0, -2, -4, -6$ <span class="note">(v2.2 修正申月从 +3 到 0，酉月从 -1 到 -2，反映"凉金当令·炎威始退")</span></li>
+  </ul>
+  $$H = \sum_i \eta_T(t_i) + \sum_i \varepsilon_i \cdot \eta_D(d_i) + \varepsilon_m \cdot \eta_M(d_m)$$
+  <p>其中 $\varepsilon_i, \varepsilon_m$ 为空亡折损（空亡地支 $\eta$ 亦按 $\times 0.1$ 折损）。</p>
+</div>
+
+<h3>日主旺衰系数 $\bar\gamma_0$</h3>
+<div class="def-block"><span class="label">定义 5.2（$\bar\gamma_0$，月令动态权重）</span>
+  <p>$\bar\gamma_0 = \sum_{i=0}^{3} w_i^\gamma \cdot \gamma(t_0, d_i)$，权重 $w^\gamma$：</p>
+  <ul>
+    <li>月令本气未空亡且未被合化：$w^\gamma_m = 0.85$，其余三支平分 $0.05$ 各；</li>
+    <li>月令空亡或参与合化：$w^\gamma_m = 0.55$，其余三支平分 $0.15$ 各。 <span class="note">(v2.2 新增)</span></li>
+  </ul>
+</div>
+
+<h3>身强弱指数 $r^*$</h3>
+<div class="def-block"><span class="label">定义 5.3（$r^*$）</span>
+  <p>同党力量 $S_\text{同} = V'_{w_0} \cdot \bar\gamma_0 + V'_{w_\text{印}} \cdot \rho$，异党力量 $S_\text{异} = V'_{w_\text{食伤}} + V'_{w_\text{财}} + V'_{w_\text{官杀}}$：</p>
+  $$r^* = \frac{S_\text{同}}{S_\text{同} + S_\text{异}}$$
+  <p>其中 $\rho$ 为印星系数（一般 1.0；燥土脆金情形下 $\rho = 1 - (H-6)/24$，$H > 6$ 时金日主的土印生扶线性衰减）。</p>
+</div>
+
+<h3>九级标度</h3>
+<table style="font-size:.88em">
+  <tr><th>$r^*$ 范围</th><th>级别</th><th>命理含义</th></tr>
+  <tr><td>$r > 0.85$</td><td>极强</td><td>专旺，顺势泄秀</td></tr>
+  <tr><td>$0.75 < r \leq 0.85$</td><td>很强</td><td>宜官杀克制或食伤泄秀</td></tr>
+  <tr><td>$0.65 < r \leq 0.75$</td><td>强</td><td>宜抑宜泄</td></tr>
+  <tr><td>$0.55 < r \leq 0.65$</td><td>稍强</td><td>略强，取用灵活</td></tr>
+  <tr><td>$0.45 \leq r \leq 0.55$</td><td>中和</td><td>平衡，用神灵活</td></tr>
+  <tr><td>$0.35 \leq r < 0.45$</td><td>稍弱</td><td>略弱，宜扶宜助</td></tr>
+  <tr><td>$0.25 \leq r < 0.35$</td><td>弱</td><td>宜印星生扶或比劫帮扶</td></tr>
+  <tr><td>$0.15 \leq r < 0.25$</td><td>很弱</td><td>急需扶助</td></tr>
+  <tr><td>$r < 0.15$</td><td>极弱</td><td>从格/弃命从势（须无根）</td></tr>
+</table>
+
+<h2 id="s52">5.2 &nbsp; 扶抑用神</h2>
+<div class="def-block"><span class="label">规则 5.1（扶抑法）</span>
+  <ul>
+    <li>$r^* < 0.45$（偏弱）：取印星 $w_\text{印}$ 为主用神，比劫 $w_\text{比}$ 为辅；</li>
+    <li>$r^* \in [0.45, 0.55]$（中和）：取食伤/财为主；</li>
+    <li>$r^* \in [0.55, 0.65]$（稍强）：取食伤泄秀或财耗；</li>
+    <li>$r^* > 0.65$（强以上）：取官杀克制或食伤泄秀。</li>
+  </ul>
+</div>
+
+<h2 id="s53">5.3 &nbsp; 调候用神</h2>
+<div class="def-block"><span class="label">规则 5.2（调候法）</span>
+  <p>依月令季节与 H 值：</p>
+  <ul>
+    <li>冬月（亥子丑）生人：取火 $w_\text{火}$ 为调候；$H < -6$ 时急需（$\tau_{\text{boost}} = 0.35$），$H \leq 6$ 急需 ($\tau = 0.20$)，$H > 6$ 轻微 ($\tau = 0.08$)。</li>
+    <li>夏月（巳午未）生人：取水 $w_\text{水}$；参数对称。</li>
+    <li>秋月（申酉戌）偏燥（$H > 10$）：酌用水 ($\tau = 0.12$)；偏寒（$H < -10$）：酌用火。</li>
+    <li>春月（寅卯辰）偏寒（$H < -10$）：酌用火；偏热（$H > 10$）：酌用水。</li>
+  </ul>
+  <p class="note">调候增益 $\tau_\text{boost}$ 叠加到候选 $p$ 值上，与扶抑/格局候选共同竞争。</p>
+</div>
+
+<h2 id="s54">5.4 &nbsp; 泄秀格与印旺夺食</h2>
+
+<h3>泄秀格局保护</h3>
+<div class="def-block"><span class="label">规则 5.3（泄秀格局）</span>
+  <p>当 $r^* \in [0.15, 0.50)$（身弱但非从格）且食伤 $w_\text{食} = G(w_0)$ 力量占比 $\geq 18\%$ 且食伤透天干时，识别为泄秀格：</p>
+  <ul>
+    <li>首选用神切换为比劫 $w_\text{比}$（助身护秀），而非传统"身弱补印"；</li>
+    <li>印星 $p$ 值降为原来的 $0.5$，并加注"印来浊格"；</li>
+    <li>依据：《滴天髓》"木疏土、金生水"——印来克食伤反而堵塞泄秀气场。</li>
+  </ul>
+</div>
+
+<h3>印旺夺食</h3>
+<div class="def-block"><span class="label">规则 5.4（印旺夺食保护）</span>
+  <p>$r^* > 0.55$（身强）时，若印星占比 $\geq 22\%$ 且食伤为首选用神，识别为印旺夺食——印克食伤堵塞泄秀。此时财星 $w_\text{财} = K(w_0)$ 上调 $p$ 值（财克印护食伤）。</p>
+</div>
+
+<h2 id="s55">5.5 &nbsp; 相战成象与通关</h2>
+<div class="def-block"><span class="label">规则 5.5（两神相战·通关取用）</span>
+  <p>若命局两五行 $A$ 与 $B$ 合计占总量 $\geq 75\%$ 且力量比在 $1{:}2$ 到 $2{:}1$ 之间，且 $A$ 克 $B$（即 $\mathcal{K}(A) = B$），构成<strong>相战成象</strong>。取通关五行：</p>
+  $$w_\text{桥} = \Sigma(A) = \Sigma^{-1}(B)$$
+  <p>即"克方所生 / 被克方所被生"，让 $A$ 生桥再生 $B$（化克为生）：</p>
+  <ul>
+    <li>木土相战 → 通关火（木生火、火生土）；</li>
+    <li>火金相战 → 通关土（火生土、土生金）；</li>
+    <li>土水相战 → 通关金（土生金、金生水）；</li>
+    <li>金木相战 → 通关水（金生水、水生木）；</li>
+    <li>水火相战 → 通关木（水生木、木生火）。</li>
+  </ul>
+  <p>忌神不显式设定（相战成象本身不设单一忌神）；相战烈度由"交战烈度比"（参数 <code>warRatio</code>）描述，供大运救援信号识别使用。</p>
+</div>
+
+<h2 id="s56">5.6 &nbsp; 特殊格局</h2>
+
+<h3>从格</h3>
+<div class="def-block"><span class="label">规则 5.6（从格判定）</span>
+  <p>$r^* < 0.15$ <strong>且</strong> 日主无根（§3.6 通根判定）时成立从格：</p>
+  <ul>
+    <li>从财格（异党以财为主）：忌神 $= w_\text{比}$（比劫争财）；</li>
+    <li>从杀格（异党以官杀为主）：忌神 $= w_\text{食伤}$（食伤制杀破格）；</li>
+    <li>从儿格（异党以食伤为主）：忌神 $= w_\text{印}$（印夺食）；</li>
+    <li>从势格（异党均衡）：忌神 $= w_\text{印}$。</li>
+  </ul>
+  <p class="note">假从补充：即便日主<strong>有根</strong>（参数 <code>hasRoot</code> 为真），若同党力量占比 $< 8\%$，视为根虚不足，按无根处理可入假从格（《滴天髓》"假从之象，亦有之"）。</p>
+</div>
+
+<h3>专旺格</h3>
+<p>$r^* > 0.85$ 时识别专旺格：曲直格（木）、炎上格（火）、稼穑格（土）、从革格（金）、润下格（水）。首选用神为 $\Sigma(w_0)$（食伤泄秀）或 $w_\text{印}$（顺生）；忌神为 $w_\text{官杀}$（犯旺）。</p>
+
+<h3>两神成象（相生型）</h3>
+<p>命局两五行合计占 $\geq 75\%$、力量比 $\in [1{:}2, 2{:}1]$、且为相生关系（如 $\Sigma(A) = B$）时识别为相生成象：水木清华（水生木）、木火通明（木生火）、火土成慈（火生土）、土金毓秀（土生金）、金水相涵（金生水）。主用神取被生方再生的下一五行（泄秀方向），忌神为克"被生方"的五行（破象之五行）。</p>
+
+<h2 id="s57">5.7 &nbsp; 十干性情修正</h2>
+<p>在扶抑/调候层之外，《穷通宝鉴》《滴天髓》记载了十干各自的"性情喜忌"，用以微调用神候选 $p$ 值。本系统实现的核心规则（节选）：</p>
+
+<table style="font-size:.9em">
+  <tr><th>日干</th><th>关键规则</th></tr>
+  <tr><td>甲</td><td class="left">身强喜庚金（劈木成栋）；见己合土，贪合忘官；庚丁齐见木火通明</td></tr>
+  <tr><td>乙</td><td class="left">喜丙火向阳生机；寒月急需丙；身弱见甲为藤萝系甲</td></tr>
+  <tr><td>丙</td><td class="left">喜壬水映照（日照江湖）；次选癸水（云遮日，调候略弱）；忌己土晦光；坐寅长生为根本</td></tr>
+  <tr><td>丁</td><td class="left">身弱喜甲木引燃；见乙木湿草闷火；壬水映月主清贵</td></tr>
+  <tr><td>戊</td><td class="left">身强喜甲木疏土；冬月必见丙火</td></tr>
+  <tr><td>己</td><td class="left">喜丙癸并透（田园得阳光雨露）；忌壬水冲溃（洪水冲田）</td></tr>
+  <tr><td>庚</td><td class="left">身强喜丁火煅炼（效果优于丙火）；冬月无火则沉海底</td></tr>
+  <tr><td>辛</td><td class="left">喜壬水洗磨（珠玉光华）；忌土旺埋金</td></tr>
+  <tr><td>壬</td><td class="left">喜庚金发源（金水相生）；夏月见丙水火既济</td></tr>
+  <tr><td>癸</td><td class="left">喜庚金清源；冬月见丙火调候第一；戊癸合绊功名虚浮</td></tr>
+</table>
+
+<p>此外对每个日主加入"日主自坐"规则：按十二长生状态（§3.6）给出结构性描述，如日坐禄位、日坐长生、日坐墓库、日坐死绝 等。</p>
+
+<h2 id="s58">5.8 &nbsp; 真假神分型</h2>
+<div class="def-block"><span class="label">定义 5.4（真假神判定）</span>
+  <p>真神 $\triangleq$ 用神五行得月令本气（或中余气）且透天干；假神 $\triangleq$ 不满足。本系统进一步区分：</p>
+  <ul>
+    <li><strong>真神得用</strong>（标签 <code>true</code>）：得月令本气 + 透干</li>
+    <li><strong>真神（次气）</strong>（标签 <code>trueMinor</code>）：得月令中余气且透干</li>
+    <li><strong>半真半假</strong>（标签 <code>halfTrue</code>）：得月令本气但未透天干</li>
+    <li><strong>结构性假神</strong>（标签 <code>structural</code>）：日主非当令季节（如冬火、夏水、秋木、春金），其用神永远不可能得月令——此为<em>季节结构必然</em>，非盘的缺陷</li>
+    <li><strong>待补用神</strong>（标签 <code>weak</code>）：透干未得月令之气、或得余气未透干——喜大运补位</li>
+    <li><strong>缺陷性假神</strong>（标签 <code>defect</code>）：既不得月令、亦不透干、占比低——格局偏虚</li>
+  </ul>
+  <p>此分型修正了传统"真神平生贵，假神绝不灵"的简单二分法，避免对冬火、夏水等命局做不必要的负面定性。</p>
+</div>
+
+<h2 id="s59">5.9 &nbsp; 源流气-力评估</h2>
+<p>《滴天髓》"源流论"：从日主出发沿相生链 $w_0 \to \Sigma(w_0) \to \Sigma^2(w_0) \to \cdots$ 与逆向 $\Sigma^{-1}(w_0) \to \Sigma^{-2}(w_0) \to \cdots$ 各延伸，看链长度与断流点。链上每个节点的"气-力质量"分三档：</p>
+<ul>
+  <li><strong>气力俱足</strong>（标签 <code>full</code>）：透天干 且 $V$ 占比 $\geq 12\%$</li>
+  <li><strong>气足力中</strong>（标签 <code>medium</code>）：透天干 或 $V$ 占比 $\geq 15\%$</li>
+  <li><strong>气通力不足</strong>（标签 <code>paper</code>）：仅地支藏干、占比 $< 12\%$</li>
+</ul>
+<p>评分为拓扑分（链长、断流、用神连通、财官到达）减去质量扣分：气通力不足每节扣 3–4 分（占比 &lt;3% 扣 4，否则扣 3），气足力中每节扣 2 分，扣分上限 20 分。</p>
+
+<h2 id="s510">5.10 &nbsp; 用神选取总则</h2>
+<div class="algo-block"><span class="label">算法 5.1（用神求解）</span>
+  <p>综合前述各路径：</p>
+  <ol>
+    <li>先判从格/专旺/两神成象/相战成象（若触发则走特殊路径）；</li>
+    <li>否则以扶抑法为基本候选集；</li>
+    <li>泄秀/印旺夺食保护修正；</li>
+    <li>调候叠加 $\tau_{\text{boost}}$；</li>
+    <li>十干性情规则修正 $p$ 值；</li>
+    <li>真假神分型 $\zeta$ 标注；</li>
+    <li>归一化后按 $p$ 值排序，首选用神 $= \arg\max p$（即取 $p$ 值最大的候选），忌神权重固定为 $-1$；</li>
+    <li>评价向量 $\mathbf{w} \in \mathbb{R}^5$：$w_i = p_i$（正候选），$w_{\text{忌神}} = -1$。</li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════ 第六章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch6">第六章 &nbsp; 十神与格局</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 6 · Ten Gods and Patterns</p>
+
+<h2 id="s61">6.1 &nbsp; 十神定义</h2>
+<div class="def-block"><span class="label">定义 6.1（十神）</span>
+  <p>以日主 $t_0$ 为中心，其它天干 $t$ 按五行关系 + 阴阳匹配分十类：</p>
+</div>
+<table style="font-size:.9em">
+  <tr><th>五行关系</th><th>同阴阳</th><th>异阴阳</th></tr>
+  <tr><td>同（$\varphi_T(t) = w_0$）</td><td>比肩</td><td>劫财</td></tr>
+  <tr><td>我生（$\Sigma(w_0)$）</td><td>食神</td><td>伤官</td></tr>
+  <tr><td>我克（$\mathcal{K}(w_0)$）</td><td>偏财</td><td>正财</td></tr>
+  <tr><td>克我（$\mathcal{K}^{-1}(w_0)$）</td><td>七杀</td><td>正官</td></tr>
+  <tr><td>生我（$\Sigma^{-1}(w_0)$）</td><td>偏印</td><td>正印</td></tr>
+</table>
+
+<h2 id="s62">6.2 &nbsp; 十神判定</h2>
+<div class="thm-block"><span class="label">定理 6.1（十神公式）</span>
+  $$\mathrm{shiShen}(t_0, t) = 2 \cdot ((\varphi_T(t) - w_0) \bmod 5) + [(t \bmod 2) \neq (t_0 \bmod 2)]$$
+  <p>十神编号 $\in \{0, 1, \ldots, 9\}$：比(0) 劫(1) 食(2) 伤(3) 偏财(4) 正财(5) 七杀(6) 正官(7) 偏印(8) 正印(9)。</p>
+</div>
+
+<h2 id="s63">6.3 &nbsp; 地支十神</h2>
+<p>地支十神以其本气天干计算。丑、未、辰、戌（土库）若参与合化转化，按合化后五行重新判定。</p>
+
+<h2 id="s64">6.4 &nbsp; 格局判定</h2>
+<p>以月支本气为十神得正格名：</p>
+<table style="font-size:.9em">
+  <tr><th>月支本气十神</th><th>格局名</th></tr>
+  <tr><td>比肩</td><td>建禄格</td></tr>
+  <tr><td>劫财</td><td>羊刃格</td></tr>
+  <tr><td>食神</td><td>食神格</td></tr>
+  <tr><td>伤官</td><td>伤官格</td></tr>
+  <tr><td>偏财</td><td>偏财格</td></tr>
+  <tr><td>正财</td><td>正财格</td></tr>
+  <tr><td>七杀</td><td>七杀格</td></tr>
+  <tr><td>正官</td><td>正官格</td></tr>
+  <tr><td>偏印</td><td>偏印格（枭神格）</td></tr>
+  <tr><td>正印</td><td>正印格</td></tr>
+</table>
+
+<h2 id="s65">6.5 &nbsp; 格局气质画像</h2>
+<p>每格除结构判定外，给出"气质画像 + 身强弱分叉语"两段文字（摘要）：</p>
+<ul>
+  <li><strong>正官格</strong>——带秩序感、尊重规则，身强任之、身弱宜印星转化</li>
+  <li><strong>七杀格</strong>——带锋芒、竞争环境易出头，身强任杀、身弱宜食神制或印绶化</li>
+  <li><strong>正财格</strong>——务实派、长线积累，身强担财、身弱宜比劫聚力</li>
+  <li><strong>偏财格</strong>——资源调度者、嗅觉灵敏，身强财路宽阔、身弱宜顾问型</li>
+  <li><strong>食神格</strong>——才情型、表达创作，身强吐秀、身弱防过耗</li>
+  <li><strong>伤官格</strong>——叛逆才华、规则感弱，身强执行力双全、身弱宜佩印护秀</li>
+  <li><strong>正印格</strong>——学问与庇荫、温厚好学，身强印旺宜食伤泄秀、身弱得印为救应</li>
+  <li><strong>偏印格</strong>——偏门智慧、直觉强，身强宜主动社交、身弱宜借财制印</li>
+  <li><strong>建禄/比肩格</strong>——同行合伙型、领导潜质，身强宜泄秀、身弱宜合伙</li>
+  <li><strong>羊刃格</strong>——锋芒毕露、适高强度，身强宜正官/七杀制、身弱刃不成器</li>
+</ul>
+
+<!-- ═══════════════════════ 第七章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch7">第七章 &nbsp; 大运与流年</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 7 · Major Luck Cycles and Annual Fortune</p>
+
+<h2 id="s71">7.1 &nbsp; 大运起法</h2>
+<div class="def-block"><span class="label">定义 7.1（大运排列）</span>
+  <p>方向：阳男阴女顺排（$\epsilon = +1$），阴男阳女逆排（$\epsilon = -1$）。</p>
+  <p>起运年龄：从出生到最近节气（顺行取下一节、逆行取上一节）的绝对时间差 $\Delta T$（单位：天），按命理口诀"三天为一岁，一天为四月，一时辰为十天"换算（本系统实现到月份级）：</p>
+  $$\text{起运岁} = \lfloor \Delta T / 3 \rfloor, \quad \text{起运月} = \mathrm{round}((\Delta T \bmod 3) \cdot 4)$$
+  <p>大运干支从月柱 $P_m = (t_m, d_m)$ 开始按方向 $\epsilon$ 顺/逆排，每 10 年一步，共 9 步。</p>
+</div>
+
+<h2 id="s72">7.2 &nbsp; 流年增量</h2>
+<div class="def-block"><span class="label">定义 7.2（大运流年五行增量 $\Delta V$）</span>
+  <p>年份 $y$ 的大运干支 $D^{(y)} = (t^{(y)}_\text{大运}, d^{(y)}_\text{大运})$，流年干支 $F^{(y)} = (t^{(y)}_\text{流年}, d^{(y)}_\text{流年})$，其中 $n^{\text{流年}} = (y - 4) \bmod 60$。五行增量向量：</p>
+  <p><strong>大运贡献</strong>：</p>
+  <ul>
+    <li>天干：$\Delta V_{\varphi_T(t^{(y)}_\text{大运})} \mathrel{+}= 1.0$</li>
+    <li>地支藏干：$\Delta V_{\varphi_T(t')} \mathrel{+}= \alpha \cdot \kappa_{\text{空},\text{大运}}$，其中 $\kappa_{\text{空},\text{大运}} = 0.8$ 若大运地支 $d^{(y)}_\text{大运}$ 落命局空亡集 $K$，否则 $1.0$ <span class="note">（v2.2 新增：大运地支落命局空亡时救应打折）</span></li>
+  </ul>
+  <p><strong>流年贡献</strong>：</p>
+  <ul>
+    <li>天干：$\Delta V_{\varphi_T(t^{(y)}_\text{流年})} \mathrel{+}= 1.2$ <span class="note">（v2.2 从 0.8 提到 1.2，使流年有能力推翻大运主调）</span></li>
+    <li>地支藏干：$\Delta V_{\varphi_T(t')} \mathrel{+}= \alpha \cdot 1.0 \cdot \kappa_{\text{空},\text{流年}}$（流年地支落空亡集 $K$ 时同样 $\times 0.8$）</li>
+  </ul>
+</div>
+
+<h3>五行旺衰逐元修正</h3>
+<p>$\Delta V$ 按大运地支的动态 $\gamma$ 调整：$\Delta V_w \leftarrow \Delta V_w \cdot \rho_w$，其中比例系数 $\rho = \gamma_\text{动态}/\bar\gamma_0$，限制在 $[0.3, 2.5]$ 区间内（防止极端值）。</p>
+
+<h3>饱和修正</h3>
+<p>对大 $\Delta V_w$（$> 0.5$）施加：$\Delta V_w \leftarrow \Delta V_w \cdot (V + \bar V)/(V + \kappa \Delta V_w + \bar V)$，$\kappa = 0.3$。</p>
+
+<h3>流年克大运的非线性调和</h3>
+<div class="def-block"><span class="label">规则 7.1（流年-大运相克抵消）</span>
+  <p>若流年天干五行 $w_\text{流}$ 克大运天干五行 $w_\text{运}$（即 $\mathcal{K}(w_\text{流}) = w_\text{运}$）：$\Delta V_{w_\text{运}} \leftarrow \Delta V_{w_\text{运}} \cdot 0.7$（大运能量被压制 30%）；</p>
+  <p>若反过来大运克流年：$\Delta V_{w_\text{流}} \leftarrow \Delta V_{w_\text{流}} \cdot 0.8$（流年本就乘 0.8，扣较轻）。</p>
+  <p>此规则避免多年连续同向主导带来的累积虚假大凶/大吉。</p>
+</div>
+
+<h2 id="s73">7.3 &nbsp; 综合系数 F</h2>
+
+<div class="def-block"><span class="label">定义 7.3（F 综基础公式）</span>
+  $$F_{\text{基础}} = \mathbf{w}^\top \Delta V$$
+  <p>加极性反转（$r^*$ 远离 0.5 时大运逆推可能反向）：</p>
+  $$F_{\text{原始}} = F_{\text{基础}} + \mu \cdot \mathrm{sgn}(0.5 - r^*) \cdot (\gamma_{\text{大运}} - \bar\gamma_0) + \tau_{\text{调候奖励}}$$
+  <p>其中 $\mu = 0.8$（v2.1 起为此值），$\gamma_{\text{大运}} = \gamma(t_0, d^{(y)}_\text{大运})$ 即日主在当前大运地支的旺衰系数。</p>
+</div>
+
+<h2 id="s74">7.4 &nbsp; 软饱和与置信区间</h2>
+
+<h3>软饱和</h3>
+<div class="def-block"><span class="label">定义 7.4（双曲正切软饱和）</span>
+  <p>为避免 $F$ 值在长期主导大运里累积到不切实际的极端，使用双曲正切函数（$\tanh$）做软饱和：</p>
+  $$F_{\text{饱和}} = s \cdot \tanh(F_{\text{原始}} / s), \quad s = 1.5$$
+  <p>即 $F_{\text{饱和}} \in (-1.5, 1.5)$，保留方向与相对强弱，压缩长尾。</p>
+</div>
+
+<h3>判定阈值</h3>
+<table style="font-size:.9em">
+  <tr><th>$F_{\text{饱和}}$</th><th>判定</th></tr>
+  <tr><td>$> 1.1$</td><td>大吉</td></tr>
+  <tr><td>$(0.45, 1.1]$</td><td>吉</td></tr>
+  <tr><td>$(-0.45, 0.45]$</td><td>平</td></tr>
+  <tr><td>$[-1.1, -0.45]$</td><td>凶</td></tr>
+  <tr><td>$\leq -1.1$</td><td>大凶</td></tr>
+</table>
+
+<h3>置信区间</h3>
+<div class="def-block"><span class="label">定义 7.5（参数扰动置信区间）</span>
+  <p>对两个关键参数做 $3 \times 3$ 网格扰动：</p>
+  <ul>
+    <li>用神权重缩放 $\sigma_w \in \{0.80, 1.00, 1.20\}$（反映各法分歧带来的不确定性）；</li>
+    <li>极性反转强度 $\mu \in \{0.5, 0.8, 1.1\}$（反映旺衰映射的口径争议）。</li>
+  </ul>
+  <p>对 9 组采样取中位数为 $F_{\text{饱和}}$，最小值为 $F_{\text{下界}}$、最大值为 $F_{\text{上界}}$。若区间 $[F_{\text{下界}}, F_{\text{上界}}]$ 跨越 0，判定不稳定（在结果里以星号 $*$ 标注）。</p>
+</div>
+
+<!-- ═══════════════════════ 第八章 ═══════════════════════ -->
+<h2 class="ch-title" id="ch8">第八章 &nbsp; 论命算法</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Chapter 8 · Six-Step Fate Algorithm</p>
+
+<h2 id="s81">8.1 &nbsp; 六步流程</h2>
+
+<div class="algo-block"><span class="label">算法 8.1（完整论命流程）</span>
+  <p><strong>输入：</strong>出生日期时间 $(Y, M, D, h, m)$、出生地经度 $\lambda_g$、性别 $g \in \{0, 1\}$（0 女、1 男）、晚子时派别 $\ell \in \{\text{归本日}, \text{换日}\}$（参数 <code>sameDay</code> / <code>nextDay</code>）。</p>
+  <p><strong>输出：</strong>完整命盘数据（四柱、五行向量、用神、大运、90 年流年综合系数）。</p>
+  <ol>
+    <li><strong>时空坐标初始化（$B, \text{四柱}$）：</strong>
+      <ul>
+        <li>北京时 → 真太阳时（均时差 + 经度差修正）→ 时支 $d_h$；</li>
+        <li>晚子时检测：派别参数 $\ell$ 决定是否进位（参数 <code>advanceDay</code>）→ 日柱用儒略日号 $\text{JDN}_\text{日}$；</li>
+        <li>年柱：以立春分界确定 $\tilde Y$ → $n_y = (\tilde Y - 4) \bmod 60$；</li>
+        <li>月柱：节气定月 → 五虎遁；</li>
+        <li>日柱：$n_d = (\text{JDN}_\text{日} + 49) \bmod 60$；</li>
+        <li>时柱：五鼠遁 → $t_h$。</li>
+      </ul>
+    </li>
+    <li><strong>命局张量化与基础五行计算（$V$）：</strong>
+      <ul>
+        <li>藏干展开；</li>
+        <li>计算空亡地支集 $K$；</li>
+        <li>按定义 2.4 计算 $V \in \mathbb{R}^5$。</li>
+      </ul>
+    </li>
+    <li><strong>合冲刑害与四时用事修正（$V'$）：</strong>
+      <ul>
+        <li>检测所有干支关系，按优先级解析（§4.6）；</li>
+        <li>对地支乘数（参数 <code>branchMul</code>）、天干乘数（参数 <code>stemMul</code>）做力量修正；</li>
+        <li>合化五行重分配；</li>
+        <li>按月令 $\mu$ 系数旺衰修正得 $V'$。</li>
+      </ul>
+    </li>
+    <li><strong>日主强弱评估与十神解析：</strong>
+      <ul>
+        <li>计算 $H, \bar\gamma_0, r^*$；</li>
+        <li>通根判定（参数 <code>hasRoot</code>）：基于 §3.6 长生位 + 同类五行藏干；</li>
+        <li>十神映射：对每个天干 $t_i$ 求 $\mathrm{shiShen}(t_0, t_i)$；</li>
+        <li>格局定名（月支本气十神）。</li>
+      </ul>
+    </li>
+    <li><strong>多维评价向量与用神求解：</strong>
+      <ul>
+        <li>特殊格局识别（从格/专旺/相战/两神成象）；</li>
+        <li>扶抑候选 → 泄秀/印旺夺食保护 → 调候叠加 → 十干性情修正；</li>
+        <li>真假神分型 $\zeta$ 标注；</li>
+        <li>归一化得评价向量 $\mathbf{w} \in \mathbb{R}^5$。</li>
+      </ul>
+    </li>
+    <li><strong>大运流年动态推演系统：</strong>
+      <ul>
+        <li>计算大运起运年龄、方向、各步干支 $\{D^{(k)}\}_{k=0}^{8}$；</li>
+        <li>对 90 年每年：
+          <ol type="a">
+            <li>计算 $\Delta V$（大运 + 流年，空亡折损）；</li>
+            <li>动态 $\gamma$ 修正、饱和修正、流年克大运抵消；</li>
+            <li>计算 $F_{\text{原始}}$ → 参数扰动 9 组采样 → $F_{\text{饱和}}$ + 置信区间 $[F_{\text{下界}}, F_{\text{上界}}]$；</li>
+            <li>输出判定（大吉/吉/平/凶/大凶），跨零标 $*$。</li>
+          </ol>
+        </li>
+      </ul>
+    </li>
+  </ol>
+</div>
+
+<h3>算法流程图（示意）</h3>
+<pre style="background:#f5f0e6;padding:14px;border-radius:6px;font-size:.85em;overflow-x:auto;line-height:1.6">
+输入 (年 Y, 月 M, 日 D, 时 h, 分 m, 经度 λ_g, 性别 g, 晚子时派别 ℓ)
+        ↓
+[1] 真太阳时 + 晚子时 → 四柱 (P_y, P_m, P_d, P_h)
+        ↓
+[2] 藏干 + 空亡 + 位置权重 → V ∈ ℝ⁵
+        ↓
+[3] 合冲刑害（地支乘数 branchMul、天干乘数 stemMul、合化转化 transform）
+   → 月令 μ 修正 → V' ∈ ℝ⁵
+        ↓
+[4] 寒暖 H、日主旺衰 γ̄₀、身强弱 r*、通根 hasRoot → 身强弱标签
+   + 十神 + 格局名
+        ↓
+[5] 特殊格局? ── 是 ─→ 从格/专旺/相战/两神 → 用神
+                └─ 否 ─→ 扶抑 + 泄秀/印旺保护
+                        + 调候 + 十干性情
+                        → 候选归一化 → 评价向量 w ∈ ℝ⁵
+        ↓
+[6] 大运（9 步）× 流年（每步 10 年）→ F_饱和 + [F_下界, F_上界]
+        ↓
+输出: 完整命盘 + 90 年逐年综合系数
+</pre>
+
+<!-- ═══════════════════════ 附录 ═══════════════════════ -->
+<h2 class="ch-title" id="appendix">附录 &nbsp; 符号总表</h2>
+<p style="text-align:center;color:#888;margin-bottom:40px;">Appendix · Symbol Reference</p>
+
+<h3>A.1 基础代数对象</h3>
+<table style="font-size:.88em">
+  <tr><th>符号</th><th>含义</th><th>定义位置</th></tr>
+  <tr><td>$Y$</td><td>阴阳群 $\mathbb{Z}/2\mathbb{Z}$</td><td>1.1</td></tr>
+  <tr><td>$W$</td><td>五行环 $\mathbb{Z}/5\mathbb{Z}$</td><td>1.2</td></tr>
+  <tr><td>$T$</td><td>天干群 $\mathbb{Z}/10\mathbb{Z}$</td><td>1.3</td></tr>
+  <tr><td>$D$</td><td>地支群 $\mathbb{Z}/12\mathbb{Z}$</td><td>1.4</td></tr>
+  <tr><td>$G$</td><td>甲子群（$|G|=60$）</td><td>1.5</td></tr>
+  <tr><td>$B = (P_y, P_m, P_d, P_h)$</td><td>四柱</td><td>1.6</td></tr>
+  <tr><td>$t_0, w_0$</td><td>日主天干编号与五行</td><td>1.6</td></tr>
+  <tr><td>$\varphi_T$</td><td>天干→五行映射</td><td>1.3</td></tr>
+  <tr><td>$\psi$</td><td>天干→阴阳映射</td><td>1.3</td></tr>
+  <tr><td>$\Sigma$</td><td>相生映射 $w \mapsto (w+1) \bmod 5$</td><td>3.1</td></tr>
+  <tr><td>$\mathcal{K}$</td><td>相克映射 $w \mapsto (w+2) \bmod 5$</td><td>3.2</td></tr>
+  <tr><td>$A(w_0), O(w_0)$</td><td>同党集、异党集</td><td>3.3</td></tr>
+</table>
+
+<h3>A.2 向量与系数</h3>
+<table style="font-size:.88em">
+  <tr><th>符号</th><th>含义</th><th>定义位置</th></tr>
+  <tr><td>$V$</td><td>命局原始五行向量 $\in \mathbb{R}^5$</td><td>2.6</td></tr>
+  <tr><td>$V'$</td><td>合冲刑害 + 月令修正后</td><td>8.1[3]</td></tr>
+  <tr><td>$\alpha$</td><td>藏干系数（本气 $\in \{0.6, 0.7, 1.0\}$，中气 $0.3$，余气 $0.1$）</td><td>2.3</td></tr>
+  <tr><td>$\lambda^T, \lambda^D$</td><td>天干/地支位置权重</td><td>2.4</td></tr>
+  <tr><td>$\varepsilon_\text{空}$</td><td>空亡折损 = 0.1</td><td>2.5</td></tr>
+  <tr><td>$\mu(d)$</td><td>月令旺衰五档</td><td>3.5</td></tr>
+  <tr><td>$\gamma(t, d)$</td><td>十二长生系数</td><td>3.6</td></tr>
+  <tr><td>$\bar\gamma_0$</td><td>日主加权平均旺衰</td><td>5.1</td></tr>
+  <tr><td>$w^\gamma_m$</td><td>月令权重 (0.85 / 0.55)</td><td>5.1</td></tr>
+  <tr><td>$\eta_T, \eta_D, \eta_M$</td><td>寒暖权</td><td>5.1</td></tr>
+  <tr><td>$H$</td><td>寒暖总分</td><td>5.1</td></tr>
+  <tr><td>$r^*$</td><td>身强弱指数 $\in [0, 1]$</td><td>5.1</td></tr>
+  <tr><td>$K$</td><td>空亡地支集</td><td>2.5</td></tr>
+</table>
+
+<h3>A.3 用神与判定</h3>
+<table style="font-size:.88em">
+  <tr><th>符号</th><th>含义</th><th>定义位置</th></tr>
+  <tr><td>$p_w$</td><td>用神候选 $w$ 的权重分</td><td>5.10</td></tr>
+  <tr><td>$\mathbf{w} \in \mathbb{R}^5$</td><td>评价向量</td><td>5.10</td></tr>
+  <tr><td>$w_\text{忌神}$</td><td>忌神五行（评价向量中权重为 $-1$）</td><td>5.6</td></tr>
+  <tr><td>$\tau_\text{boost}$</td><td>调候增益权重 $\in \{0.08, 0.12, 0.20, 0.35\}$</td><td>5.3</td></tr>
+  <tr><td>$\zeta$</td><td>真假神分型标签</td><td>5.8</td></tr>
+  <tr><td>$\rho$</td><td>燥土脆金印星衰减系数</td><td>5.1</td></tr>
+</table>
+
+<h3>A.4 大运流年</h3>
+<table style="font-size:.88em">
+  <tr><th>符号</th><th>含义</th><th>定义位置</th></tr>
+  <tr><td>$\epsilon$</td><td>大运方向 $\pm 1$</td><td>7.1</td></tr>
+  <tr><td>$D^{(k)}$</td><td>第 $k$ 步大运干支</td><td>7.1</td></tr>
+  <tr><td>$\Delta V$</td><td>大运+流年的五行增量</td><td>7.2</td></tr>
+  <tr><td>$\kappa_\text{空}$</td><td>大运/流年地支落空亡折损 = 0.8</td><td>7.2</td></tr>
+  <tr><td>$\kappa_\text{饱和}$</td><td>饱和修正系数 = 0.3</td><td>7.2</td></tr>
+  <tr><td>$\mu$</td><td>极性反转系数 = 0.8</td><td>7.3</td></tr>
+  <tr><td>$F_\text{原始}$</td><td>原始综合系数（极性反转 + 调候奖励）</td><td>7.3</td></tr>
+  <tr><td>$F_\text{饱和}$</td><td>双曲正切（tanh）软饱和后的综合系数</td><td>7.4</td></tr>
+  <tr><td>$s$</td><td>双曲正切饱和半径 = 1.5</td><td>7.4</td></tr>
+  <tr><td>$[F_\text{下界}, F_\text{上界}]$</td><td>9 组参数扰动置信区间</td><td>7.4</td></tr>
+  <tr><td>$\sigma_w$</td><td>用神权重缩放扰动 $\in \{0.8, 1.0, 1.2\}$</td><td>7.4</td></tr>
+</table>
+
+<!-- ═══════════════════════ 致谢 ═══════════════════════ -->
+<h2 class="ch-title" id="ack">致谢</h2>
+<p style="text-align:center;color:#888;margin-bottom:30px;">Acknowledgments</p>
+
+<p>首先感谢<strong>王德峰教授</strong>。他的《中华命理学》课程以哲学家的深度和人文学者的温度，为笔者打开了命理学这一传统知识体系的大门。课堂上那些关于天命与自由意志、数术与人生智慧的讨论，是本文写作的最初动力。</p>
+
+<p>本文的写作过程大量借助了人工智能工具的辅助。<strong>Anthropic Claude Opus 4.7</strong> 在形式化推导、公式验证、代码实现同步与本次 v2.2 大规模修订中提供了深度协作；若干审阅意见亦来自独立 AI 审稿。当然，文中若有错误，责任完全在笔者本人。</p>
+
+<p>本形式化框架已通过配套算法实现（<code>bazi-core.js</code>，约 4400 行 JavaScript 代码）。配套测试套件（7 个脚本，230+ 检查点，100 盘随机大样本 + 多轮边界情形测试）持续验证计算层、格局识别、大运流年的一致性与稳定性。读者可直接通过 <code>destiny.html</code> 页面输入出生时间得到完整命盘分析。</p>
+
+<p>最后，感谢所有在这个时代仍然认真对待中华传统文化的人们——无论是将其视为哲学智慧、历史遗产，还是如本文所尝试的，视为一个值得用现代数学语言重新审视、可验证、可回测的精巧体系。</p>
+
+<footer style="text-align:center;padding:24px 16px;margin-top:40px;font-size:.78em;color:#999;border-top:1px solid #eee">
+  <div>八字命理计算系统 v2.2 · 更新于 2026-04-23</div>
+  <div style="margin-top:4px">基于《子平真诠》《滴天髓》《穷通宝鉴》《三命通会》《五行结构论》等经典 · 现代量化建模</div>
+  <div style="margin-top:4px">源码：<code>bazi-core.js</code> · UI：<code>destiny.html</code> · 测试：<code>test/</code></div>
+</footer>
+</body>
+</html>

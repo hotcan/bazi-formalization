@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中华命理学计算系统</title>
+<style>
+:root{--bg:#f8f9fc;--card:#ffffff;--border:#e0e3ea;--text:#1a1a2e;--sub:#6b7280;--accent:#0b1120;--accent2:#0066ff;--red:#d94f4f;--green:#2d8a4e;--blue:#2e6bc5;--gold:#b8922e;--purple:#8e44ad;--metal:#7a7a7a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"SF Pro Display","Helvetica Neue","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh;overflow-x:hidden}
+h1{font-size:1.8em;text-align:center;margin:0 0 6px;color:var(--accent)}
+h2{font-size:1.25em;color:var(--accent);margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+h3{font-size:1.05em;color:var(--sub);margin:18px 0 8px}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 60px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 30px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.subtitle{text-align:center;color:var(--sub);font-size:.92em;margin-bottom:20px}
+
+/* ═══ Hero Section ═══ */
+.hero{background:linear-gradient(135deg,#0b1120 0%,#1a2444 60%,#0d1a3a 100%);position:relative;overflow:hidden;padding:60px 24px 80px;text-align:center;margin-bottom:-40px}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(0,102,255,0.08) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(180,160,100,0.06) 0%,transparent 50%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent);pointer-events:none}
+.hero h1{color:#fff;font-size:2.6rem;font-weight:900;letter-spacing:0.12em;margin-bottom:12px;position:relative;text-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.hero .subtitle{color:rgba(255,255,255,0.6);font-size:1rem;letter-spacing:0.3em;font-weight:300;margin-bottom:0;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 16px;font-size:.78rem;color:rgba(255,255,255,0.7);margin-bottom:20px;position:relative;backdrop-filter:blur(8px)}
+.hero-badge::before{content:'';width:6px;height:6px;background:#4ade80;border-radius:50%;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* ═══ Input Card ═══ */
+.input-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 36px 30px;position:relative;z-index:2;box-shadow:0 8px 32px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.04)}
+.section-title{font-size:1.05rem;font-weight:600;color:var(--accent);margin:0 0 20px;padding-bottom:10px;border-bottom:2px solid var(--accent2);display:inline-block}
+
+/* Input form */
+.form-row{display:flex;gap:14px;margin:0 0 16px;flex-wrap:wrap}
+.form-row .form-group{flex:1;min-width:0}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-size:.82em;font-weight:600;color:var(--sub);margin-bottom:6px;letter-spacing:0.02em}
+.form-group input,.form-group select{padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.95em;font-family:inherit;background:#fafbfd;color:var(--text);transition:all .2s;width:100%}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(0,102,255,0.1);background:#fff}
+.form-group input::placeholder{color:#c0c4cc}
+.form-group-small{flex:0 0 80px!important}
+
+/* Radio group */
+.radio-group{display:flex;gap:10px;margin-top:2px}
+.radio-group label{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:.92em;font-weight:500;transition:all .2s;background:#fafbfd;margin-bottom:0}
+.radio-group label:hover{border-color:#a0a8b8}
+.radio-group input[type="radio"]{display:none}
+.radio-group input[type="radio"]:checked+label{border-color:var(--accent2);background:rgba(0,102,255,0.04);color:var(--accent2);box-shadow:0 0 0 3px rgba(0,102,255,0.08)}
+.radio-indicator{width:16px;height:16px;border:2px solid var(--border);border-radius:50%;position:relative;transition:all .2s;flex-shrink:0}
+.radio-group input[type="radio"]:checked+label .radio-indicator{border-color:var(--accent2)}
+.radio-group input[type="radio"]:checked+label .radio-indicator::after{content:'';position:absolute;top:3px;left:3px;width:6px;height:6px;background:var(--accent2);border-radius:50%}
+
+.btn{display:block;width:100%;max-width:360px;margin:28px auto 0;padding:14px 0;background:var(--accent2);color:#fff;border:none;border-radius:12px;font-size:1.05em;font-family:inherit;cursor:pointer;letter-spacing:2px;font-weight:600;transition:all .25s;box-shadow:0 4px 16px rgba(0,102,255,0.2)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,102,255,0.3);background:#0055dd}
+.btn:active{transform:translateY(0);box-shadow:0 2px 8px rgba(0,102,255,0.2)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-secondary{background:linear-gradient(135deg,#374151,#4b5563);box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.btn-secondary:hover{background:linear-gradient(135deg,#2d3748,#3f4a5c);box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.divider-line{height:1px;background:var(--border);margin:18px 0}
+.form-hint{font-size:.78em;color:#9ca3af;margin-top:4px}
+.time-sep{font-size:1.2em;color:var(--sub);align-self:center;padding-top:20px}
+
+/* Five Element decorative icons */
+.wx-icons{display:flex;justify-content:center;gap:18px;margin:18px 0 6px}
+.wx-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82em;font-weight:700;color:#fff;opacity:0.9}
+.wx-icon:nth-child(1){background:#2d8a4e}
+.wx-icon:nth-child(2){background:#d94f4f}
+.wx-icon:nth-child(3){background:#b8922e}
+.wx-icon:nth-child(4){background:#7a7a7a}
+.wx-icon:nth-child(5){background:#2e6bc5}
+
+/* Pillar display */
+.pillar-row{display:flex;justify-content:center;gap:14px;margin:16px 0}
+.pillar{text-align:center;min-width:85px}
+.pillar .ph{font-size:.78em;color:var(--sub);margin-bottom:4px;font-weight:600}
+.pillar .pt,.pillar .pb{font-size:1.5em;padding:10px 18px;border:1.5px solid var(--border);background:#fafbfd}
+.pillar .pt{border-radius:10px 10px 0 0;border-bottom:none;color:var(--accent);font-weight:700}
+.pillar .pb{border-radius:0 0 10px 10px;font-weight:500}
+.pillar .ps{font-size:.72em;color:var(--sub);margin-top:4px}
+.pillar-dm .pt{background:linear-gradient(135deg,#fff7ed,#fef3c7);font-weight:bold}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:.88em;margin:10px 0}
+th,td{padding:8px 10px;border:1px solid var(--border);text-align:center}
+th{background:var(--accent);color:#fff;font-weight:600;font-size:.82em;letter-spacing:0.04em}
+tr:nth-child(even){background:#f8f9fc}
+tr:hover{background:#eef2ff}
+.note{font-size:.85em;color:var(--sub);margin:8px 0;padding:10px 14px;background:#f0f4ff;border-left:3px solid var(--accent2);border-radius:0 8px 8px 0}
+
+/* Strength gauge */
+.gauge-wrap{display:flex;align-items:center;gap:12px;margin:12px 0}
+.gauge{flex:1;height:26px;background:#e5e7eb;border-radius:13px;overflow:hidden;position:relative}
+.gauge-fill{height:100%;border-radius:13px;transition:width .8s}
+.gauge-label{font-size:.85em;min-width:80px;text-align:right;font-weight:500}
+.gauge-val{font-size:.85em;min-width:60px;font-weight:bold}
+
+/* Five element horizontal bars */
+.wx-hbars{margin:12px 0}
+.wx-hbar{display:flex;align-items:center;gap:10px;margin:6px 0}
+.wx-hbar .hb-label{width:28px;font-weight:700;font-size:.95em;text-align:center}
+.wx-hbar .hb-track{flex:1;height:22px;background:#f1f5f9;border-radius:11px;overflow:hidden;position:relative}
+.wx-hbar .hb-fill{height:100%;border-radius:11px;transition:width .6s;min-width:2px}
+.wx-hbar .hb-val{width:50px;font-size:.85em;font-weight:700;text-align:right}
+.wx-compare{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}
+.wx-compare>div{min-width:0}
+
+/* Step section styling */
+.step-section{margin:24px 0}
+.step-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.step-num{width:32px;height:32px;background:var(--accent2);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;flex-shrink:0}
+.step-title{font-size:1.1em;font-weight:700;color:var(--accent)}
+.step-desc{font-size:.85em;color:var(--sub);margin-left:auto}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.detail-box{background:#f8f9fc;border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.detail-box h4{font-size:.88em;color:var(--sub);margin:0 0 8px;font-weight:600}
+.detail-box .big-val{font-size:1.4em;font-weight:800;color:var(--accent)}
+.detail-box p{font-size:.85em;margin:4px 0;color:var(--text)}
+.formula{font-family:"SF Mono","Fira Code","Consolas",monospace;font-size:.82em;color:var(--sub);background:#f1f5f9;padding:8px 12px;border-radius:8px;margin:8px 0;overflow:visible}
+.tip-wrap{position:relative;display:inline-flex;align-items:center;cursor:help}
+.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(0,102,255,0.10);color:var(--accent2);font-size:10px;font-weight:700;margin-left:4px;flex-shrink:0;line-height:1}
+.tip-wrap .tip-box{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:320px;padding:12px 14px;background:#1a1a2e;color:#e8eaed;font-size:.82em;line-height:1.7;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.25);z-index:100;font-family:-apple-system,"SF Pro Display","Helvetica Neue","Noto Sans SC",sans-serif;font-weight:400;pointer-events:none}
+.tip-wrap .tip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1a1a2e}
+.tip-wrap:hover .tip-box{display:block}
+.tip-box .tip-title{font-weight:700;color:#fff;font-size:.92em}
+.tip-box .tip-src{color:#7eb8ff;font-style:italic;font-size:.9em;display:inline-block;margin:2px 0}
+.tip-box .tip-note{color:#a0a8b8;font-size:.88em;display:inline-block;margin-top:2px}
+
+/* Five element bars (legacy vertical - kept for compat) */
+.wx-bars{display:flex;gap:10px;margin:12px 0}
+.wx-bar{flex:1;text-align:center}
+.wx-bar .bar-outer{height:120px;background:#f1f5f9;border-radius:8px;position:relative;overflow:hidden}
+.wx-bar .bar-inner{position:absolute;bottom:0;width:100%;border-radius:8px;transition:height .6s}
+.wx-bar .bar-label{font-size:.78em;color:var(--sub);margin-top:4px;font-weight:500}
+.wx-bar .bar-val{font-size:.82em;font-weight:bold;margin-top:2px}
+.wx-colors{--c0:#2d8a4e;--c1:#d94f4f;--c2:#b8922e;--c3:#7a7a7a;--c4:#2e6bc5}
+
+/* Chart container */
+.chart-wrap{position:relative;margin:20px 0;background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 32px rgba(0,0,0,0.06)}
+.chart-wrap canvas{display:block;margin:0 auto;cursor:crosshair}
+.chart-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;margin:12px 0 0;font-size:.82em}
+.chart-legend .leg-item{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 8px;border-radius:6px;transition:all .2s}
+.chart-legend .leg-item:hover{background:rgba(0,102,255,0.06)}
+.chart-legend .leg-item.off{opacity:.3}
+.chart-legend .leg-line{width:20px;height:3px;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+.tooltip{position:absolute;pointer-events:none;background:rgba(255,255,255,0.98);border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:.82em;box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:10;display:none;max-width:260px;line-height:1.6;backdrop-filter:blur(8px)}
+.tooltip .tt-year{font-weight:bold;color:var(--accent);margin-bottom:6px;font-size:1.05em}
+.tooltip .tt-row{display:flex;justify-content:space-between;gap:12px}
+.tooltip .tt-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+
+/* Tabs */
+.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;gap:4px}
+.tab-btn{padding:10px 20px;border:none;background:none;font-family:inherit;font-size:.9em;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s;border-radius:8px 8px 0 0;font-weight:500}
+.tab-btn:hover{background:rgba(0,102,255,0.04);color:var(--text)}
+.tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent2);font-weight:700;background:rgba(0,102,255,0.04)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Luck period timeline */
+.luck-timeline{display:flex;overflow-x:auto;gap:0;margin:12px 0;padding-bottom:8px}
+.luck-item{min-width:90px;text-align:center;padding:10px 8px;border-left:2px solid var(--border);position:relative;transition:background .2s}
+.luck-item:first-child{border-left:none}
+.luck-item:hover{background:rgba(0,102,255,0.04);border-radius:8px}
+.luck-item .li-age{font-size:.72em;color:var(--sub);font-weight:500}
+.luck-item .li-gz{font-size:1.1em;font-weight:bold;color:var(--accent);margin:4px 0}
+.luck-item .li-god{font-size:.78em;padding:2px 8px;border-radius:10px;display:inline-block}
+
+/* Results section header */
+.results-header{text-align:center;padding:30px 0 20px}
+.results-header h1{color:var(--accent);font-weight:800;font-size:1.6em}
+
+/* Bazi direct input grid */
+.bazi-input-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.bazi-col{text-align:center}
+.bazi-col label{display:block;font-size:.82em;font-weight:600;color:var(--sub);margin-bottom:6px}
+.gz-select{width:100%;padding:10px 4px;border:1.5px solid var(--border);border-radius:10px;font-size:1.05em;font-family:inherit;background:#fafbfd;color:var(--text);text-align:center;transition:all .2s;appearance:none;-webkit-appearance:none;cursor:pointer}
+.gz-select:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(0,102,255,0.1);background:#fff}
+
+@media(max-width:640px){
+  .hero{padding:40px 16px 60px}
+  .hero h1{font-size:1.8rem}
+  .form-row{flex-wrap:wrap}
+  .form-row .form-group{min-width:calc(50% - 10px)}
+  .form-group-small{flex:0 0 60px!important;min-width:60px!important}
+  .input-card{padding:24px 20px 20px;margin:0 8px}
+  .pillar-row{gap:6px}
+  .pillar{min-width:65px}
+  .pillar .pt,.pillar .pb{font-size:1.2em;padding:6px 10px}
+  h1{font-size:1.4em}
+  .wx-icons{gap:10px}
+  .wx-icon{width:30px;height:30px;font-size:.72em}
+  .radio-group{flex-wrap:wrap}
+}
+@media print{
+  #sec-input,.btn,.btn-select-all,.chart-legend+div{display:none!important}
+  body{background:#fff;font-size:11pt}
+  .card{box-shadow:none;border:1px solid #eee;break-inside:avoid}
+  section{padding:0}
+  canvas{max-width:100%!important;height:auto!important}
+  .chart-legend .leg-item.off{display:none}
+  .chart-legend .leg-line{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+  h1{font-size:18pt}
+}
+</style>
+</head>
+<body>
+  <!-- ═══ STEP 1: INPUT ═══ -->
+  <section id="sec-input">
+    <div class="hero">
+      <div class="hero-badge">算法引擎在线</div>
+      <h1>八字命理排盘</h1>
+      <p class="subtitle">基于群论与线性代数的形式化分析</p>
+      <div class="wx-icons">
+        <div class="wx-icon">木</div>
+        <div class="wx-icon">火</div>
+        <div class="wx-icon">土</div>
+        <div class="wx-icon">金</div>
+        <div class="wx-icon">水</div>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="input-card">
+        <!-- ─── 姓名（共享） ─── -->
+        <div class="section-title">姓名</div>
+        <div class="form-row">
+          <div class="form-group"><label>姓名</label><input type="text" id="inp-name" placeholder="请输入姓名" maxlength="50"></div>
+        </div>
+
+        <div class="divider-line"></div>
+
+        <!-- ─── 输入模式 Tab ─── -->
+        <div class="tab-bar" id="input-tabs">
+          <button class="tab-btn active" onclick="switchTab('solar')">公历</button>
+          <button class="tab-btn" onclick="switchTab('lunar')">农历</button>
+          <button class="tab-btn" onclick="switchTab('bazi')">八字</button>
+        </div>
+
+        <!-- ══ Tab 1: 公历 ══ -->
+        <div class="tab-panel active" id="tab-solar">
+          <div class="form-row">
+            <div class="form-group"><label>年</label><input type="number" id="inp-year" min="1800" max="2200" value="1990" placeholder="如 1990"></div>
+            <div class="form-group"><label>月</label>
+              <select id="inp-month">
+                <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+                <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+                <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+                <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+              </select>
+            </div>
+            <div class="form-group"><label>日</label><input type="number" id="inp-day" min="1" max="31" value="1" placeholder="1-31"></div>
+            <div class="form-group-small form-group"><label>时</label><input type="number" id="inp-hh" min="0" max="23" value="12" placeholder="0-23"></div>
+            <span class="time-sep">:</span>
+            <div class="form-group-small form-group"><label>分</label><input type="number" id="inp-mm" min="0" max="59" value="0" placeholder="0-59"></div>
+          </div>
+        </div>
+
+        <!-- ══ Tab 2: 农历 ══ -->
+        <div class="tab-panel" id="tab-lunar">
+          <div class="form-row">
+            <div class="form-group"><label>农历年</label><input type="number" id="inp-lunar-year" min="1901" max="2099" value="1990" placeholder="如 1990" onchange="updateLunarMonths()"></div>
+            <div class="form-group"><label>农历月</label>
+              <select id="inp-lunar-month"><option value="1">正月</option></select>
+            </div>
+            <div class="form-group"><label>农历日</label>
+              <select id="inp-lunar-day"></select>
+            </div>
+            <div class="form-group-small form-group"><label>时</label><input type="number" id="inp-lunar-hh" min="0" max="23" value="12" placeholder="0-23"></div>
+            <span class="time-sep">:</span>
+            <div class="form-group-small form-group"><label>分</label><input type="number" id="inp-lunar-mm" min="0" max="59" value="0" placeholder="0-59"></div>
+          </div>
+          <div class="form-hint" id="lunar-solar-preview"></div>
+        </div>
+
+        <!-- ══ Tab 3: 八字 ══ -->
+        <div class="tab-panel" id="tab-bazi">
+          <div class="form-hint" style="margin-bottom:12px">已知四柱干支，直接输入排盘。系统将自动反查对应公历日期。</div>
+          <div class="bazi-input-grid">
+            <div class="bazi-col">
+              <label>年柱</label>
+              <select id="inp-bazi-year" class="gz-select"></select>
+            </div>
+            <div class="bazi-col">
+              <label>月柱</label>
+              <select id="inp-bazi-month" class="gz-select"></select>
+            </div>
+            <div class="bazi-col">
+              <label>日柱</label>
+              <select id="inp-bazi-day" class="gz-select"></select>
+            </div>
+            <div class="bazi-col">
+              <label>时柱</label>
+              <select id="inp-bazi-hour" class="gz-select"></select>
+            </div>
+          </div>
+          <div class="form-hint" id="bazi-date-preview" style="margin-top:12px"></div>
+        </div>
+
+        <!-- ─── 出生地点（公历/农历共享） ─── -->
+        <div id="place-section">
+          <div class="divider-line"></div>
+          <div class="section-title">出生地点</div>
+          <div class="form-row">
+            <div class="form-group"><label>出生省份</label>
+              <select id="inp-province" onchange="updateCityList()"><option value="">选择省份</option></select>
+            </div>
+            <div class="form-group"><label>出生城市</label>
+              <select id="inp-city" onchange="updateLonFromCity()"><option value="">选择城市</option></select>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="inp-lon" value="120">
+
+        <!-- ─── 性别（共享） ─── -->
+        <div class="divider-line"></div>
+        <div class="section-title">性别</div>
+        <div class="radio-group">
+          <input type="radio" name="gender" id="gender-m" value="1" checked>
+          <label for="gender-m"><span class="radio-indicator"></span>男（乾造）</label>
+          <input type="radio" name="gender" id="gender-f" value="0">
+          <label for="gender-f"><span class="radio-indicator"></span>女（坤造）</label>
+        </div>
+
+        <button class="btn" id="btn-calc" onclick="runCalculation()">开始排盘 →</button>
+        <a href="match.html" class="btn" style="background:linear-gradient(135deg,#e84393,#fd79a8);margin-top:8px;text-align:center;text-decoration:none;display:block">&#128149; 八字合婚 →</a>
+      </div>
+    </div>
+  </section>
+
+<!-- 共享计算引擎 -->
+<script src="bazi-core.js?v=20260416"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   中华命理学计算系统 — 页面专属逻辑（三Tab模式）
+   ═══════════════════════════════════════════════════════════════ */
+
+var currentTab = 'solar';
+
+// ── Tab 切换 ──
+function switchTab(tab){
+  currentTab = tab;
+  var btns = document.querySelectorAll('#input-tabs .tab-btn');
+  var panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(function(b,i){ b.classList.toggle('active', ['solar','lunar','bazi'][i]===tab); });
+  panels.forEach(function(p){ p.classList.toggle('active', p.id === 'tab-'+tab); });
+  // 八字模式隐藏出生地点（无需真太阳时）
+  document.getElementById('place-section').style.display = (tab==='bazi') ? 'none' : '';
+}
+
+// ── 省市联动 ──
+function updateCityList(){
+  var prov = document.getElementById('inp-province').value;
+  var citySelect = document.getElementById('inp-city');
+  citySelect.innerHTML = '<option value="">选择城市</option>';
+  if(prov && PROVINCE_CITY[prov]){
+    PROVINCE_CITY[prov].forEach(function(c){
+      var opt = document.createElement('option');
+      opt.value = c[1];
+      opt.textContent = c[0] + ' (' + c[1] + '\u00b0E)';
+      citySelect.appendChild(opt);
+    });
+    if(PROVINCE_CITY[prov].length===1){
+      citySelect.selectedIndex = 1;
+      updateLonFromCity();
+    }
+  }
+}
+function updateLonFromCity(){
+  var v = document.getElementById('inp-city').value;
+  if(v) document.getElementById('inp-lon').value = v;
+}
+
+// ── 农历月份/日期联动 ──
+function updateLunarMonths(){
+  var y = parseInt(document.getElementById('inp-lunar-year').value);
+  var sel = document.getElementById('inp-lunar-month');
+  sel.innerHTML = '';
+  if(!y || y < 1901 || y > 2099){ sel.innerHTML='<option>--</option>'; return; }
+  var list = getLunarMonthList(y);
+  list.forEach(function(item){
+    var opt = document.createElement('option');
+    opt.value = item.value + (item.isLeap ? 'L' : '');
+    opt.textContent = item.label;
+    opt.dataset.days = item.days;
+    sel.appendChild(opt);
+  });
+  updateLunarDays();
+}
+function updateLunarDays(){
+  var mSel = document.getElementById('inp-lunar-month');
+  var dSel = document.getElementById('inp-lunar-day');
+  dSel.innerHTML = '';
+  if(!mSel.selectedOptions.length) return;
+  var maxD = parseInt(mSel.selectedOptions[0].dataset.days) || 30;
+  var LUNAR_DAY_NAMES = ['初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+    '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+    '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+  for(var d = 1; d <= maxD; d++){
+    var opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = LUNAR_DAY_NAMES[d-1];
+    dSel.appendChild(opt);
+  }
+  previewLunarSolar();
+}
+function previewLunarSolar(){
+  var y = parseInt(document.getElementById('inp-lunar-year').value);
+  var mVal = document.getElementById('inp-lunar-month').value;
+  var d = parseInt(document.getElementById('inp-lunar-day').value);
+  if(!y || !mVal || !d){ document.getElementById('lunar-solar-preview').textContent=''; return; }
+  var isLeap = mVal.indexOf('L') >= 0;
+  var m = parseInt(mVal);
+  var solar = lunarToSolar(y, m, d, isLeap);
+  if(solar){
+    document.getElementById('lunar-solar-preview').textContent =
+      '对应公历：' + solar.year + '年' + solar.month + '月' + solar.day + '日';
+  } else {
+    document.getElementById('lunar-solar-preview').textContent = '日期转换失败，请检查输入';
+  }
+}
+
+// ── 60甲子下拉初始化 ──
+function initBaziSelects(){
+  var S = '甲乙丙丁戊己庚辛壬癸';
+  var B = '子丑寅卯辰巳午未申酉戌亥';
+  var gz60 = [];
+  for(var i = 0; i < 60; i++) gz60.push(S[i%10] + B[i%12]);
+
+  ['inp-bazi-year','inp-bazi-month','inp-bazi-day','inp-bazi-hour'].forEach(function(id){
+    var sel = document.getElementById(id);
+    gz60.forEach(function(gz, idx){
+      var opt = document.createElement('option');
+      opt.value = gz;
+      opt.textContent = gz;
+      sel.appendChild(opt);
+    });
+  });
+  // 默认值示例
+  document.getElementById('inp-bazi-year').value = '庚午';
+  document.getElementById('inp-bazi-month').value = '戊子';
+  document.getElementById('inp-bazi-day').value = '丙辰';
+  document.getElementById('inp-bazi-hour').value = '甲午';
+}
+
+// 八字反查预览
+function previewBaziDate(){
+  var yGZ = document.getElementById('inp-bazi-year').value;
+  var mGZ = document.getElementById('inp-bazi-month').value;
+  var dGZ = document.getElementById('inp-bazi-day').value;
+  var hGZ = document.getElementById('inp-bazi-hour').value;
+  var el = document.getElementById('bazi-date-preview');
+  if(!yGZ || !mGZ || !dGZ || !hGZ){ el.textContent=''; return; }
+  var matches = findDateFromBazi(yGZ, mGZ, dGZ, hGZ);
+  if(matches.length > 0){
+    var parts = matches.map(function(m){ return m.year+'年'+m.month+'月'+m.day+'日 '+m.hour+'时'; });
+    el.textContent = '匹配公历：' + parts.join('、');
+    el.style.color = '#2d8a4e';
+  } else {
+    el.textContent = '未找到匹配日期，请检查四柱组合是否有效';
+    el.style.color = '#d94f4f';
+  }
+}
+
+// ══════════════════════════════════════
+// §9 NAVIGATION TO DESTINY PAGE
+// ══════════════════════════════════════
+
+function runCalculation(){
+  var userName = (document.getElementById('inp-name').value||'').trim();
+  var genderEl = document.querySelector('input[name="gender"]:checked');
+  var gender = genderEl ? parseInt(genderEl.value) : 1;
+
+  var Y, M, D, hh, mm, lon;
+
+  if(currentTab === 'solar'){
+    // ── 公历模式 ──
+    Y = parseInt(document.getElementById('inp-year').value);
+    M = parseInt(document.getElementById('inp-month').value);
+    D = parseInt(document.getElementById('inp-day').value);
+    hh = parseInt(document.getElementById('inp-hh').value);
+    mm = parseInt(document.getElementById('inp-mm').value) || 0;
+    lon = parseFloat(document.getElementById('inp-lon').value) || 120;
+    if(!Y||!M||!D||isNaN(hh)){ alert('请填写完整的公历出生信息'); return; }
+
+  } else if(currentTab === 'lunar'){
+    // ── 农历模式：先转公历 ──
+    var lunarY = parseInt(document.getElementById('inp-lunar-year').value);
+    var mVal = document.getElementById('inp-lunar-month').value;
+    var lunarD = parseInt(document.getElementById('inp-lunar-day').value);
+    hh = parseInt(document.getElementById('inp-lunar-hh').value);
+    mm = parseInt(document.getElementById('inp-lunar-mm').value) || 0;
+    lon = parseFloat(document.getElementById('inp-lon').value) || 120;
+    if(!lunarY||!mVal||!lunarD||isNaN(hh)){ alert('请填写完整的农历出生信息'); return; }
+    var isLeap = mVal.indexOf('L') >= 0;
+    var lunarM = parseInt(mVal);
+    var solar = lunarToSolar(lunarY, lunarM, lunarD, isLeap);
+    if(!solar){ alert('农历日期无效，请检查输入'); return; }
+    Y = solar.year; M = solar.month; D = solar.day;
+
+  } else {
+    // ── 八字模式：反查日期 ──
+    var yGZ = document.getElementById('inp-bazi-year').value;
+    var mGZ = document.getElementById('inp-bazi-month').value;
+    var dGZ = document.getElementById('inp-bazi-day').value;
+    var hGZ = document.getElementById('inp-bazi-hour').value;
+    if(!yGZ||!mGZ||!dGZ||!hGZ){ alert('请完整选择四柱干支'); return; }
+    var matches = findDateFromBazi(yGZ, mGZ, dGZ, hGZ);
+    if(matches.length === 0){ alert('未找到匹配日期，请检查四柱组合是否正确。'); return; }
+    // 多个匹配时（60年一轮），优先选最近的过去日期
+    var now = new Date();
+    var best = matches[0];
+    for(var mi=0; mi<matches.length; mi++){
+      var md = new Date(matches[mi].year, matches[mi].month-1, matches[mi].day);
+      if(md <= now) best = matches[mi];
+    }
+    Y = best.year; M = best.month; D = best.day; hh = best.hour; mm = best.minute;
+    lon = 120; // 八字模式默认经度
+  }
+
+  var params = new URLSearchParams();
+  params.set('year', Y);
+  params.set('month', M);
+  params.set('day', D);
+  params.set('hh', hh);
+  params.set('mm', mm);
+  params.set('lon', lon);
+  params.set('gender', gender);
+  if(userName) params.set('name', userName);
+
+  var provText = document.getElementById('inp-province');
+  var cityEl = document.getElementById('inp-city');
+  if(currentTab !== 'bazi'){
+    if(provText && provText.selectedIndex > 0) params.set('province', provText.options[provText.selectedIndex].text);
+    if(cityEl && cityEl.selectedIndex > 0) params.set('city', cityEl.options[cityEl.selectedIndex].text);
+  }
+
+  window.location.href = 'destiny.html?' + params.toString();
+}
+
+// ── 初始化 ──
+window.addEventListener('DOMContentLoaded', function(){
+  // 省份下拉
+  var ps = document.getElementById('inp-province');
+  Object.keys(PROVINCE_CITY).forEach(function(p){
+    var opt = document.createElement('option');
+    opt.value = p; opt.textContent = p;
+    ps.appendChild(opt);
+  });
+
+  // 农历月份初始化
+  updateLunarMonths();
+  // 农历联动事件
+  document.getElementById('inp-lunar-month').addEventListener('change', function(){ updateLunarDays(); });
+  document.getElementById('inp-lunar-day').addEventListener('change', previewLunarSolar);
+
+  // 八字下拉初始化
+  initBaziSelects();
+  // 八字反查预览事件
+  ['inp-bazi-year','inp-bazi-month','inp-bazi-day','inp-bazi-hour'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', previewBaziDate);
+  });
+});
+
+</script>
+<footer style="text-align:center;padding:24px 16px;margin-top:40px;font-size:.78em;color:#999;border-top:1px solid #eee">
+  <div>八字命理计算系统 v2.1 · 更新于 2026-04-16</div>
+  <div style="margin-top:4px">基于《子平真诠》《滴天髓》《穷通宝鉴》《三命通会》等经典 · 现代量化建模</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>八字合婚 — 中华命理学计算系统</title>
+<style>
+:root{--bg:#f8f9fc;--card:#ffffff;--border:#e0e3ea;--text:#1a1a2e;--sub:#6b7280;--accent:#0b1120;--accent2:#e84393;--red:#d94f4f;--green:#2d8a4e;--blue:#2e6bc5;--gold:#b8922e;--purple:#8e44ad;--metal:#7a7a7a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"SF Pro Display","Helvetica Neue","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh;overflow-x:hidden}
+h1{font-size:1.8em;text-align:center;margin:0 0 6px;color:var(--accent)}
+h2{font-size:1.25em;color:var(--accent);margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+h3{font-size:1.05em;color:var(--sub);margin:18px 0 8px}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 60px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 30px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.subtitle{text-align:center;color:var(--sub);font-size:.92em;margin-bottom:20px}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#1a0a2e 0%,#2d1b4e 40%,#e84393 100%);position:relative;overflow:hidden;padding:60px 24px 80px;text-align:center;margin-bottom:-40px}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(232,67,147,0.15) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(253,121,168,0.1) 0%,transparent 50%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent);pointer-events:none}
+.hero h1{color:#fff;font-size:2.6rem;font-weight:900;letter-spacing:0.12em;margin-bottom:12px;position:relative;text-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.hero .subtitle{color:rgba(255,255,255,0.6);font-size:1rem;letter-spacing:0.3em;font-weight:300;margin-bottom:0;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 16px;font-size:.78rem;color:rgba(255,255,255,0.7);margin-bottom:20px;position:relative;backdrop-filter:blur(8px)}
+.hero-badge::before{content:'';width:6px;height:6px;background:#fd79a8;border-radius:50%;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* Input Card */
+.input-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 28px 22px;position:relative;z-index:2;box-shadow:0 4px 16px rgba(0,0,0,0.06)}
+.section-title{font-size:1.05rem;font-weight:600;color:var(--accent);margin:0 0 16px;padding-bottom:8px;border-bottom:2px solid var(--accent2);display:inline-block}
+
+/* Form */
+.form-row{display:flex;gap:14px;margin:0 0 14px;flex-wrap:wrap}
+.form-row .form-group{flex:1;min-width:0}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-size:.82em;font-weight:600;color:var(--sub);margin-bottom:5px;letter-spacing:0.02em}
+.form-group input,.form-group select{padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;font-size:.93em;font-family:inherit;background:#fafbfd;color:var(--text);transition:all .2s;width:100%}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(232,67,147,0.1);background:#fff}
+.form-group input::placeholder{color:#c0c4cc}
+.form-group-small{flex:0 0 80px!important}
+
+/* Radio group */
+.radio-group{display:flex;gap:10px;margin-top:2px}
+.radio-group label{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:.92em;font-weight:500;transition:all .2s;background:#fafbfd;margin-bottom:0}
+.radio-group label:hover{border-color:#a0a8b8}
+.radio-group input[type="radio"]{display:none}
+.radio-group input[type="radio"]:checked+label{border-color:var(--accent2);background:rgba(232,67,147,0.04);color:var(--accent2);box-shadow:0 0 0 3px rgba(232,67,147,0.08)}
+.radio-indicator{width:16px;height:16px;border:2px solid var(--border);border-radius:50%;position:relative;transition:all .2s;flex-shrink:0}
+.radio-group input[type="radio"]:checked+label .radio-indicator{border-color:var(--accent2)}
+.radio-group input[type="radio"]:checked+label .radio-indicator::after{content:'';position:absolute;top:3px;left:3px;width:6px;height:6px;background:var(--accent2);border-radius:50%}
+
+.btn{display:block;width:100%;max-width:420px;margin:24px auto 0;padding:14px 0;background:linear-gradient(135deg,#e84393,#fd79a8);color:#fff;border:none;border-radius:12px;font-size:1.08em;font-family:inherit;cursor:pointer;letter-spacing:2px;font-weight:600;transition:all .25s;box-shadow:0 4px 16px rgba(232,67,147,0.25)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(232,67,147,0.35)}
+.btn:active{transform:translateY(0);box-shadow:0 2px 8px rgba(232,67,147,0.2)}
+.btn-secondary{background:linear-gradient(135deg,#374151,#4b5563);box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.btn-secondary:hover{background:linear-gradient(135deg,#2d3748,#3f4a5c);box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.btn-back{display:inline-block;width:auto;max-width:none;margin:24px 8px 0;padding:10px 24px;font-size:.95em}
+.divider-line{height:1px;background:var(--border);margin:14px 0}
+.time-sep{font-size:1.2em;color:var(--sub);align-self:center;padding-top:20px}
+.note{font-size:.85em;color:var(--sub);margin:8px 0;padding:10px 14px;background:#f0f4ff;border-left:3px solid var(--accent2);border-radius:0 8px 8px 0}
+
+/* Dual input grid */
+.dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;position:relative;z-index:2}
+
+/* Results header */
+.results-header{text-align:center;padding:10px 0 20px}
+.results-header h1{color:var(--accent);font-weight:800;font-size:1.6em}
+
+.step-section{margin:24px 0}
+
+/* Chart container (matching fortune chart style) */
+.chart-wrap{position:relative;margin:20px 0;background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 32px rgba(0,0,0,0.06)}
+.chart-wrap canvas{display:block;margin:0 auto;cursor:crosshair}
+.chart-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;margin:12px 0 0;font-size:.82em}
+.chart-legend .leg-item{display:flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px}
+.chart-legend .leg-line{width:20px;height:3px;border-radius:2px}
+
+/* Info tooltip */
+.info-tip{position:relative;display:inline-flex;align-items:center;cursor:help}
+.info-tip .info-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#e0e3ea;color:#6b7280;font-size:10px;font-weight:700;font-style:normal;margin-left:4px;transition:all .2s;line-height:1;font-family:serif}
+.info-tip:hover .info-icon{background:var(--accent2);color:#fff}
+.info-tip .info-bubble{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:280px;padding:12px 14px;background:#1a1a2e;color:#f0f0f0;font-size:.78em;line-height:1.6;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:100;pointer-events:none;text-align:left;font-weight:400}
+.info-tip .info-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1a1a2e}
+.info-tip:hover .info-bubble{display:block}
+
+/* Synastry chart tooltip */
+.syn-tooltip{position:absolute;pointer-events:none;background:rgba(255,255,255,0.97);border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:.82em;box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:10;display:none;max-width:280px;line-height:1.7;backdrop-filter:blur(8px)}
+.syn-tooltip .tt-year{font-weight:bold;color:var(--accent);margin-bottom:6px;font-size:1.05em}
+.syn-tooltip .tt-row{display:flex;justify-content:space-between;gap:12px;margin:2px 0}
+.syn-tooltip .tt-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
+.syn-tooltip .tt-tag{display:inline-block;font-size:.75em;padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:600}
+
+@media(max-width:768px){
+  .dual-grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.8rem}
+  .form-row{flex-wrap:wrap}
+  .form-row .form-group{min-width:calc(50% - 10px)}
+  .form-group-small{flex:0 0 60px!important;min-width:60px!important}
+  .input-card{padding:20px 16px 16px}
+  .radio-group{flex-wrap:wrap}
+}
+@media print{
+  .hero,.btn{display:none!important}
+  body{background:#fff;font-size:11pt}
+  .card{box-shadow:none;border:1px solid #eee;break-inside:avoid}
+  canvas{max-width:100%!important;height:auto!important}
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">合婚引擎在线</div>
+  <h1>&#128149; 八字合婚</h1>
+  <p class="subtitle">量子纠缠网络 · 双体对撞分析</p>
+</div>
+
+<!-- Input Section -->
+<section id="sec-input">
+<div class="wrap">
+  <div class="dual-grid">
+    <!-- 男方 -->
+    <div class="input-card" style="border-top:3px solid #2980b9">
+      <div class="section-title" style="color:#2980b9;border-bottom-color:#2980b9">&#9794; 男方信息</div>
+      <div class="form-row"><div class="form-group"><label>姓名</label><input type="text" id="syn-name-m" placeholder="男方姓名"></div></div>
+      <div class="divider-line"></div>
+      <div class="form-row">
+        <div class="form-group"><label>年</label><input type="number" id="syn-year-m" min="1800" max="2200" value="1990" placeholder="如 1990"></div>
+        <div class="form-group"><label>月</label>
+          <select id="syn-month-m">
+            <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+            <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+            <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+            <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+          </select>
+        </div>
+        <div class="form-group"><label>日</label><input type="number" id="syn-day-m" min="1" max="31" value="1" placeholder="1-31"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group-small form-group"><label>时</label><input type="number" id="syn-hh-m" min="0" max="23" value="12" placeholder="0-23"></div>
+        <span class="time-sep">:</span>
+        <div class="form-group-small form-group"><label>分</label><input type="number" id="syn-mm-m" min="0" max="59" value="0" placeholder="0-59"></div>
+      </div>
+      <div class="divider-line"></div>
+      <div class="form-row">
+        <div class="form-group"><label>出生省份</label>
+          <select id="syn-prov-m" onchange="updateCityList('m')"><option value="">选择省份</option></select>
+        </div>
+        <div class="form-group"><label>出生城市</label>
+          <select id="syn-city-m" onchange="updateLonFromCity('m')"><option value="">选择城市</option></select>
+        </div>
+      </div>
+      <input type="hidden" id="syn-lon-m" value="116.4">
+    </div>
+
+    <!-- 女方 -->
+    <div class="input-card" style="border-top:3px solid #e84393">
+      <div class="section-title" style="color:#e84393">&#9792; 女方信息</div>
+      <div class="form-row"><div class="form-group"><label>姓名</label><input type="text" id="syn-name-f" placeholder="女方姓名"></div></div>
+      <div class="divider-line"></div>
+      <div class="form-row">
+        <div class="form-group"><label>年</label><input type="number" id="syn-year-f" min="1800" max="2200" value="1992" placeholder="如 1992"></div>
+        <div class="form-group"><label>月</label>
+          <select id="syn-month-f">
+            <option value="1">1月</option><option value="2">2月</option><option value="3">3月</option>
+            <option value="4">4月</option><option value="5">5月</option><option value="6">6月</option>
+            <option value="7">7月</option><option value="8">8月</option><option value="9">9月</option>
+            <option value="10">10月</option><option value="11">11月</option><option value="12">12月</option>
+          </select>
+        </div>
+        <div class="form-group"><label>日</label><input type="number" id="syn-day-f" min="1" max="31" value="1" placeholder="1-31"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group-small form-group"><label>时</label><input type="number" id="syn-hh-f" min="0" max="23" value="12" placeholder="0-23"></div>
+        <span class="time-sep">:</span>
+        <div class="form-group-small form-group"><label>分</label><input type="number" id="syn-mm-f" min="0" max="59" value="0" placeholder="0-59"></div>
+      </div>
+      <div class="divider-line"></div>
+      <div class="form-row">
+        <div class="form-group"><label>出生省份</label>
+          <select id="syn-prov-f" onchange="updateCityList('f')"><option value="">选择省份</option></select>
+        </div>
+        <div class="form-group"><label>出生城市</label>
+          <select id="syn-city-f" onchange="updateLonFromCity('f')"><option value="">选择城市</option></select>
+        </div>
+      </div>
+      <input type="hidden" id="syn-lon-f" value="116.4">
+    </div>
+  </div>
+
+  <div style="text-align:center">
+    <button class="btn" onclick="runSynastry()">&#128149; 开始合婚分析 &#8594;</button>
+    <a href="index.html" class="btn btn-secondary btn-back">&#8592; 返回排盘</a>
+  </div>
+
+  <!-- Results -->
+  <div id="syn-results" style="margin-top:24px"></div>
+
+  <!-- Bottom action buttons (shown after results) -->
+  <div id="bottom-actions" style="display:none;text-align:center;margin-top:20px;padding-bottom:40px">
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="index.html" class="btn btn-secondary btn-back">&#8592; 返回排盘</a>
+      <button class="btn btn-back" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593; 重新输入</button>
+      <button class="btn btn-back" style="background:linear-gradient(135deg,#374151,#4b5563)" onclick="window.print()">&#128424; 打印 / 保存PDF</button>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Shared Core Engine -->
+<script src="bazi-core.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   八字合婚 — 页面专属逻辑
+   ═══════════════════════════════════════════════════════════════ */
+
+// ── 省市联动（参数化版本，支持 'm' / 'f' 后缀） ──
+function updateCityList(side){
+  var prov = document.getElementById('syn-prov-'+side).value;
+  var citySelect = document.getElementById('syn-city-'+side);
+  citySelect.innerHTML = '<option value="">选择城市</option>';
+  if(prov && PROVINCE_CITY[prov]){
+    PROVINCE_CITY[prov].forEach(function(c){
+      var opt = document.createElement('option');
+      opt.value = c[1];
+      opt.textContent = c[0] + ' (' + c[1] + '\u00b0E)';
+      citySelect.appendChild(opt);
+    });
+    if(PROVINCE_CITY[prov].length===1){
+      citySelect.selectedIndex = 1;
+      updateLonFromCity(side);
+    }
+  }
+}
+function updateLonFromCity(side){
+  var v = document.getElementById('syn-city-'+side).value;
+  if(v) document.getElementById('syn-lon-'+side).value = v;
+}
+
+// 初始化省份下拉
+window.addEventListener('DOMContentLoaded', function(){
+  ['m','f'].forEach(function(side){
+    var ps = document.getElementById('syn-prov-'+side);
+    Object.keys(PROVINCE_CITY).forEach(function(p){
+      var opt = document.createElement('option');
+      opt.value = p; opt.textContent = p;
+      ps.appendChild(opt);
+    });
+  });
+});
+
+// ══════════════════════════════════════
+// 合婚计算引擎 V2.1 — 五维对撞 + 六亲拓扑 + 纳什均衡
+// ══════════════════════════════════════
+
+// 十神人格图谱
+function getTenGodProfile(pillars){
+  var dm = pillars.dayMaster, prof = new Array(10).fill(0);
+  for(var i=0;i<4;i++){
+    if(i===2) continue; // 跳过日主自身
+    prof[shiShen(dm, pillars.stems[i])] += 1.0;
+  }
+  for(var i=0;i<4;i++){
+    var cg = CANG_GAN[pillars.branches[i]];
+    for(var k=0;k<cg.length;k++) prof[shiShen(dm, cg[k].t)] += cg[k].w * 0.6;
+  }
+  return prof;
+}
+
+// 三年加权移动平均
+function movingAvg3(arr){
+  var r = [];
+  for(var i=0;i<arr.length;i++){
+    var s=0,c=0;
+    for(var j=Math.max(0,i-1);j<=Math.min(arr.length-1,i+1);j++){ s+=arr[j]; c++; }
+    r.push(s/c);
+  }
+  return r;
+}
+
+var XING_MAP = {2:5,5:8,8:2, 1:10,10:7,7:1, 0:3,3:0, 4:4,6:6,9:9,11:11};
+var SAN_HE_GROUPS = [[8,0,4],[2,6,10],[11,3,7],[5,9,1]];
+var CROSS_POS = ['年','月','日','时'];
+var BRANCH_WT = [1.0, 1.2, 1.5, 1.0];
+
+function calcSynastry(chartA, chartB){
+  var pA = chartA.pillars, pB = chartB.pillars;
+  var details = [];
+  var warnings = [];
+
+  // ════════════════════════════════════════
+  // 维度一：能量场互补 + 忌神质量溢出 (25%)
+  // ════════════════════════════════════════
+  var wA = chartA.usefulGod.weights, wB = chartB.usefulGod.weights;
+  var VB = chartB.Vfinal, VA = chartA.Vfinal;
+  var totalVB = 0, totalVA = 0;
+  for(var w=0;w<5;w++){ totalVB += VB[w]; totalVA += VA[w]; }
+
+  var benefitAFromB = 0, benefitBFromA = 0;
+  for(var w=0;w<5;w++){
+    if(totalVB > 0) benefitAFromB += wA[w] * (VB[w] / totalVB);
+    if(totalVA > 0) benefitBFromA += wB[w] * (VA[w] / totalVA);
+  }
+
+  // ★ 忌神质量溢出：对方的旺五行恰好是我的忌神
+  var enemyA = chartA.usefulGod.enemy, enemyB = chartB.usefulGod.enemy;
+  var overflowA = 0, overflowB = 0;
+  if(enemyA !== null && enemyA >= 0 && totalVB > 0) overflowA = VB[enemyA] / totalVB * 8;
+  if(enemyB !== null && enemyB >= 0 && totalVA > 0) overflowB = VA[enemyB] / totalVA * 8;
+
+  var energyA = Math.max(-20, Math.min(20, (benefitAFromB - overflowA) * 12));
+  var energyB = Math.max(-20, Math.min(20, (benefitBFromA - overflowB) * 12));
+  var energyScore = energyA + energyB;
+
+  var eLabel = energyScore > 10 ? '互补极佳' : (energyScore > 0 ? '有一定互补' : (energyScore > -10 ? '互补不足' : '互相克害'));
+  var eNotes = [];
+  eNotes.push('男方从女方获益 '+(energyA>0?'+':'')+energyA.toFixed(1));
+  eNotes.push('女方从男方获益 '+(energyB>0?'+':'')+energyB.toFixed(1));
+  if(overflowA > 2) eNotes.push('&#9888; 女方'+WX[enemyA]+'旺为男方忌神(质量溢出-'+overflowA.toFixed(1)+')');
+  if(overflowB > 2) eNotes.push('&#9888; 男方'+WX[enemyB]+'旺为女方忌神(质量溢出-'+overflowB.toFixed(1)+')');
+  details.push({
+    dim:'能量互补', weight:'25%', score:energyScore.toFixed(1),
+    desc:eNotes.join('。')+'。'+eLabel+'。',
+    color:energyScore > 0 ? '#10b981' : '#ef4444'
+  });
+
+  // ════════════════════════════════════════
+  // 维度二：宫位纠缠 + 跨网络碰撞扫描 (25%)
+  // ════════════════════════════════════════
+  var palaceScore = 0, palaceNotes = [];
+
+  // 2a. 日支(夫妻宫核心)
+  var dA = pA.branches[2], dB = pB.branches[2];
+  var frictionIndex = 0; // 摩擦指数（自刑专用）
+  if(CHONG_PAIRS[dA]===dB){ palaceScore-=15; palaceNotes.push('日支 '+DZ[dA]+DZ[dB]+' 六冲（夫妻宫互毁）-15'); }
+  else if(HE_PAIRS[dA]===dB){ palaceScore+=12; palaceNotes.push('日支 '+DZ[dA]+DZ[dB]+' 六合（夫妻宫和谐）+12'); }
+  if(XING_MAP[dA]===dB){
+    if(dA===dB){
+      // ★ 自刑 = 熵增模型：不是"感情变薄"而是"内部摩擦力增加"
+      // 自刑不直接扣宫位分，而是产生摩擦指数，影响沟通成本
+      frictionIndex = 0.35; // 基础摩擦系数 0~1
+      var frictionPenalty = -3; // 摩擦产生的间接损耗(低于直接冲克)
+      palaceScore += frictionPenalty;
+      palaceNotes.push('日支 '+DZ[dA]+DZ[dB]+' 自刑（内部熵增）摩擦指数 F='+frictionIndex.toFixed(2)+'，间接损耗 '+frictionPenalty);
+      warnings.push({level:'warn',text:'[摩擦预警] 夫妻宫'+DZ[dA]+DZ[dB]+'自刑：非外力破坏，而是内部沟通摩擦持续累积。建议建立固定的深度沟通机制（如每周一次无手机晚餐）'});
+    } else {
+      // 互刑 = 传统负分逻辑
+      palaceScore-=8; palaceNotes.push('日支 '+DZ[dA]+DZ[dB]+' 相刑（夫妻宫刑伤）-8');
+    }
+  }
+
+  // 2b. 日干五合/冲
+  var tA = pA.dayMaster, tB = pB.dayMaster;
+  if(TG_HE_PAIRS[tA]===tB){ palaceScore+=15; palaceNotes.push('日干 '+TG[tA]+TG[tB]+' 天干五合（灵魂伴侣级吸引）+15'); }
+  if((tA+6)%10===tB||(tB+6)%10===tA){ palaceScore-=6; palaceNotes.push('日干 '+TG[tA]+TG[tB]+' 天干冲（性格冲突）-6'); }
+
+  // 2c. 年支
+  var yA = pA.branches[0], yB = pB.branches[0];
+  if(CHONG_PAIRS[yA]===yB){ palaceScore-=5; palaceNotes.push('年支 '+DZ[yA]+DZ[yB]+' 六冲（家庭背景冲突）-5'); }
+  else if(HE_PAIRS[yA]===yB){ palaceScore+=5; palaceNotes.push('年支 '+DZ[yA]+DZ[yB]+' 六合（家庭背景融洽）+5'); }
+  for(var gi=0;gi<SAN_HE_GROUPS.length;gi++){
+    var grp=SAN_HE_GROUPS[gi];
+    if(grp.indexOf(yA)>=0 && grp.indexOf(yB)>=0){ palaceScore+=4; palaceNotes.push('年支 '+DZ[yA]+DZ[yB]+' 三合（志趣相投）+4'); break; }
+  }
+
+  // 2d. ★ 跨网络碰撞扫描（4×4 全矩阵）
+  var crossClash=0, crossHarmony=0;
+  for(var i=0;i<4;i++){
+    for(var j=0;j<4;j++){
+      if(i===2&&j===2) continue; if(i===0&&j===0) continue;
+      var bA=pA.branches[i], bB=pB.branches[j], wt=BRANCH_WT[i]*BRANCH_WT[j]*0.3;
+      if(CHONG_PAIRS[bA]===bB){
+        var d=-wt*3; palaceScore+=d; crossClash++;
+        if(Math.abs(d)>=0.8) palaceNotes.push('&#9889; '+CROSS_POS[i]+'(男)'+DZ[bA]+'冲'+CROSS_POS[j]+'(女)'+DZ[bB]+' '+d.toFixed(1));
+      } else if(HE_PAIRS[bA]===bB){
+        var d=wt*2; palaceScore+=d; crossHarmony++;
+        if(d>=0.5) palaceNotes.push(CROSS_POS[i]+'(男)'+DZ[bA]+'合'+CROSS_POS[j]+'(女)'+DZ[bB]+' +'+d.toFixed(1));
+      }
+    }
+  }
+  if(crossClash>=3){ palaceScore-=3; palaceNotes.push('&#9889; 跨网冲突密集('+crossClash+'组) 额外-3'); }
+
+  details.push({
+    dim:'宫位纠缠', weight:'25%', score:palaceScore.toFixed(1),
+    desc:palaceNotes.join('；'),
+    color:palaceScore>0?'#10b981':(palaceScore<-5?'#ef4444':'#f59e0b')
+  });
+
+  // ════════════════════════════════════════
+  // 维度三：十神人格动力学 (15%) ★ 新增
+  // ════════════════════════════════════════
+  // 十神: 比肩0 劫财1 食神2 伤官3 偏财4 正财5 七杀6 正官7 偏印8 正印9
+  var profA = getTenGodProfile(pA), profB = getTenGodProfile(pB);
+  var personScore = 0, personNotes = [];
+
+  // 3a. 伤官见官(叛逆 vs 规则)
+  if(profA[3]>1.5 && profB[7]>1.5){
+    var f=-Math.min(8,(profA[3]+profB[7]-3)*2.5); personScore+=f;
+    personNotes.push('男方伤官('+profA[3].toFixed(1)+')克女方正官('+profB[7].toFixed(1)+')：叛逆vs规则 '+f.toFixed(1));
+  }
+  if(profB[3]>1.5 && profA[7]>1.5){
+    var f=-Math.min(8,(profB[3]+profA[7]-3)*2.5); personScore+=f;
+    personNotes.push('女方伤官('+profB[3].toFixed(1)+')克男方正官('+profA[7].toFixed(1)+')：叛逆vs规则 '+f.toFixed(1));
+  }
+  // 3b. 比劫夺财(资源竞争)
+  var bjA=profA[0]+profA[1], bjB=profB[0]+profB[1];
+  var caiA=profA[4]+profA[5], caiB=profB[4]+profB[5];
+  if(bjA>2.0 && caiB>1.5){
+    var c=-Math.min(5,(bjA-1.5)*1.5); personScore+=c;
+    personNotes.push('男方比劫旺('+bjA.toFixed(1)+')夺女方财星('+caiB.toFixed(1)+') '+c.toFixed(1));
+  }
+  if(bjB>2.0 && caiA>1.5){
+    var c=-Math.min(5,(bjB-1.5)*1.5); personScore+=c;
+    personNotes.push('女方比劫旺('+bjB.toFixed(1)+')夺男方财星('+caiA.toFixed(1)+') '+c.toFixed(1));
+  }
+  // 3c. 食伤生财(创造力互利)
+  var ssA=profA[2]+profA[3], ssB=profB[2]+profB[3];
+  if(ssA>1.5 && caiB>1.0){ var b=Math.min(5,(ssA-1)*1.2); personScore+=b; personNotes.push('男方食伤('+ssA.toFixed(1)+')生女方财：创造力互利 +'+b.toFixed(1)); }
+  if(ssB>1.5 && caiA>1.0){ var b=Math.min(5,(ssB-1)*1.2); personScore+=b; personNotes.push('女方食伤('+ssB.toFixed(1)+')生男方财：创造力互利 +'+b.toFixed(1)); }
+  // 3d. 印星共鸣
+  var yinA=profA[8]+profA[9], yinB=profB[8]+profB[9];
+  if(yinA>1.5 && yinB>1.5){ personScore+=3; personNotes.push('双方印星俱旺：精神世界共鸣 +3'); }
+  // 3e. 双七杀拉锯
+  if(profA[6]>1.5 && profB[6]>1.5){
+    var c=-Math.min(6,(profA[6]+profB[6]-3)*2); personScore+=c;
+    personNotes.push('双方七杀俱旺：权力拉锯 '+c.toFixed(1));
+  }
+
+  // 3f. ★ 十神人格互视（Cross-Chart Personality Perception）
+  // A的日主看B的日主 = 对方在我眼中的"角色"
+  var ssNames = ['比肩','劫财','食神','伤官','偏财','正财','七杀','正官','偏印','正印'];
+  var aSeesB = shiShen(pA.dayMaster, pB.dayMaster);
+  var bSeesA = shiShen(pB.dayMaster, pA.dayMaster);
+
+  // 枭神/偏印互视 → 沟通屏障（一方觉得对方"管太多"又"不讲道理"）
+  if(aSeesB===8 || bSeesA===8){
+    var who = aSeesB===8 ? '男方视女方为偏印(枭神)' : '女方视男方为偏印(枭神)';
+    // 身强遇枭神 → 屏障更强（不需要被保护，反感控制）
+    var target = aSeesB===8 ? chartA : chartB;
+    var barrier = target.strength.r > 0.5 ? -3.5 : -1.5;
+    personScore += barrier;
+    personNotes.push(who+'：'+( barrier < -2 ? '身强遇枭，沟通屏障显著' : '身弱遇枭，尚可接受关怀')+ ' ' + barrier.toFixed(1));
+  }
+
+  // 正财/偏财互视 → 吸引力（对方是我"想要追逐"的人）
+  if((aSeesB===4||aSeesB===5) && (bSeesA===4||bSeesA===5)){
+    personScore += 3;
+    personNotes.push('双方互为财星：天然吸引力强 +3');
+  } else if(aSeesB===4||aSeesB===5||bSeesA===4||bSeesA===5){
+    personScore += 1.5;
+    var who2 = (aSeesB===4||aSeesB===5) ? '男方视女方为'+ssNames[aSeesB] : '女方视男方为'+ssNames[bSeesA];
+    personNotes.push(who2+'：单向财星吸引 +1.5');
+  }
+
+  // 七杀互视 → 压迫感（对方让我有强烈压力）
+  if(aSeesB===6 && bSeesA===6){
+    personScore -= 3;
+    personNotes.push('双方互为七杀：相互压迫，关系紧张 -3');
+  } else if(aSeesB===6 || bSeesA===6){
+    var who3 = aSeesB===6 ? '男方视女方为七杀' : '女方视男方为七杀';
+    personScore -= 1.5;
+    personNotes.push(who3+'：单向压迫感 -1.5');
+  }
+
+  // 正官互视 → 规范（对方让我想遵守规则）
+  if(aSeesB===7 || bSeesA===7){
+    var who4 = aSeesB===7 ? '男方视女方为正官' : '女方视男方为正官';
+    personScore += 1;
+    personNotes.push(who4+'：正向约束力 +1');
+  }
+
+  // 摩擦指数放大人格冲突
+  if(frictionIndex > 0 && personScore < 0){
+    var frictionAmp = personScore * frictionIndex * -0.5; // 摩擦放大负面人格
+    personScore += frictionAmp;
+    personNotes.push('夫妻宫自刑摩擦放大人格冲突 '+frictionAmp.toFixed(1));
+  }
+
+  personScore = Math.max(-20, Math.min(20, personScore));
+  if(!personNotes.length) personNotes.push('十神配置无明显冲突');
+  details.push({
+    dim:'十神人格', weight:'15%', score:personScore.toFixed(1),
+    desc:personNotes.join('；'),
+    color:personScore>3?'#10b981':(personScore<-3?'#ef4444':'#f59e0b')
+  });
+
+  // ════════════════════════════════════════
+  // 维度四：六亲拓扑 — 婆媳/岳婿/子女 (15%) ★ 新增
+  // ════════════════════════════════════════
+  var topoScore = 0, topoNotes = [];
+
+  // 4a. 婆媳：男方月支(父母宫) vs 女方日支(配偶宫)
+  var mMonA=pA.branches[1], fDayB=pB.branches[2];
+  if(CHONG_PAIRS[mMonA]===fDayB){ topoScore-=6; topoNotes.push('男月支'+DZ[mMonA]+'冲女日支'+DZ[fDayB]+'（婆媳冲突）-6'); warnings.push({level:'warn',text:'[婆媳预警] 男方父母宫('+DZ[mMonA]+')与女方夫妻宫('+DZ[fDayB]+')六冲，婆媳关系需刻意经营'}); }
+  else if(HE_PAIRS[mMonA]===fDayB){ topoScore+=4; topoNotes.push('男月支'+DZ[mMonA]+'合女日支'+DZ[fDayB]+'（婆媳融洽）+4'); }
+  else if(XING_MAP[mMonA]===fDayB){ topoScore-=3; topoNotes.push('男月支'+DZ[mMonA]+'刑女日支'+DZ[fDayB]+'（婆媳刑伤）-3'); warnings.push({level:'warn',text:'[婆媳预警] 男方父母宫与女方夫妻宫相刑，沟通需格外谨慎'}); }
+
+  // 4b. 岳婿：女方月支(父母宫) vs 男方日支(配偶宫)
+  var fMonB=pB.branches[1], mDayA=pA.branches[2];
+  if(CHONG_PAIRS[fMonB]===mDayA){ topoScore-=6; topoNotes.push('女月支'+DZ[fMonB]+'冲男日支'+DZ[mDayA]+'（岳婿冲突）-6'); warnings.push({level:'warn',text:'[岳婿预警] 女方父母宫('+DZ[fMonB]+')与男方夫妻宫('+DZ[mDayA]+')六冲，翁婿关系需维护'}); }
+  else if(HE_PAIRS[fMonB]===mDayA){ topoScore+=4; topoNotes.push('女月支'+DZ[fMonB]+'合男日支'+DZ[mDayA]+'（岳婿融洽）+4'); }
+  else if(XING_MAP[fMonB]===mDayA){ topoScore-=3; topoNotes.push('女月支'+DZ[fMonB]+'刑男日支'+DZ[mDayA]+'（岳婿刑伤）-3'); }
+
+  // 4c. 子女宫：双方时柱对撞
+  var hA=pA.branches[3], hB=pB.branches[3], htA=pA.stems[3], htB=pB.stems[3];
+  if(CHONG_PAIRS[hA]===hB){ topoScore-=5; topoNotes.push('时支 '+DZ[hA]+DZ[hB]+' 六冲（子女宫对冲）-5'); warnings.push({level:'alert',text:'[子女预警] 双方子女宫('+DZ[hA]+DZ[hB]+')六冲，在子女培育或晚年生活节奏上存在严重阻力'}); }
+  else if(HE_PAIRS[hA]===hB){ topoScore+=4; topoNotes.push('时支 '+DZ[hA]+DZ[hB]+' 六合（子女宫和谐）+4'); }
+  if(TG_HE_PAIRS[htA]===htB){ topoScore+=3; topoNotes.push('时干 '+TG[htA]+TG[htB]+' 五合（子女缘同步）+3'); }
+
+  // 4d. 时柱五行 vs 对方用神
+  var ugWxA=chartA.usefulGod.candidates[0].w, ugWxB=chartB.usefulGod.candidates[0].w;
+  if(wxKe(tgWx(htA))===ugWxB){ topoScore-=3; topoNotes.push('男时柱'+WX[tgWx(htA)]+'克女方用神'+WX[ugWxB]+' -3'); warnings.push({level:'warn',text:'[拓扑预警] 男方时柱('+WX[tgWx(htA)]+')克制女方用神('+WX[ugWxB]+')，晚年互动需留意'}); }
+  if(wxKe(tgWx(htB))===ugWxA){ topoScore-=3; topoNotes.push('女时柱'+WX[tgWx(htB)]+'克男方用神'+WX[ugWxA]+' -3'); warnings.push({level:'warn',text:'[拓扑预警] 女方时柱('+WX[tgWx(htB)]+')克制男方用神('+WX[ugWxA]+')，晚年互动需留意'}); }
+
+  topoScore = Math.max(-20, Math.min(20, topoScore));
+  if(!topoNotes.length) topoNotes.push('六亲宫位无明显冲突');
+  details.push({
+    dim:'六亲拓扑', weight:'15%', score:topoScore.toFixed(1),
+    desc:topoNotes.join('；'),
+    color:topoScore>3?'#10b981':(topoScore<-3?'#ef4444':'#f59e0b')
+  });
+
+  // ════════════════════════════════════════
+  // 维度五：大运共振 + 争吵年检测 + 波动指数 (20%)
+  // ════════════════════════════════════════
+  var startYear = Math.max(chartA.birthYear, chartB.birthYear) + 20;
+  var endYear = startYear + 30;
+  var fA=[], fB=[], fYears=[];
+  for(var yr=startYear; yr<endYear; yr++){
+    var fa=calcYearFortune(yr, chartA.pillars, chartA.daYun, chartA.strength, chartA.usefulGod, chartA.gammaVec);
+    var fb=calcYearFortune(yr, chartB.pillars, chartB.daYun, chartB.strength, chartB.usefulGod, chartB.gammaVec);
+    if(fa && fb){ fA.push(fa.F); fB.push(fb.F); fYears.push(yr); }
+  }
+
+  // 三年移动平均
+  var maA = movingAvg3(fA), maB = movingAvg3(fB);
+
+  // ★ 争吵年检测：双方F异号且差值大
+  var clashYears = [];
+  for(var i=0;i<fA.length;i++){
+    if(fA[i]*fB[i]<0 && Math.abs(fA[i]-fB[i])>0.8 && (Math.abs(fA[i])>0.3||Math.abs(fB[i])>0.3)){
+      clashYears.push({idx:i, year:fYears[i], fA:fA[i], fB:fB[i]});
+    }
+  }
+
+  // ★ 大运交脱期检测：双方同年±1年切换大运 = 时空共振点
+  // 并判断共振极性：同时切入凶运=毁灭共振，同时切入吉运=正向共振
+  var transA = chartA.daYun.periods.map(function(p){return p.yr0});
+  var transB = chartB.daYun.periods.map(function(p){return p.yr0});
+  var transitionPoints = [];
+  for(var ti=0;ti<transA.length;ti++){
+    for(var tj=0;tj<transB.length;tj++){
+      var diff = Math.abs(transA[ti] - transB[tj]);
+      if(diff <= 1){
+        var yr = Math.round((transA[ti]+transB[tj])/2);
+        if(yr >= startYear && yr < endYear){
+          var idx = yr - startYear;
+          // 取交脱后2年的均值作为"新大运方向"
+          var afterA=0, afterB=0, cnt=0;
+          for(var k=idx;k<=Math.min(idx+2, fA.length-1);k++){ afterA+=fA[k]; afterB+=fB[k]; cnt++; }
+          if(cnt>0){ afterA/=cnt; afterB/=cnt; }
+          // 极性判断
+          var polarity = 'neutral';
+          if(afterA < -0.3 && afterB < -0.3) polarity = 'doom';      // 双凶共振
+          else if(afterA > 0.3 && afterB > 0.3) polarity = 'fortune'; // 双吉共振
+          else if(afterA * afterB < 0) polarity = 'diverge';           // 一吉一凶分化
+          transitionPoints.push({year:yr, yrA:transA[ti], yrB:transB[tj], idx:idx, polarity:polarity, afterA:afterA, afterB:afterB});
+        }
+      }
+    }
+  }
+
+  // 波动指数惩罚
+  var volPenalty = clashYears.length>=5 ? -Math.min(5,(clashYears.length-4)*1.5) : 0;
+  // 交脱期叠加额外波动——凶运共振加重惩罚
+  var doomCount = 0, fortuneCount = 0;
+  for(var tpi=0;tpi<transitionPoints.length;tpi++){
+    if(transitionPoints[tpi].polarity==='doom') doomCount++;
+    if(transitionPoints[tpi].polarity==='fortune') fortuneCount++;
+  }
+  if(transitionPoints.length >= 2) volPenalty -= transitionPoints.length * 0.5;
+  if(doomCount > 0) volPenalty -= doomCount * 1.5; // 双凶共振额外重罚
+
+  // Pearson
+  var pearson = 0;
+  if(fA.length>5){
+    var mA=0,mB=0;
+    for(var i=0;i<fA.length;i++){ mA+=fA[i]; mB+=fB[i]; }
+    mA/=fA.length; mB/=fA.length;
+    var cov=0,vA=0,vB=0;
+    for(var i=0;i<fA.length;i++){
+      cov+=(fA[i]-mA)*(fB[i]-mB); vA+=(fA[i]-mA)*(fA[i]-mA); vB+=(fB[i]-mB)*(fB[i]-mB);
+    }
+    if(vA>0&&vB>0) pearson=cov/Math.sqrt(vA*vB);
+  }
+
+  var timeScore = Math.max(-20, Math.min(20, pearson*20 + volPenalty));
+  var syncLabel = pearson>0.5?'高度同步（同甘共苦）':(pearson>0?'基本同步':(pearson>-0.3?'节奏不同':'严重错位（一吉一凶）'));
+  var timeDesc = '皮尔逊相关系数 r = '+pearson.toFixed(3)+' <span class="info-tip"><i class="info-icon">?</i><span class="info-bubble"><b>皮尔逊相关系数 (Pearson r)</b><br>衡量两人大运曲线的同步程度，取值 -1 到 +1。<br><b>r &gt; 0.5</b>：高度同步<br><b>0 &lt; r &lt; 0.5</b>：基本同步<br><b>-0.3 &lt; r &lt; 0</b>：节奏不同<br><b>r &lt; -0.3</b>：严重错位</span></span>。'+syncLabel+'。';
+  if(clashYears.length>0){
+    var cyList = clashYears.slice(0,5).map(function(c){ return c.year+'年'; }).join('、');
+    timeDesc += '<br>&#9888; 检测到 <b>'+clashYears.length+'</b> 个争吵高危年'+(clashYears.length<=5?'('+cyList+')':'');
+  }
+  if(volPenalty<0) timeDesc += '。波动指数过高 '+volPenalty.toFixed(1);
+  if(transitionPoints.length>0){
+    var tpParts = transitionPoints.map(function(tp){
+      var label = tp.year+'年';
+      if(tp.polarity==='doom') label += '&#x1F480;';
+      else if(tp.polarity==='fortune') label += '&#x2728;';
+      return label;
+    });
+    timeDesc += '<br>&#9733; 检测到 <b>'+transitionPoints.length+'</b> 个大运交脱共振点('+tpParts.join('、')+')';
+    if(doomCount>0){
+      timeDesc += '<br><b style="color:#ef4444">&#9888; 其中 '+doomCount+' 个为双凶共振</b>：双方同时切入低运，负面能量叠加放大，需高度警惕';
+    }
+    if(fortuneCount>0){
+      timeDesc += '<br><span style="color:#10b981">&#10024; 其中 '+fortuneCount+' 个为双吉共振：双方同时进入好运期，适合共同开创事业</span>';
+    }
+    // 预警文案——根据极性分级
+    if(doomCount>0){
+      var doomYears = transitionPoints.filter(function(t){return t.polarity==='doom'}).map(function(t){return t.year+'年'}).join('、');
+      warnings.push({level:'alert',text:'[双凶共振] '+doomYears+'前后，双方同时切入凶运大运。共振放大效应下，家庭将承受双倍压力。强烈建议：提前储备经济缓冲、避免同时冒险决策、必要时引入第三方调解'});
+    } else {
+      var tpList = transitionPoints.map(function(tp){return tp.year+'年'}).join('、');
+      warnings.push({level:'warn',text:'[交脱期预警] '+tpList+'前后，双方同时切换大运，是关系转折的窗口期。建议提前做好心理准备与沟通铺垫'});
+    }
+  }
+
+  details.push({
+    dim:'大运共振', weight:'20%', score:timeScore.toFixed(1), desc:timeDesc,
+    color:pearson>0.2?'#10b981':(pearson<-0.2?'#ef4444':'#f59e0b'),
+    fA:fA, fB:fB, maA:maA, maB:maB, startYear:startYear, pearson:pearson,
+    clashYears:clashYears, fYears:fYears, transitionPoints:transitionPoints
+  });
+
+  // ════════════════════════════════════════
+  // 纳什均衡建议
+  // ════════════════════════════════════════
+  var nashAdvice = [];
+  var ugNameA=WX[ugWxA], ugNameB=WX[ugWxB];
+  if(energyScore<-5) nashAdvice.push('双方在 '+ugNameA+'(男方用神) 与 '+ugNameB+'(女方用神) 相关领域互相补位，可缓解能量对冲');
+  if(personScore<-3){
+    if(profA[3]>1.5||profB[3]>1.5) nashAdvice.push('伤官旺方需在表达欲上适度收敛，官星旺方需在控制欲上适当放手');
+    if(bjA>2||bjB>2) nashAdvice.push('比劫旺方需在经济决策上给予对方更多自主权');
+  }
+  if(topoScore<-5) nashAdvice.push('六亲拓扑存在冲突：建议减少双方原生家庭的直接互动频率，保持适度距离');
+  if(clashYears.length>3) nashAdvice.push('大运中有 '+clashYears.length+' 个争吵高危年：建议提前规划，在对方低运年给予更多包容与支持');
+  if(frictionIndex>0) nashAdvice.push('夫妻宫自刑摩擦指数 F='+frictionIndex.toFixed(2)+'：建议建立固定深度沟通机制（每周一次无手机晚餐），将内部熵增转化为相互理解');
+  if(doomCount>0){
+    nashAdvice.push('检测到 '+doomCount+' 个双凶共振点：在共振年前 1-2 年开始储备（经济缓冲、情感账户），共振年内严禁双方同时做高风险决策（辞职、投资、搬迁）');
+  } else if(transitionPoints.length>0){
+    nashAdvice.push('检测到 '+transitionPoints.length+' 个大运交脱共振点：在共振年前后保持战略定力，避免同时做出重大人生决策');
+  }
+  var potentialGain = 0;
+  if(energyScore<0) potentialGain += Math.min(10, Math.abs(energyScore)*0.4);
+  if(personScore<0) potentialGain += Math.min(8, Math.abs(personScore)*0.4);
+  if(topoScore<0) potentialGain += Math.min(5, Math.abs(topoScore)*0.3);
+  potentialGain = Math.round(potentialGain * 1.25);
+
+  // ════════════════════════════════════════
+  // 综合评分 (五维加权)
+  // ════════════════════════════════════════
+  var rawTotal = energyScore*0.25 + palaceScore*0.25 + personScore*0.15 + topoScore*0.15 + timeScore*0.2;
+  var finalScore = Math.max(0, Math.min(100, Math.round(50 + rawTotal*1.25)));
+
+  var grade;
+  if(finalScore>=90) grade={name:'天作之合',color:'#10b981',emoji:'&#128149;&#128149;&#128149;'};
+  else if(finalScore>=75) grade={name:'良缘佳配',color:'#2980b9',emoji:'&#128149;&#128149;'};
+  else if(finalScore>=60) grade={name:'中等姻缘',color:'#f59e0b',emoji:'&#128149;'};
+  else if(finalScore>=40) grade={name:'需要磨合',color:'#e67e22',emoji:'&#9888;'};
+  else grade={name:'慎重考虑',color:'#ef4444',emoji:'&#9888;&#9888;'};
+
+  return {
+    score:finalScore, grade:grade, details:details,
+    energyScore:energyScore, palaceScore:palaceScore, personScore:personScore,
+    topoScore:topoScore, timeScore:timeScore, pearson:pearson,
+    warnings:warnings, nashAdvice:nashAdvice, potentialGain:potentialGain,
+    profA:profA, profB:profB
+  };
+}
+
+// ══════════════════════════════════════
+// 渲染合婚结果
+// ══════════════════════════════════════
+
+function renderSynastryResult(chartA, chartB, result){
+  var pA = chartA.pillars, pB = chartB.pillars;
+  var nameA = document.getElementById('syn-name-m').value || '男方';
+  var nameB = document.getElementById('syn-name-f').value || '女方';
+  var baziA = TG[pA.stems[0]]+DZ[pA.branches[0]]+' '+TG[pA.stems[1]]+DZ[pA.branches[1]]+' '+TG[pA.stems[2]]+DZ[pA.branches[2]]+' '+TG[pA.stems[3]]+DZ[pA.branches[3]];
+  var baziB = TG[pB.stems[0]]+DZ[pB.branches[0]]+' '+TG[pB.stems[1]]+DZ[pB.branches[1]]+' '+TG[pB.stems[2]]+DZ[pB.branches[2]]+' '+TG[pB.stems[3]]+DZ[pB.branches[3]];
+
+  var html = '<div class="card"><div class="step-section">';
+
+  // 总分仪表盘
+  html += '<div style="text-align:center;margin-bottom:24px">';
+  html += '<div style="font-size:4em;font-weight:800;color:'+result.grade.color+'">'+result.score+'</div>';
+  html += '<div style="font-size:1.5em;color:'+result.grade.color+';margin:4px 0">'+result.grade.emoji+' '+result.grade.name+'</div>';
+  html += '<div style="width:100%;max-width:400px;height:12px;background:#e5e7eb;border-radius:6px;margin:12px auto;overflow:hidden">';
+  html += '<div style="width:'+result.score+'%;height:100%;background:'+result.grade.color+';border-radius:6px;transition:width 0.5s"></div>';
+  html += '</div>';
+  html += '</div>';
+
+  // 双方八字对照
+  html += '<div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;margin-bottom:20px;align-items:center">';
+  html += '<div style="text-align:center;padding:12px;background:rgba(41,128,185,0.05);border-radius:8px;border:1px solid rgba(41,128,185,0.15)">';
+  html += '<div style="font-size:.78em;color:#2980b9;font-weight:600">&#9794; '+nameA+'</div>';
+  html += '<div style="font-size:1.2em;font-weight:700;margin:4px 0">'+baziA+'</div>';
+  html += '<div style="font-size:.82em;color:var(--sub)">'+TG[pA.dayMaster]+WX[chartA.pillars.dayMasterWx]+'日主 · r*='+chartA.strength.r.toFixed(3)+'('+chartA.strength.name+')</div>';
+  html += '<div style="font-size:.78em;color:var(--sub)">用神: '+WX[chartA.usefulGod.candidates[0].w]+'</div>';
+  html += '</div>';
+  html += '<div style="font-size:1.5em;font-weight:800;color:#e84393">VS</div>';
+  html += '<div style="text-align:center;padding:12px;background:rgba(232,67,147,0.05);border-radius:8px;border:1px solid rgba(232,67,147,0.15)">';
+  html += '<div style="font-size:.78em;color:#e84393;font-weight:600">&#9792; '+nameB+'</div>';
+  html += '<div style="font-size:1.2em;font-weight:700;margin:4px 0">'+baziB+'</div>';
+  html += '<div style="font-size:.82em;color:var(--sub)">'+TG[pB.dayMaster]+WX[chartB.pillars.dayMasterWx]+'日主 · r*='+chartB.strength.r.toFixed(3)+'('+chartB.strength.name+')</div>';
+  html += '<div style="font-size:.78em;color:var(--sub)">用神: '+WX[chartB.usefulGod.candidates[0].w]+'</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // 五维评分明细
+  var dimIcons = ['⚡','🏛','🎭','👨‍👩‍👧','📈'];
+  html += '<h3>五维评分明细</h3>';
+  html += '<div style="display:flex;flex-direction:column;gap:10px">';
+  for(var i=0;i<result.details.length;i++){
+    var d = result.details[i];
+    html += '<div style="padding:14px 16px;background:'+d.color+'0a;border-left:4px solid '+d.color+';border-radius:8px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    html += '<span style="font-weight:700;color:'+d.color+';font-size:1.02em">'+dimIcons[i]+' '+d.dim+'（权重'+d.weight+'）</span>';
+    html += '<span style="font-size:1.2em;font-weight:800;color:'+d.color+';font-variant-numeric:tabular-nums">'+(parseFloat(d.score)>=0?'+':'')+d.score+'</span>';
+    html += '</div>';
+    html += '<div style="font-size:.85em;color:var(--text);line-height:1.8">'+d.desc+'</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // ── 六亲拓扑预警 ──
+  if(result.warnings && result.warnings.length > 0){
+    html += '<h3 style="color:#ef4444;margin-top:24px">⚠ 六亲拓扑预警</h3>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    for(var w=0;w<result.warnings.length;w++){
+      var warn = result.warnings[w];
+      var wColor = warn.level==='alert' ? '#ef4444' : '#f59e0b';
+      var wBg = warn.level==='alert' ? 'rgba(239,68,68,0.06)' : 'rgba(245,158,11,0.06)';
+      var wIcon = warn.level==='alert' ? '🔴' : '🟡';
+      html += '<div style="padding:12px 14px;background:'+wBg+';border:1px solid '+wColor+'30;border-radius:8px;font-size:.9em;line-height:1.7">';
+      html += '<span style="margin-right:6px">'+wIcon+'</span>'+warn.text;
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  // ── 纳什均衡建议 ──
+  if(result.nashAdvice && result.nashAdvice.length > 0){
+    html += '<h3 style="color:#8e44ad;margin-top:24px">🎯 纳什均衡建议</h3>';
+    if(result.potentialGain > 0){
+      html += '<div style="padding:10px 14px;background:rgba(142,68,173,0.06);border-radius:8px;margin-bottom:10px;font-size:.88em;color:#8e44ad">';
+      html += '若双方配合执行以下策略，预计合婚指数可提升约 <b>+'+result.potentialGain+'</b> 分';
+      html += '</div>';
+    }
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    for(var a=0;a<result.nashAdvice.length;a++){
+      html += '<div style="padding:12px 14px;background:rgba(142,68,173,0.04);border-left:3px solid #8e44ad;border-radius:0 8px 8px 0;font-size:.9em;line-height:1.7">';
+      html += '<span style="color:#8e44ad;font-weight:700;margin-right:8px">'+(a+1)+'.</span>'+result.nashAdvice[a];
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  html += '</div></div>';
+
+  // 大运共振曲线（独立 chart-wrap 容器）
+  var timeDetail = result.details[4];
+  if(timeDetail && timeDetail.fA && timeDetail.fA.length > 0){
+    html += '<div class="chart-wrap" id="syn-chart-wrap" style="position:relative">';
+    html += '<canvas id="synastry-chart" style="width:100%;max-width:860px"></canvas>';
+    html += '<div class="syn-tooltip" id="syn-tooltip"></div>';
+    html += '<div class="chart-legend">';
+    html += '<div class="leg-item"><div class="leg-line" style="background:#2980b9"></div>'+nameA+'（男）</div>';
+    html += '<div class="leg-item"><div class="leg-line" style="background:#e84393"></div>'+nameB+'（女）</div>';
+    if(timeDetail.clashYears && timeDetail.clashYears.length>0){
+      html += '<div class="leg-item"><div style="width:14px;height:14px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);border-radius:2px"></div>争吵高危年</div>';
+    }
+    if(timeDetail.transitionPoints && timeDetail.transitionPoints.length>0){
+      html += '<div class="leg-item"><div style="width:14px;height:14px;background:rgba(184,146,46,0.15);border:1px solid rgba(184,146,46,0.5);border-radius:2px;text-align:center;font-size:9px;line-height:14px;color:#b8922e">★</div>大运交脱点</div>';
+    }
+    html += '</div>';
+    html += '</div>';
+    window._synChartData = {
+      fA:timeDetail.fA, fB:timeDetail.fB,
+      clashYears:timeDetail.clashYears||[],
+      transitionPoints:timeDetail.transitionPoints||[],
+      startYear:timeDetail.startYear,
+      fYears:timeDetail.fYears,
+      nameA:nameA, nameB:nameB,
+      pearson:timeDetail.pearson,
+      birthYearA:chartA.birthYear, birthYearB:chartB.birthYear,
+      daYunA:chartA.daYun, daYunB:chartB.daYun
+    };
+  }
+
+  return html;
+}
+
+// ══════════════════════════════════════
+// 绘制共振曲线
+// ══════════════════════════════════════
+
+var _synCS = {}; // synastry chart state
+
+function drawSynastryChart(hoverIdx){
+  var c = document.getElementById('synastry-chart');
+  if(!c || !window._synChartData) return;
+  var d = window._synChartData;
+  var g = c.getContext('2d');
+  var dp = window.devicePixelRatio||1;
+
+  // Only recalc size on first draw
+  if(!_synCS.W){
+    var W = c.parentElement.offsetWidth - 32;
+    if(W < 400) W = 400;
+    if(W > 860) W = 860;
+    var H = Math.round(W * 0.42);
+    c.width=W*dp; c.height=H*dp;
+    c.style.width=W+'px'; c.style.height=H+'px';
+    _synCS.W=W; _synCS.H=H; _synCS.dp=dp;
+  }
+  var W=_synCS.W, H=_synCS.H;
+  g.setTransform(dp,0,0,dp,0,0);
+
+  var fA=d.fA, fB=d.fB, n=fA.length;
+  var allF = fA.concat(fB);
+  var fMax = Math.max.apply(null, allF.map(Math.abs));
+  if(fMax < 0.5) fMax = 0.5;
+  fMax = Math.ceil(fMax*2)/2;
+
+  var M = {t:50, b:28, l:55, r:55};
+  var cW = W-M.l-M.r, cH = H-M.t-M.b;
+  _synCS.M=M; _synCS.cW=cW; _synCS.n=n;
+
+  function xS(i){ return M.l + (i/(n-1))*cW; }
+  function yS(v){ return M.t + (1 - (v+fMax)/(2*fMax)) * cH; }
+  var y0 = yS(0);
+
+  // ── Background ──
+  g.fillStyle='#fafbfd'; g.fillRect(0,0,W,H);
+
+  // ── Title ──
+  g.textAlign='center';
+  g.font='bold 14px "Noto Serif SC","PingFang SC",serif';
+  g.fillStyle='#2c3e50';
+  g.fillText('大运共振曲线 · 30年运势对照', W/2, 22);
+  g.font='11px "Noto Serif SC",serif'; g.fillStyle='#95a5a6';
+  g.fillText(d.nameA+' vs '+d.nameB+' · Pearson r = '+d.pearson.toFixed(3), W/2, 38);
+
+  // ── Grid lines ──
+  g.strokeStyle='#ecf0f1'; g.lineWidth=0.5;
+  var steps = 5;
+  for(var s=-steps; s<=steps; s++){
+    var v = fMax * s / steps;
+    var gy = yS(v);
+    g.beginPath(); g.moveTo(M.l, gy); g.lineTo(W-M.r, gy); g.stroke();
+  }
+
+  // ── Zero baseline (dashed) ──
+  g.strokeStyle='rgba(255,107,53,0.4)'; g.lineWidth=1;
+  g.setLineDash([6,4]);
+  g.beginPath(); g.moveTo(M.l, y0); g.lineTo(W-M.r, y0); g.stroke();
+  g.setLineDash([]);
+
+  // ── Y axis labels ──
+  g.textAlign='right'; g.font='9px sans-serif'; g.fillStyle='#95a5a6';
+  for(var s=-steps; s<=steps; s++){
+    var v = fMax * s / steps;
+    g.fillText((v>=0?'+':'')+v.toFixed(1), M.l-6, yS(v)+3);
+  }
+  g.fillText('F综', M.l-6, M.t-6);
+
+  // ── X axis labels ──
+  g.textAlign='center'; g.font='9px sans-serif';
+  for(var i=0;i<n;i+=5){
+    var x = xS(i);
+    g.fillStyle='#7f8c8d'; g.fillText(String(d.startYear+i), x, H-M.b+14);
+  }
+  if((n-1)%5!==0){
+    g.fillStyle='#7f8c8d'; g.fillText(String(d.startYear+n-1), xS(n-1), H-M.b+14);
+  }
+
+  // ── Helper: cardinal spline ──
+  function drawSpline(pts, color, lw){
+    if(pts.length<2) return;
+    g.beginPath();
+    g.moveTo(pts[0][0], pts[0][1]);
+    for(var i=0;i<pts.length-1;i++){
+      var p0=pts[Math.max(i-1,0)], p1=pts[i], p2=pts[i+1], p3=pts[Math.min(i+2,pts.length-1)];
+      g.bezierCurveTo(
+        p1[0]+(p2[0]-p0[0])/6, p1[1]+(p2[1]-p0[1])/6,
+        p2[0]-(p3[0]-p1[0])/6, p2[1]-(p3[1]-p1[1])/6,
+        p2[0], p2[1]
+      );
+    }
+    g.strokeStyle=color; g.lineWidth=lw||2.5; g.stroke();
+  }
+
+  // ── Helper: gradient fill ──
+  function fillArea(data, r, gb, positive){
+    g.save();
+    g.beginPath();
+    g.moveTo(xS(0), y0);
+    for(var i=0;i<data.length;i++){
+      var v = positive ? Math.max(0, data[i]) : Math.min(0, data[i]);
+      g.lineTo(xS(i), yS(v));
+    }
+    g.lineTo(xS(data.length-1), y0);
+    g.closePath();
+    var grad;
+    if(positive){
+      grad = g.createLinearGradient(0, M.t, 0, y0);
+      grad.addColorStop(0, 'rgba('+r+','+gb+',0.25)');
+      grad.addColorStop(1, 'rgba('+r+','+gb+',0.02)');
+    } else {
+      grad = g.createLinearGradient(0, y0, 0, M.t+cH);
+      grad.addColorStop(0, 'rgba('+r+','+gb+',0.02)');
+      grad.addColorStop(1, 'rgba('+r+','+gb+',0.25)');
+    }
+    g.fillStyle = grad;
+    g.fill();
+    g.restore();
+  }
+
+  // ── Clash year highlight bands ──
+  var clashYears = d.clashYears || [];
+  for(var ci=0;ci<clashYears.length;ci++){
+    var idx = clashYears[ci].idx;
+    var cx = xS(idx);
+    var bw = Math.max(cW/(n-1)*0.8, 8);
+    g.fillStyle='rgba(239,68,68,0.10)';
+    g.fillRect(cx-bw/2, M.t, bw, cH);
+    g.strokeStyle='rgba(239,68,68,0.35)'; g.lineWidth=0.8;
+    g.setLineDash([3,3]);
+    g.beginPath(); g.moveTo(cx,M.t); g.lineTo(cx,M.t+cH); g.stroke();
+    g.setLineDash([]);
+    g.save();
+    g.font='bold 8px sans-serif'; g.fillStyle='rgba(239,68,68,0.7)'; g.textAlign='center';
+    g.fillText('!', cx, M.t+10);
+    g.restore();
+  }
+
+  // ── Transition point markers (colored by polarity) ──
+  var transPoints = d.transitionPoints || [];
+  for(var ti=0;ti<transPoints.length;ti++){
+    var tp = transPoints[ti];
+    var idx = tp.idx;
+    if(idx < 0 || idx >= n) continue;
+    var tx = xS(idx);
+    var tbw = Math.max(cW/(n-1)*0.9, 10);
+    // Color by polarity
+    var bandColor, strokeColor, markerColor, marker;
+    if(tp.polarity==='doom'){
+      bandColor='rgba(239,68,68,0.08)'; strokeColor='rgba(239,68,68,0.5)'; markerColor='rgba(239,68,68,0.85)'; marker='\u2620'; // ☠
+    } else if(tp.polarity==='fortune'){
+      bandColor='rgba(16,185,129,0.08)'; strokeColor='rgba(16,185,129,0.5)'; markerColor='rgba(16,185,129,0.85)'; marker='\u2728'; // ✨
+    } else {
+      bandColor='rgba(184,146,46,0.12)'; strokeColor='rgba(184,146,46,0.6)'; markerColor='rgba(184,146,46,0.85)'; marker='\u2605'; // ★
+    }
+    g.fillStyle=bandColor;
+    g.fillRect(tx-tbw/2, M.t, tbw, cH);
+    g.strokeStyle=strokeColor; g.lineWidth=1.2;
+    g.setLineDash([2,2]);
+    g.beginPath(); g.moveTo(tx,M.t); g.lineTo(tx,M.t+cH); g.stroke();
+    g.setLineDash([]);
+    g.save();
+    g.font='bold 10px sans-serif'; g.fillStyle=markerColor; g.textAlign='center';
+    g.fillText(marker, tx, M.t+12);
+    g.restore();
+  }
+
+  // ── Male curve ──
+  fillArea(fA, '41','128,185', true);
+  fillArea(fA, '41','128,185', false);
+  var ptsA = fA.map(function(v,i){ return [xS(i), yS(v)]; });
+  drawSpline(ptsA, '#2980b9', 2.8);
+
+  // ── Female curve ──
+  fillArea(fB, '232','67,147', true);
+  fillArea(fB, '232','67,147', false);
+  var ptsB = fB.map(function(v,i){ return [xS(i), yS(v)]; });
+  drawSpline(ptsB, '#e84393', 2.8);
+
+  // ── Data point dots ──
+  for(var i=0;i<n;i++){
+    var isClash = false;
+    for(var ci=0;ci<clashYears.length;ci++){ if(clashYears[ci].idx===i){ isClash=true; break; } }
+    var dotR = isClash ? 4.5 : 3;
+    var isHover = (hoverIdx === i);
+    if(isHover) dotR = 5.5;
+
+    g.beginPath(); g.arc(xS(i), yS(fA[i]), dotR, 0, Math.PI*2);
+    g.fillStyle = isHover ? '#1a5276' : (isClash ? '#ef4444' : '#2980b9'); g.fill();
+    g.strokeStyle='#fff'; g.lineWidth= isHover ? 2 : 1.2; g.stroke();
+
+    g.beginPath(); g.arc(xS(i), yS(fB[i]), dotR, 0, Math.PI*2);
+    g.fillStyle = isHover ? '#922b5e' : (isClash ? '#ef4444' : '#e84393'); g.fill();
+    g.strokeStyle='#fff'; g.lineWidth= isHover ? 2 : 1.2; g.stroke();
+  }
+
+  // ── Hover crosshair ──
+  if(hoverIdx != null && hoverIdx >= 0 && hoverIdx < n){
+    var hx = xS(hoverIdx);
+    g.strokeStyle='rgba(44,62,80,0.35)'; g.lineWidth=1;
+    g.setLineDash([4,3]);
+    g.beginPath(); g.moveTo(hx, M.t); g.lineTo(hx, M.t+cH); g.stroke();
+    g.setLineDash([]);
+  }
+
+  // ── Right side scale ──
+  g.textAlign='left'; g.font='9px sans-serif'; g.fillStyle='#ff6b35';
+  for(var s=-steps; s<=steps; s+=2){
+    var v = fMax * s / steps;
+    var fy = yS(v);
+    if(fy > M.t+5 && fy < M.t+cH-5){
+      g.fillText((v>=0?'+':'')+v.toFixed(1), W-M.r+6, fy+3);
+    }
+  }
+  g.fillText('F综', W-M.r+6, M.t-6);
+
+  // ── Correlation annotation ──
+  var rLabel = d.pearson > 0.5 ? '高度同步' : (d.pearson > 0 ? '基本同步' : (d.pearson > -0.3 ? '节奏不同' : '严重错位'));
+  var rColor = d.pearson > 0.3 ? '#10b981' : (d.pearson > -0.1 ? '#f59e0b' : '#ef4444');
+  g.textAlign='right'; g.font='bold 10px sans-serif'; g.fillStyle=rColor;
+  g.fillText(rLabel, W-M.r, M.t-6);
+}
+
+function initSynChartInteraction(){
+  var c = document.getElementById('synastry-chart');
+  if(!c || !window._synChartData) return;
+  var d = window._synChartData;
+
+  c.onmousemove = function(e){
+    var rect = c.getBoundingClientRect();
+    var mx = (e.clientX - rect.left) * (_synCS.W / rect.width);
+    var M = _synCS.M, cW = _synCS.cW, n = _synCS.n;
+    // map mx → nearest index
+    var rawIdx = (mx - M.l) / cW * (n - 1);
+    var idx = Math.round(rawIdx);
+    if(idx < 0 || idx >= n || mx < M.l - 5 || mx > _synCS.W - M.r + 5){
+      // Outside chart area
+      c.onmouseleave();
+      return;
+    }
+    if(idx !== _synCS.hoverIdx){
+      _synCS.hoverIdx = idx;
+      drawSynastryChart(idx);
+      showSynTooltip(e, idx, rect);
+    } else {
+      // Just reposition tooltip
+      positionSynTooltip(e);
+    }
+  };
+
+  c.onmouseleave = function(){
+    _synCS.hoverIdx = null;
+    drawSynastryChart(null);
+    var tip = document.getElementById('syn-tooltip');
+    if(tip) tip.style.display = 'none';
+  };
+}
+
+function showSynTooltip(e, idx, canvasRect){
+  var tip = document.getElementById('syn-tooltip');
+  if(!tip) return;
+  var d = window._synChartData;
+  var yr = d.startYear + idx;
+  var ageA = yr - d.birthYearA;
+  var ageB = yr - d.birthYearB;
+  var valA = d.fA[idx], valB = d.fB[idx];
+
+  // Flow year GZ
+  var n_flow = ((yr-4)%60+60)%60;
+  var flowGZ = TG[n_flow%10]+DZ[n_flow%12];
+
+  // Find 大运 for each
+  function findDY(daYun, yr){
+    var ps = daYun.periods;
+    for(var i=0;i<ps.length;i++){ if(yr>=ps[i].yr0 && yr<=ps[i].yr1) return ps[i].name; }
+    return '';
+  }
+  var dyA = d.daYunA ? findDY(d.daYunA, yr) : '';
+  var dyB = d.daYunB ? findDY(d.daYunB, yr) : '';
+
+  var fJudge = function(v){ return v>=1.2?'大吉':v>=0.6?'吉':v>=0?'平':v>=-0.6?'小凶':v>=-1.2?'凶':'大凶'; };
+  var fColor = function(v){ return v>=0?'#2ecc71':'#e74c3c'; };
+
+  var html = '<div class="tt-year">'+yr+'年 · 流年'+flowGZ+'</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-bottom:4px">';
+  html += '<div style="color:#888;font-size:.9em">♂ '+d.nameA+'（'+ageA+'岁）</div>';
+  html += '<div style="color:#888;font-size:.9em">♀ '+d.nameB+'（'+ageB+'岁）</div>';
+  if(dyA||dyB){
+    html += '<div style="font-size:.85em;color:#2980b9">大运：'+dyA+'</div>';
+    html += '<div style="font-size:.85em;color:#e84393">大运：'+dyB+'</div>';
+  }
+  html += '</div>';
+
+  html += '<div style="border-top:1px solid #eee;padding-top:5px;margin-top:2px">';
+  html += '<div class="tt-row"><span><span class="tt-dot" style="background:#2980b9"></span>男方 F综</span><span style="font-weight:bold;color:'+fColor(valA)+'">'+valA.toFixed(2)+' ('+fJudge(valA)+')</span></div>';
+  html += '<div class="tt-row"><span><span class="tt-dot" style="background:#e84393"></span>女方 F综</span><span style="font-weight:bold;color:'+fColor(valB)+'">'+valB.toFixed(2)+' ('+fJudge(valB)+')</span></div>';
+
+  // Diff
+  var diff = Math.abs(valA - valB);
+  html += '<div class="tt-row" style="margin-top:3px;padding-top:3px;border-top:1px dashed #eee"><span>运势差</span><span style="font-weight:bold;color:'+(diff>1?'#ef4444':'#95a5a6')+'">'+diff.toFixed(2)+'</span></div>';
+  html += '</div>';
+
+  // Tags
+  var tags = [];
+  for(var ci=0;ci<d.clashYears.length;ci++){
+    if(d.clashYears[ci].idx===idx){ tags.push('<span class="tt-tag" style="background:rgba(239,68,68,0.1);color:#ef4444">争吵高危</span>'); break; }
+  }
+  for(var ti=0;ti<d.transitionPoints.length;ti++){
+    if(d.transitionPoints[ti].idx===idx){
+      var tp = d.transitionPoints[ti];
+      if(tp.polarity==='doom') tags.push('<span class="tt-tag" style="background:rgba(239,68,68,0.12);color:#ef4444">💀 双凶共振</span>');
+      else if(tp.polarity==='fortune') tags.push('<span class="tt-tag" style="background:rgba(16,185,129,0.12);color:#10b981">✨ 双吉共振</span>');
+      else tags.push('<span class="tt-tag" style="background:rgba(184,146,46,0.1);color:#b8922e">★ 交脱共振</span>');
+      break;
+    }
+  }
+  if(tags.length) html += '<div style="margin-top:4px">'+tags.join(' ')+'</div>';
+
+  tip.innerHTML = html;
+  tip.style.display = 'block';
+  positionSynTooltip(e);
+}
+
+function positionSynTooltip(e){
+  var tip = document.getElementById('syn-tooltip');
+  var wrap = document.getElementById('syn-chart-wrap');
+  if(!tip||!wrap) return;
+  var wRect = wrap.getBoundingClientRect();
+  var tx = e.clientX - wRect.left + 16;
+  var ty = e.clientY - wRect.top - 10;
+  if(tx + 290 > wRect.width) tx = tx - 306;
+  if(ty < 0) ty = 10;
+  if(ty + tip.offsetHeight > wRect.height) ty = wRect.height - tip.offsetHeight - 10;
+  tip.style.left = tx+'px';
+  tip.style.top = ty+'px';
+}
+
+// ══════════════════════════════════════
+// 运行合婚
+// ══════════════════════════════════════
+
+function runSynastry(){
+  var Ym = parseInt(document.getElementById('syn-year-m').value);
+  var Mm = parseInt(document.getElementById('syn-month-m').value);
+  var Dm = parseInt(document.getElementById('syn-day-m').value);
+  var hhm = parseInt(document.getElementById('syn-hh-m').value)||0;
+  var mmm = parseInt(document.getElementById('syn-mm-m').value)||0;
+  var lonm = parseFloat(document.getElementById('syn-lon-m').value)||116.4;
+  var hm = hourMinToBranch(hhm, mmm);
+
+  var Yf = parseInt(document.getElementById('syn-year-f').value);
+  var Mf = parseInt(document.getElementById('syn-month-f').value);
+  var Df = parseInt(document.getElementById('syn-day-f').value);
+  var hhf = parseInt(document.getElementById('syn-hh-f').value)||0;
+  var mmf = parseInt(document.getElementById('syn-mm-f').value)||0;
+  var lonf = parseFloat(document.getElementById('syn-lon-f').value)||116.4;
+  var hf = hourMinToBranch(hhf, mmf);
+
+  if(!Ym||!Mm||!Dm||!Yf||!Mf||!Df){ alert('请填写完整的出生信息'); return; }
+
+  var chartA = calcFullChart(Ym,Mm,Dm,hm,lonm,hhm,mmm,1);
+  var chartB = calcFullChart(Yf,Mf,Df,hf,lonf,hhf,mmf,0);
+
+  var result = calcSynastry(chartA, chartB);
+  var html = renderSynastryResult(chartA, chartB, result);
+  document.getElementById('syn-results').innerHTML = html;
+
+  // Show bottom action buttons
+  document.getElementById('bottom-actions').style.display = 'block';
+
+  _synCS = {}; // reset chart state for fresh sizing
+  setTimeout(function(){
+    drawSynastryChart(null);
+    initSynChartInteraction();
+  }, 100);
+  setTimeout(function(){
+    document.getElementById('syn-results').scrollIntoView({behavior:'smooth'});
+  }, 150);
+}
+</script>
+<footer style="text-align:center;padding:24px 16px;margin-top:40px;font-size:.78em;color:#999;border-top:1px solid #eee">
+  <div>八字命理计算系统 v2.1 · 更新于 2026-04-16</div>
+  <div style="margin-top:4px">基于《子平真诠》《滴天髓》《穷通宝鉴》《三命通会》等经典 · 现代量化建模</div>
+</footer>
+</body>
+</html>

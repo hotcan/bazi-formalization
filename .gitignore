@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Claude Code local settings (machine-specific)
+.claude/
+CLAUDE.md
+
+# Test reports (regenerated each run)
+test/*-report*.json
+test/test-report*.json
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node (if any tooling added later)
+node_modules/
+npm-debug.log
+
+# Logs / temp
+*.log
+*.tmp
+.env
+.env.local

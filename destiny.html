@@ -1,0 +1,2932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>命局分析 — 中华命理学计算系统</title>
+<style>
+:root{--bg:#f8f9fc;--card:#ffffff;--border:#e0e3ea;--text:#1a1a2e;--sub:#6b7280;--accent:#0b1120;--accent2:#0066ff;--red:#d94f4f;--green:#2d8a4e;--blue:#2e6bc5;--gold:#b8922e;--purple:#8e44ad;--metal:#7a7a7a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"SF Pro Display","Helvetica Neue","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;min-height:100vh;overflow-x:hidden}
+h1{font-size:1.8em;text-align:center;margin:0 0 6px;color:var(--accent)}
+h2{font-size:1.25em;color:var(--accent);margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+h3{font-size:1.05em;color:var(--sub);margin:18px 0 8px}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 60px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 30px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.subtitle{text-align:center;color:var(--sub);font-size:.92em;margin-bottom:20px}
+
+/* ═══ Hero Section (not used but kept for compat) ═══ */
+.hero{background:linear-gradient(135deg,#0b1120 0%,#1a2444 60%,#0d1a3a 100%);position:relative;overflow:hidden;padding:60px 24px 80px;text-align:center;margin-bottom:-40px}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(0,102,255,0.08) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(180,160,100,0.06) 0%,transparent 50%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent);pointer-events:none}
+.hero h1{color:#fff;font-size:2.6rem;font-weight:900;letter-spacing:0.12em;margin-bottom:12px;position:relative;text-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.hero .subtitle{color:rgba(255,255,255,0.6);font-size:1rem;letter-spacing:0.3em;font-weight:300;margin-bottom:0;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:6px 16px;font-size:.78rem;color:rgba(255,255,255,0.7);margin-bottom:20px;position:relative;backdrop-filter:blur(8px)}
+.hero-badge::before{content:'';width:6px;height:6px;background:#4ade80;border-radius:50%;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* ═══ Input Card ═══ */
+.input-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:36px 36px 30px;position:relative;z-index:2;box-shadow:0 8px 32px rgba(0,0,0,0.08),0 1px 3px rgba(0,0,0,0.04)}
+.section-title{font-size:1.05rem;font-weight:600;color:var(--accent);margin:0 0 20px;padding-bottom:10px;border-bottom:2px solid var(--accent2);display:inline-block}
+
+/* Input form */
+.form-row{display:flex;gap:14px;margin:0 0 16px;flex-wrap:wrap}
+.form-row .form-group{flex:1;min-width:0}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-size:.82em;font-weight:600;color:var(--sub);margin-bottom:6px;letter-spacing:0.02em}
+.form-group input,.form-group select{padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:.95em;font-family:inherit;background:#fafbfd;color:var(--text);transition:all .2s;width:100%}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--accent2);box-shadow:0 0 0 3px rgba(0,102,255,0.1);background:#fff}
+.form-group input::placeholder{color:#c0c4cc}
+.form-group-small{flex:0 0 80px!important}
+
+/* Radio group */
+.radio-group{display:flex;gap:10px;margin-top:2px}
+.radio-group label{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:.92em;font-weight:500;transition:all .2s;background:#fafbfd;margin-bottom:0}
+.radio-group label:hover{border-color:#a0a8b8}
+.radio-group input[type="radio"]{display:none}
+.radio-group input[type="radio"]:checked+label{border-color:var(--accent2);background:rgba(0,102,255,0.04);color:var(--accent2);box-shadow:0 0 0 3px rgba(0,102,255,0.08)}
+.radio-indicator{width:16px;height:16px;border:2px solid var(--border);border-radius:50%;position:relative;transition:all .2s;flex-shrink:0}
+.radio-group input[type="radio"]:checked+label .radio-indicator{border-color:var(--accent2)}
+.radio-group input[type="radio"]:checked+label .radio-indicator::after{content:'';position:absolute;top:3px;left:3px;width:6px;height:6px;background:var(--accent2);border-radius:50%}
+
+.btn{display:block;width:100%;max-width:360px;margin:28px auto 0;padding:14px 0;background:var(--accent2);color:#fff;border:none;border-radius:12px;font-size:1.05em;font-family:inherit;cursor:pointer;letter-spacing:2px;font-weight:600;transition:all .25s;box-shadow:0 4px 16px rgba(0,102,255,0.2)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,102,255,0.3);background:#0055dd}
+.btn:active{transform:translateY(0);box-shadow:0 2px 8px rgba(0,102,255,0.2)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-secondary{background:linear-gradient(135deg,#374151,#4b5563);box-shadow:0 4px 16px rgba(0,0,0,0.15)}
+.btn-secondary:hover{background:linear-gradient(135deg,#2d3748,#3f4a5c);box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.divider-line{height:1px;background:var(--border);margin:18px 0}
+.form-hint{font-size:.78em;color:#9ca3af;margin-top:4px}
+.time-sep{font-size:1.2em;color:var(--sub);align-self:center;padding-top:20px}
+
+/* Five Element decorative icons */
+.wx-icons{display:flex;justify-content:center;gap:18px;margin:18px 0 6px}
+.wx-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82em;font-weight:700;color:#fff;opacity:0.9}
+.wx-icon:nth-child(1){background:#2d8a4e}
+.wx-icon:nth-child(2){background:#d94f4f}
+.wx-icon:nth-child(3){background:#b8922e}
+.wx-icon:nth-child(4){background:#7a7a7a}
+.wx-icon:nth-child(5){background:#2e6bc5}
+
+/* Pillar display */
+.pillar-row{display:flex;justify-content:center;gap:14px;margin:16px 0}
+.pillar{text-align:center;min-width:85px}
+.pillar .ph{font-size:.78em;color:var(--sub);margin-bottom:4px;font-weight:600}
+.pillar .pt,.pillar .pb{font-size:1.5em;padding:10px 18px;border:1.5px solid var(--border);background:#fafbfd}
+.pillar .pt{border-radius:10px 10px 0 0;border-bottom:none;color:var(--accent);font-weight:700}
+.pillar .pb{border-radius:0 0 10px 10px;font-weight:500}
+.pillar .ps{font-size:.72em;color:var(--sub);margin-top:4px}
+.pillar-dm .pt{background:linear-gradient(135deg,#fff7ed,#fef3c7);font-weight:bold}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:.88em;margin:10px 0}
+th,td{padding:8px 10px;border:1px solid var(--border);text-align:center}
+th{background:var(--accent);color:#fff;font-weight:600;font-size:.82em;letter-spacing:0.04em}
+tr:nth-child(even){background:#f8f9fc}
+tr:hover{background:#eef2ff}
+.note{font-size:.85em;color:var(--sub);margin:8px 0;padding:10px 14px;background:#f0f4ff;border-left:3px solid var(--accent2);border-radius:0 8px 8px 0}
+
+/* Strength gauge */
+.gauge-wrap{display:flex;align-items:center;gap:12px;margin:12px 0}
+.gauge{flex:1;height:26px;background:#e5e7eb;border-radius:13px;overflow:hidden;position:relative}
+.gauge-fill{height:100%;border-radius:13px;transition:width .8s}
+.gauge-label{font-size:.85em;min-width:80px;text-align:right;font-weight:500}
+.gauge-val{font-size:.85em;min-width:60px;font-weight:bold}
+
+/* Five element horizontal bars */
+.wx-hbars{margin:12px 0}
+.wx-hbar{display:flex;align-items:center;gap:10px;margin:6px 0}
+.wx-hbar .hb-label{width:28px;font-weight:700;font-size:.95em;text-align:center}
+.wx-hbar .hb-track{flex:1;height:22px;background:#f1f5f9;border-radius:11px;overflow:hidden;position:relative}
+.wx-hbar .hb-fill{height:100%;border-radius:11px;transition:width .6s;min-width:2px}
+.wx-hbar .hb-val{width:50px;font-size:.85em;font-weight:700;text-align:right}
+.wx-compare{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0}
+.wx-compare>div{min-width:0}
+
+/* Step section styling */
+.step-section{margin:24px 0}
+.step-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.step-num{width:32px;height:32px;background:var(--accent2);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;flex-shrink:0}
+.step-title{font-size:1.1em;font-weight:700;color:var(--accent)}
+.step-desc{font-size:.85em;color:var(--sub);margin-left:auto}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:12px 0}
+.detail-box{background:#f8f9fc;border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.detail-box h4{font-size:.88em;color:var(--sub);margin:0 0 8px;font-weight:600}
+.detail-box .big-val{font-size:1.4em;font-weight:800;color:var(--accent)}
+.detail-box p{font-size:.85em;margin:4px 0;color:var(--text)}
+.formula{font-family:"SF Mono","Fira Code","Consolas",monospace;font-size:.82em;color:var(--sub);background:#f1f5f9;padding:8px 12px;border-radius:8px;margin:8px 0;overflow:visible}
+.tip-wrap{position:relative;display:inline-flex;align-items:center;cursor:help}
+.tip-icon{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:rgba(0,102,255,0.10);color:var(--accent2);font-size:10px;font-weight:700;margin-left:4px;flex-shrink:0;line-height:1}
+.tip-wrap .tip-box{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:320px;padding:12px 14px;background:#1a1a2e;color:#e8eaed;font-size:.82em;line-height:1.7;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.25);z-index:100;font-family:-apple-system,"SF Pro Display","Helvetica Neue","Noto Sans SC",sans-serif;font-weight:400;pointer-events:none}
+.tip-wrap .tip-box::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1a1a2e}
+.tip-wrap:hover .tip-box{display:block}
+.tip-box .tip-title{font-weight:700;color:#fff;font-size:.92em}
+.tip-box .tip-src{color:#7eb8ff;font-style:italic;font-size:.9em;display:inline-block;margin:2px 0}
+.tip-box .tip-note{color:#a0a8b8;font-size:.88em;display:inline-block;margin-top:2px}
+
+/* Five element bars (legacy vertical - kept for compat) */
+.wx-bars{display:flex;gap:10px;margin:12px 0}
+.wx-bar{flex:1;text-align:center}
+.wx-bar .bar-outer{height:120px;background:#f1f5f9;border-radius:8px;position:relative;overflow:hidden}
+.wx-bar .bar-inner{position:absolute;bottom:0;width:100%;border-radius:8px;transition:height .6s}
+.wx-bar .bar-label{font-size:.78em;color:var(--sub);margin-top:4px;font-weight:500}
+.wx-bar .bar-val{font-size:.82em;font-weight:bold;margin-top:2px}
+.wx-colors{--c0:#2d8a4e;--c1:#d94f4f;--c2:#b8922e;--c3:#7a7a7a;--c4:#2e6bc5}
+
+/* Chart container */
+.chart-wrap{position:relative;margin:20px 0;background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 32px rgba(0,0,0,0.06)}
+.chart-wrap canvas{display:block;margin:0 auto;cursor:crosshair}
+.chart-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;margin:12px 0 0;font-size:.82em}
+.chart-legend .leg-item{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 8px;border-radius:6px;transition:all .2s}
+.chart-legend .leg-item:hover{background:rgba(0,102,255,0.06)}
+.chart-legend .leg-item.off{opacity:.3}
+.chart-legend .leg-line{width:20px;height:3px;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+.tooltip{position:absolute;pointer-events:none;background:rgba(255,255,255,0.98);border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:.82em;box-shadow:0 8px 32px rgba(0,0,0,0.12);z-index:10;display:none;max-width:260px;line-height:1.6;backdrop-filter:blur(8px)}
+.tooltip .tt-year{font-weight:bold;color:var(--accent);margin-bottom:6px;font-size:1.05em}
+.tooltip .tt-row{display:flex;justify-content:space-between;gap:12px}
+.tooltip .tt-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+
+/* Tabs */
+.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;gap:4px}
+.tab-btn{padding:10px 20px;border:none;background:none;font-family:inherit;font-size:.9em;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s;border-radius:8px 8px 0 0;font-weight:500}
+.tab-btn:hover{background:rgba(0,102,255,0.04);color:var(--text)}
+.tab-btn.active{color:var(--accent2);border-bottom-color:var(--accent2);font-weight:700;background:rgba(0,102,255,0.04)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Luck period timeline */
+.luck-timeline{display:flex;overflow-x:auto;gap:0;margin:12px 0;padding-bottom:8px}
+.luck-item{min-width:90px;text-align:center;padding:10px 8px;border-left:2px solid var(--border);position:relative;transition:background .2s}
+.luck-item:first-child{border-left:none}
+.luck-item:hover{background:rgba(0,102,255,0.04);border-radius:8px}
+.luck-item .li-age{font-size:.72em;color:var(--sub);font-weight:500}
+.luck-item .li-gz{font-size:1.1em;font-weight:bold;color:var(--accent);margin:4px 0}
+.luck-item .li-god{font-size:.78em;padding:2px 8px;border-radius:10px;display:inline-block}
+
+/* Results section header */
+.results-header{text-align:center;padding:30px 0 20px}
+.results-header h1{color:var(--accent);font-weight:800;font-size:1.6em}
+
+/* Destiny page header bar */
+.destiny-header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.destiny-header .back-link{color:var(--accent2);text-decoration:none;font-size:.92em;font-weight:600;display:flex;align-items:center;gap:6px}
+.destiny-header .back-link:hover{text-decoration:underline}
+.destiny-header .info-text{font-size:.88em;color:var(--sub);text-align:center;flex:1}
+
+@media(max-width:640px){
+  .hero{padding:40px 16px 60px}
+  .hero h1{font-size:1.8rem}
+  .form-row{flex-wrap:wrap}
+  .form-row .form-group{min-width:calc(50% - 10px)}
+  .form-group-small{flex:0 0 60px!important;min-width:60px!important}
+  .input-card{padding:24px 20px 20px;margin:0 8px}
+  .pillar-row{gap:6px}
+  .pillar{min-width:65px}
+  .pillar .pt,.pillar .pb{font-size:1.2em;padding:6px 10px}
+  h1{font-size:1.4em}
+  .wx-icons{gap:10px}
+  .wx-icon{width:30px;height:30px;font-size:.72em}
+  .radio-group{flex-wrap:wrap}
+  .destiny-header{flex-direction:column;align-items:flex-start}
+}
+@media print{
+  .destiny-header,.btn,.btn-select-all,.chart-legend+div{display:none!important}
+  body{background:#fff;font-size:11pt}
+  .card{box-shadow:none;border:1px solid #eee;break-inside:avoid}
+  section{padding:0}
+  canvas{max-width:100%!important;height:auto!important}
+  .chart-legend .leg-item.off{display:none}
+  .chart-legend .leg-line{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}
+  h1{font-size:18pt}
+}
+</style>
+</head>
+<body>
+
+  <!-- ═══ Header Bar ═══ -->
+  <div class="destiny-header">
+    <a href="index.html" class="back-link">&larr; 重新排盘</a>
+    <div class="info-text" id="header-info">命局分析</div>
+    <a href="index.html" class="back-link">返回首页</a>
+  </div>
+
+  <!-- ═══ RESULTS ═══ -->
+  <section id="sec-results">
+  <div class="wrap">
+    <div class="results-header">
+      <h1>命局分析</h1>
+      <p class="subtitle" id="res-subtitle"></p>
+    </div>
+
+    <!-- All 6 Steps rendered sequentially -->
+    <div id="res-steps"></div>
+
+    <!-- Interactive Fortune Chart -->
+    <div class="chart-wrap" id="chart-container">
+      <canvas id="fortune-chart"></canvas>
+      <div class="chart-legend" id="chart-legend"></div>
+      <div class="tooltip" id="chart-tooltip"></div>
+    </div>
+
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:24px">
+    <a href="index.html" class="btn btn-secondary" style="text-align:center;text-decoration:none">重新排盘</a>
+    <button class="btn" onclick="window.print()">打印 / 保存PDF</button>
+    </div>
+  </div>
+  </section>
+
+<!-- 共享计算引擎 -->
+<script src="bazi-core.js?v=20260416"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   中华命理学计算系统 — 命局分析页（destiny.html）
+   从 URL 参数读取出生信息，执行计算并渲染结果
+   ═══════════════════════════════════════════════════════════════ */
+
+// ══════════════════════════════════════
+// §9 FORTUNE DIMENSION MAPPING
+// ══════════════════════════════════════
+
+var DIM_META = [
+  {key:'career',  name:'事业权力（官杀）',  color:'#e74c3c'},
+  {key:'income',  name:'稳定收入（正财）',  color:'#2980b9'},
+  {key:'windfall',name:'投资偏财（偏财）',  color:'#27ae60'},
+  {key:'marriage',name:'婚姻感情',         color:'#e84393'},
+  {key:'children',name:'子女缘分（食伤）',  color:'#f39c12'},
+  {key:'academic',name:'学业文昌（印星）',  color:'#8e44ad'},
+  {key:'patron',  name:'贵人扶持（正印）',  color:'#00b894'},
+  {key:'social',  name:'社交人脉（比劫）',  color:'#d4a017'},
+  {key:'pressure',name:'竞争压力（七杀）',  color:'#6c5ce7'},
+  {key:'creative',name:'灵感创造（伤官）',  color:'#00cec9'}
+];
+
+// Map ten-god to dimension base scores
+function mapTenGodToScores(ss, w0, r, isUseful){
+  var base = {career:45,income:45,windfall:40,marriage:45,children:45,academic:45,patron:45,social:45,pressure:40,creative:45};
+  var bonus = isUseful ? 20 : -5;
+
+  switch(ss){
+    case 0: case 1:
+      base.social += 25+bonus; base.pressure += 10;
+      if(r<0.45){ base.career+=15+bonus; base.income+=10; }
+      else { base.pressure+=15; base.income-=10; }
+      break;
+    case 2: case 3:
+      base.creative += 30+bonus; base.children += 20+bonus; base.academic += 15;
+      base.social += 10;
+      if(r>0.55){ base.career+=15+bonus; base.income+=10+bonus; }
+      break;
+    case 4: case 5:
+      base.income += 25+bonus; base.windfall += (ss===4?25:15)+bonus;
+      base.career += 10;
+      if(r>0.55) base.marriage += 15;
+      break;
+    case 6: case 7:
+      base.career += 25+bonus; base.pressure += (ss===6?25:15);
+      if(r<0.45){ base.pressure+=15; base.career-=10; }
+      else { base.career+=10; }
+      base.marriage += (ss===7?10:0);
+      break;
+    case 8: case 9:
+      base.academic += 25+bonus; base.patron += (ss===9?30:20)+bonus;
+      if(r<0.45){ base.career+=15+bonus; }
+      else { base.pressure+=10; base.creative-=10; }
+      break;
+  }
+
+  for(var k in base) base[k] = Math.max(5, Math.min(95, base[k]));
+  return base;
+}
+
+function generateFortuneData(pillars, daYun, strength, usefulGod, gender, gammaVec){
+  var w0 = pillars.dayMasterWx;
+  var r = strength.r;
+  var data = {};
+  DIM_META.forEach(function(dm){ data[dm.key] = []; });
+  data['fzong'] = [];
+
+  var seed = pillars.day.n * 137 + pillars.year.n;
+  var rng = function(){ seed=(seed*9301+49297)%233280; return seed/233280; };
+
+  var yr0 = daYun.periods[0].yr0;
+  var yr1 = daYun.periods[daYun.periods.length-1].yr1;
+
+  for(var yr=yr0; yr<=yr1; yr++){
+    var curDY = null;
+    for(var i=0;i<daYun.periods.length;i++){
+      if(yr>=daYun.periods[i].yr0 && yr<=daYun.periods[i].yr1){ curDY=daYun.periods[i]; break; }
+    }
+    if(!curDY) continue;
+
+    var ss = curDY.ss;
+    var isUseful = usefulGod.weights[tgWx(curDY.t)] > 0;
+
+    var baseScores = mapTenGodToScores(ss, w0, r, isUseful);
+
+    var n_flow = ((yr-4)%60+60)%60;
+    var t_flow = n_flow%10;
+    var ss_flow = shiShen(pillars.dayMaster, t_flow);
+    var flowIsUseful = usefulGod.weights[tgWx(t_flow)] > 0;
+
+    var flowAdj = mapTenGodToScores(ss_flow, w0, r, flowIsUseful);
+
+    DIM_META.forEach(function(dm){
+      var base = baseScores[dm.key] * 0.7 + flowAdj[dm.key] * 0.2;
+      var noise = (rng()-0.5)*16;
+      var val = Math.max(3, Math.min(97, Math.round(base + noise)));
+
+      var pos = (yr - curDY.yr0) / 10;
+      if(pos < 0.2 && daYun.periods.indexOf(curDY) > 0){
+        var prevDY = daYun.periods[daYun.periods.indexOf(curDY)-1];
+        var prevBase = mapTenGodToScores(prevDY.ss, w0, r, usefulGod.weights[tgWx(prevDY.t)]>0);
+        var blend = pos / 0.2;
+        val = Math.round(val * blend + (prevBase[dm.key]*0.7 + flowAdj[dm.key]*0.2 + noise) * (1-blend));
+      }
+
+      data[dm.key].push({yr:yr, val:val});
+    });
+
+    var fResult = calcYearFortune(yr, pillars, daYun, strength, usefulGod, gammaVec);
+    if(fResult) data['fzong'].push({yr:yr, val:fResult.F});
+  }
+
+  return data;
+}
+
+// ══════════════════════════════════════
+// §10 INTERACTIVE CHART
+// ══════════════════════════════════════
+
+var chartState = {
+  data: null, visible: {}, pillars: null, daYun: null, birthYear: 0,
+  hoverYr: null, canvas: null, ctx: null, W: 860, H: 500,
+  margin: {t:55, r:46, b:70, l:48}
+};
+
+function initChart(data, pillars, daYun, birthYear){
+  chartState.data = data;
+  chartState.pillars = pillars;
+  chartState.daYun = daYun;
+  chartState.birthYear = birthYear;
+  DIM_META.forEach(function(dm){ chartState.visible[dm.key] = false; });
+  chartState.visible['fzong'] = true;
+
+  var legEl = document.getElementById('chart-legend');
+  legEl.innerHTML = '';
+  var oldHint = legEl.parentNode.querySelector('.hint-row-toggle');
+  if(oldHint) oldHint.parentNode.removeChild(oldHint);
+
+  var fzItem = document.createElement('span');
+  fzItem.className = 'leg-item';
+  fzItem.innerHTML = '<span class="leg-line" style="background:#ff6b35;height:4px;border-radius:2px"></span><strong>综合运势</strong>';
+  fzItem.onclick = function(){
+    chartState.visible['fzong'] = !chartState.visible['fzong'];
+    fzItem.className = 'leg-item' + (chartState.visible['fzong']?'':' off');
+    drawChart();
+  };
+  legEl.appendChild(fzItem);
+
+  var dimItems = [];
+  DIM_META.forEach(function(dm){
+    var item = document.createElement('span');
+    item.className = 'leg-item off';
+    item.innerHTML = '<span class="leg-line" style="background:'+dm.color+'"></span>'+dm.name;
+    item.onclick = function(){
+      chartState.visible[dm.key] = !chartState.visible[dm.key];
+      item.className = 'leg-item' + (chartState.visible[dm.key]?'':' off');
+      drawChart();
+    };
+    item._dmKey = dm.key;
+    legEl.appendChild(item);
+    dimItems.push(item);
+  });
+
+  var hintRow = document.createElement('div');
+  hintRow.className = 'hint-row-toggle';
+  hintRow.style.cssText = 'text-align:center;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:12px';
+  var hint = document.createElement('span');
+  hint.style.cssText = 'color:#aaa;font-size:.78em';
+  hint.textContent = '点击上方图例可展示/隐藏具体运势维度';
+  hintRow.appendChild(hint);
+  var selAllBtn = document.createElement('button');
+  selAllBtn.className = 'btn-select-all';
+  selAllBtn.style.cssText = 'font-size:.75em;padding:3px 12px;border:1px solid #ccc;border-radius:4px;background:#fff;color:#666;cursor:pointer';
+  selAllBtn.textContent = '全选';
+  selAllBtn.onclick = function(){
+    var allOn = dimItems.every(function(it){ return !it.classList.contains('off'); });
+    dimItems.forEach(function(it){
+      if(allOn){
+        chartState.visible[it._dmKey] = false;
+        it.className = 'leg-item off';
+      } else {
+        chartState.visible[it._dmKey] = true;
+        it.className = 'leg-item';
+      }
+    });
+    selAllBtn.textContent = allOn ? '全选' : '全不选';
+    drawChart();
+  };
+  hintRow.appendChild(selAllBtn);
+  legEl.parentNode.insertBefore(hintRow, legEl.nextSibling);
+
+  var c = document.getElementById('fortune-chart');
+  chartState.canvas = c;
+  var dp = window.devicePixelRatio||1;
+  c.width = chartState.W * dp;
+  c.height = chartState.H * dp;
+  c.style.width = chartState.W + 'px';
+  c.style.height = chartState.H + 'px';
+  chartState.ctx = c.getContext('2d');
+  chartState.ctx.scale(dp, dp);
+
+  c.onmousemove = function(e){
+    var rect = c.getBoundingClientRect();
+    var mx = (e.clientX - rect.left) * (chartState.W / rect.width);
+    var M = chartState.margin;
+    var cW = chartState.W - M.l - M.r;
+    var periods = daYun.periods;
+    var yr0 = periods[0].yr0, yr1 = periods[periods.length-1].yr1;
+    var yr = Math.round(yr0 + (mx - M.l) / cW * (yr1 - yr0));
+    yr = Math.max(yr0, Math.min(yr1, yr));
+    if(yr !== chartState.hoverYr){
+      chartState.hoverYr = yr;
+      drawChart();
+      showTooltip(e, yr, rect);
+    }
+  };
+  c.onmouseleave = function(){
+    chartState.hoverYr = null;
+    drawChart();
+    document.getElementById('chart-tooltip').style.display = 'none';
+  };
+
+  drawChart();
+}
+
+function showTooltip(e, yr, canvasRect){
+  var tip = document.getElementById('chart-tooltip');
+  var data = chartState.data;
+  var age = yr - chartState.birthYear;
+
+  var dyName = '';
+  chartState.daYun.periods.forEach(function(p){ if(yr>=p.yr0&&yr<=p.yr1) dyName=p.name+'('+p.god+')'; });
+
+  var n_flow = ((yr-4)%60+60)%60;
+  var flowGZ = TG[n_flow%10]+DZ[n_flow%12];
+
+  var html = '<div class="tt-year">'+yr+'年（'+age+'岁）</div>';
+  html += '<div style="color:#888;font-size:.9em;margin-bottom:4px">大运：'+dyName+' · 流年：'+flowGZ+'</div>';
+
+  if(chartState.visible['fzong'] && data['fzong']){
+    var fArr = data['fzong'];
+    var fVal = '--';
+    for(var i=0;i<fArr.length;i++){
+      if(fArr[i].yr===yr){ fVal = fArr[i].val.toFixed(2); break; }
+    }
+    var fColor = parseFloat(fVal)>=0 ? '#2ecc71' : '#e74c3c';
+    var fJudge = parseFloat(fVal)>=1.1?'大吉':parseFloat(fVal)>=0.45?'吉':parseFloat(fVal)>=0?'平':parseFloat(fVal)>=-0.45?'小凶':parseFloat(fVal)>=-1.1?'凶':'大凶';
+    html += '<div class="tt-row" style="border-bottom:1px solid #eee;padding-bottom:4px;margin-bottom:4px"><span><span class="tt-dot" style="background:#ff6b35"></span><strong>综合运势</strong></span><span style="font-weight:bold;color:'+fColor+'">'+fVal+' ('+fJudge+')</span></div>';
+  }
+
+  DIM_META.forEach(function(dm){
+    if(!chartState.visible[dm.key]) return;
+    var arr = data[dm.key];
+    var val = '--';
+    for(var i=0;i<arr.length;i++){
+      if(arr[i].yr===yr){ val=arr[i].val; break; }
+    }
+    html += '<div class="tt-row"><span><span class="tt-dot" style="background:'+dm.color+'"></span>'+dm.name.split('（')[0]+'</span><span style="font-weight:bold">'+val+'</span></div>';
+  });
+
+  tip.innerHTML = html;
+  tip.style.display = 'block';
+  var container = document.getElementById('chart-container');
+  var cRect = container.getBoundingClientRect();
+  var tx = e.clientX - cRect.left + 16;
+  var ty = e.clientY - cRect.top - 10;
+  if(tx + 260 > cRect.width) tx = tx - 280;
+  if(ty + tip.offsetHeight > cRect.height) ty = cRect.height - tip.offsetHeight - 10;
+  tip.style.left = tx+'px';
+  tip.style.top = ty+'px';
+}
+
+function drawChart(){
+  var g = chartState.ctx;
+  var W = chartState.W, H = chartState.H, M = chartState.margin;
+  var cW = W-M.l-M.r, cH = H-M.t-M.b;
+  var data = chartState.data;
+  var periods = chartState.daYun.periods;
+  var yr0 = periods[0].yr0, yr1 = periods[periods.length-1].yr1;
+  var born = chartState.birthYear;
+
+  function xS(yr){ return M.l + (yr-yr0)/(yr1-yr0)*cW; }
+  function yS(v){ return M.t + (100-v)/100*cH; }
+
+  g.clearRect(0,0,W,H);
+  g.fillStyle='#fafbfd'; g.fillRect(0,0,W,H);
+
+  g.textAlign='center'; g.font='bold 14px "Noto Serif SC",serif'; g.fillStyle='#2c3e50';
+  g.fillText('十神运势多维进展图',W/2,18);
+  g.font='11px "Noto Serif SC",serif'; g.fillStyle='#95a5a6';
+  g.fillText(TG[chartState.pillars.dayMaster]+'日主 · '+chartState.daYun.direction,W/2,34);
+
+  periods.forEach(function(p,i){
+    var x1=xS(p.yr0), x2=(i<periods.length-1)?xS(periods[i+1].yr0):xS(yr1);
+    g.save();
+    g.globalAlpha=0.06; g.fillStyle=i%2===0?'#6c5ce7':'#00b894';
+    g.fillRect(x1,M.t,x2-x1,cH); g.globalAlpha=1;
+    g.strokeStyle='rgba(108,92,231,0.2)'; g.lineWidth=1;
+    g.setLineDash([4,3]); g.beginPath(); g.moveTo(x1,M.t); g.lineTo(x1,M.t+cH); g.stroke();
+    g.setLineDash([]);
+    var mx=(x1+x2)/2;
+    g.textAlign='center'; g.font='bold 10px "Noto Serif SC",sans-serif'; g.fillStyle='#7f8c8d';
+    g.fillText(p.name,mx,M.t+12);
+    g.font='9px sans-serif'; g.fillStyle='#b2bec3';
+    g.fillText(p.god,mx,M.t+24);
+    g.restore();
+  });
+
+  g.strokeStyle='#ecf0f1'; g.lineWidth=0.5;
+  for(var v=0;v<=100;v+=10){
+    g.beginPath(); g.moveTo(M.l,yS(v)); g.lineTo(W-M.r,yS(v)); g.stroke();
+  }
+  g.strokeStyle='#bdc3c7'; g.lineWidth=0.8;
+  g.setLineDash([3,3]); g.beginPath(); g.moveTo(M.l,yS(50)); g.lineTo(W-M.r,yS(50)); g.stroke(); g.setLineDash([]);
+
+  g.save();
+  g.fillStyle = 'rgba(220, 38, 38, 0.04)';
+  g.fillRect(M.l, yS(20), cW, yS(0) - yS(20));
+  g.font = '9px sans-serif';
+  g.fillStyle = 'rgba(220, 38, 38, 0.3)';
+  g.textAlign = 'left';
+  g.fillText('波动预警区', M.l + 4, yS(20) + 12);
+  g.restore();
+
+  g.textAlign='right'; g.font='9px sans-serif'; g.fillStyle='#95a5a6';
+  for(var v=0;v<=100;v+=20) g.fillText(v,M.l-5,yS(v)+3);
+
+  g.textAlign='center'; g.font='9px sans-serif';
+  periods.forEach(function(p){
+    var x=xS(p.yr0); g.fillStyle='#7f8c8d'; g.fillText(p.yr0,x,H-M.b+14);
+    g.fillStyle='#b2bec3'; g.fillText(p.age0+'岁',x,H-M.b+25);
+  });
+  g.fillStyle='#7f8c8d'; g.fillText(yr1,xS(yr1),H-M.b+14);
+
+  DIM_META.forEach(function(dm){
+    if(!chartState.visible[dm.key]) return;
+    var arr = data[dm.key];
+    if(!arr||arr.length<2) return;
+    var pts = arr.map(function(p){ return [xS(p.yr), yS(p.val)]; });
+
+    g.beginPath();
+    g.moveTo(pts[0][0],pts[0][1]);
+    for(var i=0;i<pts.length-1;i++){
+      var p0=pts[Math.max(i-1,0)],p1=pts[i],p2=pts[i+1],p3=pts[Math.min(i+2,pts.length-1)];
+      g.bezierCurveTo(
+        p1[0]+(p2[0]-p0[0])/6, p1[1]+(p2[1]-p0[1])/6,
+        p2[0]-(p3[0]-p1[0])/6, p2[1]-(p3[1]-p1[1])/6,
+        p2[0], p2[1]);
+    }
+    g.strokeStyle=dm.color; g.lineWidth=1.6; g.stroke();
+  });
+
+  if(chartState.visible['fzong'] && data['fzong'] && data['fzong'].length>1){
+    var fArr = data['fzong'];
+    var fMin=Infinity, fMax=-Infinity;
+    for(var i=0;i<fArr.length;i++){
+      if(fArr[i].val<fMin) fMin=fArr[i].val;
+      if(fArr[i].val>fMax) fMax=fArr[i].val;
+    }
+    var fRange = Math.max(Math.abs(fMin), Math.abs(fMax), 1.5);
+    fRange = Math.ceil(fRange * 2) / 2;
+    function yF(v){ return M.t + (1 - (v + fRange) / (2*fRange)) * cH; }
+    var y0line = yF(0);
+
+    g.save();
+    g.beginPath();
+    g.moveTo(xS(fArr[0].yr), y0line);
+    for(var i=0;i<fArr.length;i++){
+      var x=xS(fArr[i].yr), y=yF(Math.max(0, fArr[i].val));
+      if(i===0) g.lineTo(x,y);
+      else {
+        var p0=fArr[Math.max(i-1,0)], p1=fArr[i];
+        var x0=xS(p0.yr),y0p=yF(Math.max(0,p0.val)),x1=xS(p1.yr),y1p=yF(Math.max(0,p1.val));
+        g.lineTo(x1, y1p);
+      }
+    }
+    g.lineTo(xS(fArr[fArr.length-1].yr), y0line);
+    g.closePath();
+    var gradP = g.createLinearGradient(0,M.t,0,y0line);
+    gradP.addColorStop(0,'rgba(46,204,113,0.25)');
+    gradP.addColorStop(1,'rgba(46,204,113,0.02)');
+    g.fillStyle = gradP;
+    g.fill();
+    g.restore();
+
+    g.save();
+    g.beginPath();
+    g.moveTo(xS(fArr[0].yr), y0line);
+    for(var i=0;i<fArr.length;i++){
+      var x=xS(fArr[i].yr), y=yF(Math.min(0, fArr[i].val));
+      g.lineTo(x, y);
+    }
+    g.lineTo(xS(fArr[fArr.length-1].yr), y0line);
+    g.closePath();
+    var gradN = g.createLinearGradient(0,y0line,0,M.t+cH);
+    gradN.addColorStop(0,'rgba(231,76,60,0.02)');
+    gradN.addColorStop(1,'rgba(231,76,60,0.25)');
+    g.fillStyle = gradN;
+    g.fill();
+    g.restore();
+
+    g.strokeStyle='rgba(255,107,53,0.4)'; g.lineWidth=1;
+    g.setLineDash([6,4]); g.beginPath(); g.moveTo(M.l,y0line); g.lineTo(W-M.r,y0line); g.stroke(); g.setLineDash([]);
+
+    var fPts = fArr.map(function(p){ return [xS(p.yr), yF(p.val)]; });
+    g.beginPath();
+    g.moveTo(fPts[0][0], fPts[0][1]);
+    for(var i=0;i<fPts.length-1;i++){
+      var p0=fPts[Math.max(i-1,0)],p1=fPts[i],p2=fPts[i+1],p3=fPts[Math.min(i+2,fPts.length-1)];
+      g.bezierCurveTo(
+        p1[0]+(p2[0]-p0[0])/6, p1[1]+(p2[1]-p0[1])/6,
+        p2[0]-(p3[0]-p1[0])/6, p2[1]-(p3[1]-p1[1])/6,
+        p2[0], p2[1]);
+    }
+    g.strokeStyle='#ff6b35'; g.lineWidth=3; g.stroke();
+
+    g.textAlign='left'; g.font='9px sans-serif'; g.fillStyle='#ff6b35';
+    for(var fv=-fRange; fv<=fRange; fv+=fRange/2){
+      var fy = yF(fv);
+      if(fy > M.t+5 && fy < M.t+cH-5){
+        g.fillText((fv>0?'+':'')+fv.toFixed(1), W-M.r+4, fy+3);
+      }
+    }
+    g.fillText('F综', W-M.r+4, M.t-2);
+  }
+
+  if(chartState.hoverYr!==null){
+    var hx = xS(chartState.hoverYr);
+    g.strokeStyle='rgba(44,62,80,0.5)'; g.lineWidth=1;
+    g.setLineDash([3,2]); g.beginPath(); g.moveTo(hx,M.t); g.lineTo(hx,M.t+cH); g.stroke(); g.setLineDash([]);
+
+    if(chartState.visible['fzong'] && data['fzong'] && data['fzong'].length>1){
+      var fArr = data['fzong'];
+      var fMin2=Infinity,fMax2=-Infinity;
+      for(var fi=0;fi<fArr.length;fi++){if(fArr[fi].val<fMin2)fMin2=fArr[fi].val;if(fArr[fi].val>fMax2)fMax2=fArr[fi].val;}
+      var fRange2=Math.max(Math.abs(fMin2),Math.abs(fMax2),1.5);fRange2=Math.ceil(fRange2*2)/2;
+      function yF2(v){return M.t+(1-(v+fRange2)/(2*fRange2))*cH;}
+      for(var fi=0;fi<fArr.length;fi++){
+        if(fArr[fi].yr===chartState.hoverYr){
+          g.beginPath(); g.arc(hx,yF2(fArr[fi].val),6,0,Math.PI*2);
+          g.fillStyle='#ff6b35'; g.fill();
+          g.strokeStyle='#fff'; g.lineWidth=2; g.stroke();
+          break;
+        }
+      }
+    }
+
+    DIM_META.forEach(function(dm){
+      if(!chartState.visible[dm.key]) return;
+      var arr = data[dm.key];
+      for(var i=0;i<arr.length;i++){
+        if(arr[i].yr===chartState.hoverYr){
+          g.beginPath(); g.arc(hx,yS(arr[i].val),4,0,Math.PI*2);
+          g.fillStyle=dm.color; g.fill();
+          g.strokeStyle='#fff'; g.lineWidth=1.5; g.stroke();
+          break;
+        }
+      }
+    });
+
+    g.textAlign='center'; g.font='bold 10px sans-serif'; g.fillStyle='#2c3e50';
+    g.fillText(chartState.hoverYr+'年('+(chartState.hoverYr-born)+'岁)',hx,M.t-4);
+  }
+}
+
+// ══════════════════════════════════════
+// §11 UI RENDERING
+// ══════════════════════════════════════
+
+function renderPillars(pillars){
+  var html = '<div class="pillar-row">';
+  var labels = ['年柱','月柱','日柱','时柱'];
+  for(var i=0;i<4;i++){
+    var t=pillars.stems[i], d=pillars.branches[i];
+    var cls = i===2?' pillar-dm':'';
+    var ssLabel = i===2?'日主':shiShenName(shiShen(pillars.dayMaster, t));
+    var dzSS = shiShenName(shiShen(pillars.dayMaster, CANG_GAN[d][0].t));
+    html += '<div class="pillar'+cls+'">';
+    html += '<div class="ph">'+labels[i]+'</div>';
+    html += '<div class="pt">'+TG[t]+'</div>';
+    html += '<div class="pb">'+DZ[d]+'</div>';
+    html += '<div class="ps">'+ssLabel+'</div>';
+    html += '<div class="ps" style="font-size:.72em;color:#999;margin-top:-2px">'+dzSS+'</div>';
+    if(pillars.kongWang && pillars.kongWang.indexOf(d)>=0){
+      html += '<div class="ps" style="font-size:.68em;color:var(--red);margin-top:0">空亡</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  if(pillars.kongWang){
+    html += '<div style="text-align:center;font-size:.82em;color:var(--sub);margin-top:4px">空亡：'+DZ[pillars.kongWang[0]]+' '+DZ[pillars.kongWang[1]]+'</div>';
+  }
+  var nyHtml = [];
+  for(var i=0;i<4;i++){
+    var ny = getNaYin(pillars.stems[i], pillars.branches[i]);
+    nyHtml.push(ny.name);
+  }
+  html += '<div style="text-align:center;font-size:.78em;color:var(--sub);margin-top:2px">纳音：'+nyHtml.join('、')+'</div>';
+  return html;
+}
+
+function tipHtml(title, src, note){
+  return '<span class="tip-wrap"><span class="tip-icon">?</span><span class="tip-box"><span class="tip-title">'+title+'</span><br>'+(src?'<span class="tip-src">'+src+'</span><br>':'')+(note?'<span class="tip-note">'+note+'</span>':'')+'</span></span>';
+}
+
+function renderHBars(V, label, maxV){
+  if(!maxV){ maxV=0; for(var i=0;i<5;i++) maxV=Math.max(maxV,V[i]); if(maxV<0.5) maxV=0.5; }
+  var html = '<div><h3 style="margin-top:0">'+(label||'')+'</h3><div class="wx-hbars">';
+  for(var w=0;w<5;w++){
+    var pct = (V[w]/maxV*100).toFixed(1);
+    html += '<div class="wx-hbar"><div class="hb-label" style="color:'+WX_COLOR[w]+'">'+WX[w]+'</div>';
+    html += '<div class="hb-track"><div class="hb-fill" style="width:'+pct+'%;background:'+WX_COLOR[w]+'"></div></div>';
+    html += '<div class="hb-val" style="color:'+WX_COLOR[w]+'">'+V[w].toFixed(2)+'</div></div>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function renderWxBars(V, Vstar, label1, label2){
+  var maxV = 0;
+  for(var i=0;i<5;i++) maxV = Math.max(maxV, V[i], Vstar?Vstar[i]:0);
+  if(maxV<1) maxV=1;
+  var html = '<div class="wx-compare">';
+  html += renderHBars(V, label1||'原始五行向量 V', maxV);
+  if(Vstar) html += renderHBars(Vstar, label2||'月令修正 V*', maxV);
+  html += '</div>';
+  return html;
+}
+
+function renderStrengthGauge(str){
+  var pct = (str.r*100).toFixed(1);
+  var color = str.r>0.55?'#e74c3c':(str.r<0.45?'#2980b9':'#27ae60');
+  return '<div class="gauge-wrap">'+
+    '<div class="gauge-label">身弱</div>'+
+    '<div class="gauge"><div class="gauge-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
+    '<div class="gauge-label" style="text-align:left">身强</div>'+
+    '</div>'+
+    '<p style="text-align:center;font-size:1.1em"><strong>r* = '+str.r.toFixed(3)+' → '+str.name+'</strong></p>'+
+    '<p class="note">同方力量 S\'同 = '+str.S_tong_adj.toFixed(2)+' · 异方力量 S异 = '+str.S_yi.toFixed(2)+' · 日主平均旺衰 γ̄₀ = '+str.gamma0.toFixed(3)+'</p>';
+}
+
+function renderDaYunTimeline(daYun, pillars){
+  var transitDates = calcPreciseTransitDates(pillars, daYun, pillars.yearForPillar || 2000);
+
+  var html = '<div class="luck-timeline">';
+  daYun.periods.forEach(function(p, idx){
+    var col = SS_COLOR[p.ss];
+    var td = transitDates[idx];
+    var transitStr = td ? td.transitDate : '';
+    html += '<div class="luck-item">'+
+      '<div class="li-age">'+p.age0+'–'+p.age1+'岁<br>'+p.yr0+'–'+p.yr1+'</div>'+
+      '<div class="li-gz" style="color:'+col+'">'+p.name+'</div>'+
+      '<div class="li-god" style="background:'+col+'22;color:'+col+'">'+p.god+'</div>'+
+      '</div>';
+  });
+  html += '</div>';
+  html += '<p class="note">'+daYun.direction+'（'+daYun.startAge+'岁起运）</p>';
+
+  html += '<div style="margin-top:8px"><div style="color:var(--accent2);font-size:.88em;font-weight:600;margin-bottom:6px">&#128337; 精确交运时间表</div>';
+  html += '<table style="font-size:.85em"><tr><th>大运</th><th>十神</th><th>精确交运时间</th><th>交运年龄</th></tr>';
+  for(var i=0;i<transitDates.length;i++){
+    var td = transitDates[i];
+    var col = SS_COLOR[td.period.ss];
+    html += '<tr><td style="color:'+col+';font-weight:700">'+td.period.name+'</td>';
+    html += '<td>'+td.period.god+'</td>';
+    html += '<td>'+td.transitDate+'</td>';
+    html += '<td>'+td.age.toFixed(1)+'岁</td></tr>';
+  }
+  html += '</table></div>';
+
+  return html;
+}
+
+function renderFlowYearTable(pillars, daYun, strength, usefulGod, gammaVec, birthYear, daYunSignals){
+  var html = '<div style="overflow-x:auto"><table id="flow-year-table"><tr><th>年份</th><th>年龄</th><th>大运</th><th>流年</th><th>流年十神</th><th>综合系数</th><th>判定</th><th>流月</th></tr>';
+  var yr0 = daYun.periods[0].yr0;
+  var yr1 = daYun.periods[daYun.periods.length-1].yr1;
+
+  window._flowMonthCtx = {pillars:pillars, daYun:daYun, strength:strength, usefulGod:usefulGod, gammaVec:gammaVec};
+
+  // 预构建大运信号索引: periodIdx → signals[]
+  var sigMap = {};
+  if(daYunSignals && daYunSignals.signals){
+    daYunSignals.signals.forEach(function(s){
+      if(!sigMap[s.periodIdx]) sigMap[s.periodIdx] = [];
+      sigMap[s.periodIdx].push(s);
+    });
+  }
+
+  var lastDyName = '';
+  for(var yr=yr0; yr<=yr1; yr++){
+    var f = calcYearFortune(yr, pillars, daYun, strength, usefulGod, gammaVec);
+    if(!f) continue;
+    var fVal = f.F.toFixed(2);
+    var color = f.F>0.3?'var(--green)':(f.F<-0.3?'var(--red)':'#888');
+    var judge = f.F>1.1?'大吉':(f.F>0.45?'吉':(f.F>-0.45?'平':(f.F>-1.1?'凶':'大凶')));
+    var age = yr - birthYear;
+    var rowId = 'fy-'+yr;
+    html += '<tr id="'+rowId+'" style="cursor:pointer" onclick="toggleFlowMonths('+yr+',this)">';
+    html += '<td>'+yr+'</td><td>'+age+'</td>';
+
+    // 大运列：第一次出现该大运时附带信号标记
+    var dyLabel = f.dayun.name+'('+f.dayun.god+')';
+    var dyPIdx = -1;
+    for(var qi=0;qi<daYun.periods.length;qi++) if(daYun.periods[qi]===f.dayun){dyPIdx=qi;break;}
+    if(dyLabel !== lastDyName && sigMap[dyPIdx]){
+      var badges = '';
+      sigMap[dyPIdx].forEach(function(sig){
+        var bc = sig.level==='good' ? '#10b981' : '#f59e0b';
+        badges += ' <span title="'+sig.title+'：'+sig.desc.substring(0,40)+'..." style="font-size:.68em;background:'+bc+'20;color:'+bc+';padding:1px 4px;border-radius:3px;cursor:help">'+(sig.level==='good'?'✨':'⚠️')+sig.title+'</span>';
+      });
+      html += '<td>'+dyLabel+badges+'</td>';
+    } else {
+      html += '<td>'+dyLabel+'</td>';
+    }
+    lastDyName = dyLabel;
+
+    html += '<td>'+f.flowGZ+'</td>';
+    html += '<td>'+shiShenName(f.flowSS)+'</td>';
+    // F 值 + 置信区间：点估计可能在误差范围内跨过 0，此时判定不稳
+    var crossesZero = (f.F_lo !== undefined && f.F_hi !== undefined && f.F_lo <= 0 && f.F_hi >= 0);
+    var intervalStr = (f.F_lo !== undefined) ? ' <span style="font-size:.72em;color:var(--sub);font-weight:400">['+f.F_lo.toFixed(1)+', '+f.F_hi.toFixed(1)+']</span>' : '';
+    html += '<td style="color:'+color+';font-weight:bold">'+fVal+intervalStr+'</td>';
+    var judgeLabel = crossesZero ? judge+'<span style="font-size:.7em;color:#d97706;margin-left:2px" title="置信区间跨越 0，判定不稳">*</span>' : judge;
+    html += '<td style="color:'+color+'">'+judgeLabel+'</td>';
+    html += '<td style="font-size:.78em;color:var(--accent2)">&#9660;</td>';
+    html += '</tr>';
+  }
+  html += '</table></div>';
+  return html;
+}
+
+function toggleFlowMonths(year, rowEl){
+  var existingRow = document.getElementById('fm-detail-'+year);
+  if(existingRow){
+    existingRow.remove();
+    return;
+  }
+  var ctx = window._flowMonthCtx;
+  if(!ctx) return;
+
+  var months = [];
+  for(var m=0;m<12;m++){
+    var mf = calcMonthFortune(year, m, ctx.pillars, ctx.daYun, ctx.strength, ctx.usefulGod, ctx.gammaVec);
+    if(mf) months.push(mf);
+  }
+  if(months.length===0) return;
+
+  var maxF = -999, minF = 999, maxM = 0, minM = 0;
+  for(var i=0;i<months.length;i++){
+    if(months[i].F > maxF){ maxF = months[i].F; maxM = i; }
+    if(months[i].F < minF){ minF = months[i].F; minM = i; }
+  }
+
+  var detailHtml = '<td colspan="8" style="padding:8px 12px;background:rgba(0,102,255,0.02)">';
+  detailHtml += '<div style="font-size:.82em;color:var(--accent2);font-weight:600;margin-bottom:6px">'+year+'年 逐月运势</div>';
+
+  var fRange = Math.max(Math.abs(maxF), Math.abs(minF), 0.5);
+  detailHtml += '<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:8px">';
+  for(var i=0;i<months.length;i++){
+    var mf = months[i];
+    var barH = Math.abs(mf.F) / fRange * 40;
+    var barColor = mf.F > 0.3 ? '#10b981' : (mf.F < -0.3 ? '#ef4444' : '#94a3b8');
+    var isBest = (i === maxM);
+    var isWorst = (i === minM);
+    var outline = isBest ? 'outline:2px solid #10b981;' : (isWorst ? 'outline:2px solid #ef4444;' : '');
+    detailHtml += '<div style="text-align:center;'+outline+'border-radius:4px;padding:2px">';
+    detailHtml += '<div style="font-size:.68em;color:var(--sub)">'+mf.monthName.substring(0,2)+'</div>';
+    detailHtml += '<div style="height:40px;display:flex;align-items:flex-end;justify-content:center">';
+    detailHtml += '<div style="width:100%;max-width:24px;height:'+Math.max(barH,2)+'px;background:'+barColor+';border-radius:2px 2px 0 0;opacity:0.7"></div>';
+    detailHtml += '</div>';
+    detailHtml += '<div style="font-size:.7em;font-weight:600;color:'+barColor+'">'+mf.F.toFixed(2)+'</div>';
+    detailHtml += '<div style="font-size:.65em;color:var(--sub)">'+mf.gz+'</div>';
+    if(mf.clashNote) detailHtml += '<div style="font-size:.6em;color:#ef4444">'+mf.clashNote+'</div>';
+    detailHtml += '</div>';
+  }
+  detailHtml += '</div>';
+
+  detailHtml += '<div style="font-size:.78em;color:var(--sub)">';
+  detailHtml += '&#9650; 最佳月: <strong style="color:#10b981">'+months[maxM].monthName+' '+months[maxM].gz+'('+shiShenName(months[maxM].ss)+')</strong>';
+  detailHtml += ' &nbsp;|&nbsp; &#9660; 最差月: <strong style="color:#ef4444">'+months[minM].monthName+' '+months[minM].gz+'('+shiShenName(months[minM].ss)+')</strong>';
+  detailHtml += '</div>';
+  detailHtml += '</td>';
+
+  var newRow = document.createElement('tr');
+  newRow.id = 'fm-detail-'+year;
+  newRow.innerHTML = detailHtml;
+  rowEl.parentNode.insertBefore(newRow, rowEl.nextSibling);
+}
+
+// ══════════════════════════════════════
+// §12 MAIN CALCULATION ENTRY
+// ══════════════════════════════════════
+
+// ── Azure Table Storage logging ──
+var _visitorIP = '';
+try{ fetch('https://api.ipify.org?format=json').then(function(r){return r.json();}).then(function(d){_visitorIP=d.ip||'';}).catch(function(){}); }catch(e){}
+
+function logVisit(name, gender, year, month, day, hour, location, bazi){
+  try{
+    var lastLog = sessionStorage.getItem('_bazi_log_ts');
+    if(lastLog && Date.now()-parseInt(lastLog)<30000) return;
+    sessionStorage.setItem('_bazi_log_ts', String(Date.now()));
+    var now = new Date();
+    var ts = now.getTime();
+    var rid = Math.random().toString(36).substring(2,10);
+    var sas = 'st=2026-04-01T00%3A00%3A00Z&se=2027-12-31T00%3A00%3A00Z&sp=a&spr=https%2Chttp&sv=2019-02-02&ss=t&srt=o&sig=zRe/kN8rhU861eDrgYN0eqPCOkixJemW2G4xsY6ExzY%3D';
+    var url = 'https://hotcanweb.table.core.windows.net/BaziLogs?'+sas;
+    fetch(url, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Accept':'application/json;odata=nometadata',
+        'x-ms-version':'2020-12-06',
+        'Prefer':'return-no-content'
+      },
+      body: JSON.stringify({
+        PartitionKey: now.toISOString().slice(0,10),
+        RowKey: ts+'_'+rid,
+        Name: (name||'').slice(0,50),
+        Birth: year+'-'+month+'-'+day+' '+hour,
+        Bazi: bazi,
+        Gender: gender===1?'男':'女',
+        Location: location||'',
+        IP: _visitorIP,
+        Source: window.location.hostname,
+        UA: navigator.userAgent.slice(0,200)
+      })
+    }).catch(function(){});
+  }catch(e){}
+}
+
+function runCalculation(){
+  // Read from URL parameters
+  var params = new URLSearchParams(window.location.search);
+  var userName = params.get('name') || '';
+  var Y = parseInt(params.get('year'));
+  var M = parseInt(params.get('month'));
+  var D = parseInt(params.get('day'));
+  var hh = parseInt(params.get('hh')) || 0;
+  var mm = parseInt(params.get('mm')) || 0;
+  var hour = hourMinToBranch(hh, mm);
+  var gender = parseInt(params.get('gender'));
+  if(isNaN(gender)) gender = 1;
+  var lon = parseFloat(params.get('lon')) || 120;
+  var birthProvince = params.get('province') || '';
+  var birthCity = params.get('city') || '';
+  // 夜子时派别: sameDay(默认·晚子时归本日) / nextDay(子初换日派)
+  var lateZiMode = params.get('lateZi') === 'nextDay' ? 'nextDay' : 'sameDay';
+
+  if(!Y||!M||!D||isNaN(hh)){
+    document.getElementById('res-steps').innerHTML = '<div class="card" style="text-align:center;padding:40px"><h2>参数缺失</h2><p>请从首页输入出生信息后开始排盘。</p><a href="index.html" class="btn" style="display:inline-block;margin-top:16px;text-decoration:none">前往首页</a></div>';
+    return;
+  }
+
+  // Update header info
+  var headerInfo = userName ? userName + ' · ' : '';
+  headerInfo += Y+'年'+M+'月'+D+'日 '+(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm+' · '+(gender?'男':'女');
+  if(birthProvince || birthCity){
+    headerInfo += ' · ' + (birthProvince && birthCity && birthProvince !== birthCity ? birthProvince + birthCity : (birthCity || birthProvince));
+  }
+  document.getElementById('header-info').textContent = headerInfo;
+
+  // ── Step 1: Four Pillars ──
+  var pillars = calcPillars(Y, M, D, hour, lon, hh, mm, lateZiMode);
+
+  // ── Step 2: Five Element Vector ──
+  var V = calcWxVector(pillars);
+
+  // ── Step 3: Monthly Correction ──
+  var mc = calcMonthlyCorrection(V, pillars.branches[1]);
+  var Vstar = mc.V;
+
+  // ── Step 3b: 合冲刑害修正 ──
+  var tgCombos = detectTianGanHe(pillars.stems);
+  var dzRels = detectDzRelations(pillars.branches);
+  var dzEffects = applyDzEffects(Vstar, pillars.branches, dzRels, pillars.stems, pillars.kongWang);
+  var Vmod = dzEffects.V;
+  var Vfinal = dzEffects.Vmc;
+
+  pillars.dayMasterWxOrig = pillars.dayMasterWx;
+  if(dzEffects.stemTransform[2]){
+    pillars.dayMasterWx = dzEffects.stemTransform[2].targetWx;
+    dzEffects.modNotes.push('★ 日主合化变身：'+WX[pillars.dayMasterWxOrig]+'→'+WX[pillars.dayMasterWx]+'，后续分析以'+WX[pillars.dayMasterWx]+'为日主五行');
+  }
+
+  // ── Step 3c: Hidden Pillars & 暗合补完 ──
+  var hiddenPillars = calcHiddenPillars(pillars);
+  var hiddenCombosResult = detectHiddenCombos(pillars.branches, hiddenPillars);
+  var hiddenCombos = hiddenCombosResult.notes;
+  var hiddenVDelta = hiddenCombosResult.vDelta;
+  // ★ 保存暗合前的快照，供 3c 表格/图显示"补完前"状态
+  var VmodPreHidden = Vmod.slice();
+  var VfinalPreHidden = Vfinal.slice();
+  // 将暗合增量叠加到 Vmod，再重算月令修正 Vfinal
+  var hasHiddenBoost = false;
+  for(var hw=0;hw<5;hw++){
+    if(hiddenVDelta[hw] > 0.001){
+      Vmod[hw] += hiddenVDelta[hw];
+      hasHiddenBoost = true;
+    }
+  }
+  if(hasHiddenBoost){
+    var ws_h = getSeasonWx(pillars.branches[1]);
+    for(var hw=0;hw<5;hw++){
+      var dist_h = (hw - ws_h + 5) % 5;
+      Vfinal[hw] = Math.max(0, Vmod[hw] * WANG_SHUAI_MUL[dist_h]);
+    }
+  }
+
+  // ── Step 4a: Temperature ──
+  var temp = calcTemperature(pillars);
+
+  // ── Step 4b: Day Master Strength ──
+  var strength = calcDayMasterStrength(Vfinal, pillars.dayMasterWx, pillars.branches, pillars.dayMaster, temp.H, pillars.kongWang);
+  var gammaVec = calcGammaVector(pillars.branches);
+
+  // ── Step 6: Pattern ──
+  var pattern = determinePattern(pillars, pillars.dayMaster);
+
+  // ── Step 7: Useful God ──
+  var usefulGod = selectUsefulGod(pillars.dayMasterWx, strength.r, Vfinal, mc.ws, temp.H, strength.hasRoot, pillars.stems, pillars.branches);
+
+  // ── Step 7b: Clarity Score ──
+  var clarity = calcClarity(pillars, Vfinal, usefulGod, strength, dzEffects);
+  var yyPos = calcYinYangPosition(pillars);
+  var sourceFlow = calcSourceFlow(pillars, Vfinal, usefulGod);
+  var enYuan = calcEnYuan(pillars, usefulGod, strength);
+
+  // ── Step 8b: Life Events ──
+  var lifeEvents = generateLifeEvents(pillars, dzEffects, strength, gender, hiddenPillars);
+
+  // ── Step 9: Major Luck Periods ──
+  var daYun = calcDaYun(pillars, gender, Y);
+
+  // ── Step 10: Fortune Data ──
+  var fortuneData = generateFortuneData(pillars, daYun, strength, usefulGod, gender, gammaVec);
+
+  // ── Step 11: 大运信号分析 ──
+  var daYunSignals = analyzeDaYunSignals(pillars, daYun, usefulGod, strength, Vfinal, clarity);
+
+  // ═══ RENDER ALL RESULTS ═══
+  var timeStr = (hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm+' ('+DZ[hour]+'时)';
+  var baziStr = TG[pillars.stems[0]]+DZ[pillars.branches[0]]+' '+TG[pillars.stems[1]]+DZ[pillars.branches[1]]+' '+TG[pillars.stems[2]]+DZ[pillars.branches[2]]+' '+TG[pillars.stems[3]]+DZ[pillars.branches[3]];
+  var namePrefix = userName ? userName+' · ' : '';
+  var placeStr = '';
+  if(birthProvince || birthCity){
+    placeStr = ' · ' + (birthProvince && birthCity && birthProvince !== birthCity ? birthProvince + birthCity : (birthCity || birthProvince));
+  }
+  document.getElementById('res-subtitle').textContent =
+    namePrefix+Y+'年'+M+'月'+D+'日 '+timeStr+' · '+(gender?'男':'女')+placeStr+' · '+TG[pillars.dayMaster]+WX[(pillars.dayMasterWxOrig!==undefined?pillars.dayMasterWxOrig:pillars.dayMasterWx)]+(pillars.dayMasterWxOrig!==undefined&&pillars.dayMasterWxOrig!==pillars.dayMasterWx?'(合化→'+WX[pillars.dayMasterWx]+')':'')+'日主';
+
+  // Log to Azure
+  logVisit(userName, gender, Y, M, D, hh+':'+mm, '', baziStr);
+
+  var html = '';
+
+  // ── 首页摘要：给非专业用户一页可读的核心结论 ──
+  (function renderSummary(){
+    var dmWx = pillars.dayMasterWx;
+    var r = strength.r;
+    var strengthLabel = (r<0.15 && !strength.hasRoot)?'极弱·从格倾向':(r<0.15)?'极弱·有根不从':r<0.35?'身弱':r<0.55?'偏弱':r<=0.65?'中和':r<=0.85?'身强':'极强·专旺';
+    var strengthColor = r<0.35?'#d94f4f':r<0.55?'#d97706':r<=0.65?'#10b981':r<=0.85?'#2563eb':'#7c3aed';
+    var useGod = usefulGod.candidates[0];
+    var useGodName = WX[useGod.w];
+    var secondGod = usefulGod.candidates.length>1 ? usefulGod.candidates[1] : null;
+    var enemyName = (usefulGod.enemy !== null && usefulGod.enemy !== undefined) ? WX[usefulGod.enemy] : null;
+
+    // 当前大运
+    var nowYear = new Date().getFullYear();
+    var curDY = null;
+    if (daYun.periods){
+      for (var i=0; i<daYun.periods.length; i++){
+        if (nowYear >= daYun.periods[i].yr0 && nowYear <= daYun.periods[i].yr1){ curDY = daYun.periods[i]; break; }
+      }
+    }
+    var age = nowYear - Y;
+    var curDYText = curDY ? TG[curDY.t]+DZ[curDY.d]+'('+curDY.god+') · '+curDY.yr0+'-'+curDY.yr1 : '未起运';
+    var curDYFavorable = curDY && usefulGod.weights ? (usefulGod.weights[tgWx(curDY.t)] > 0) : null;
+    var curDYTone = curDYFavorable === true ? {text:'助力运', color:'#10b981'} : curDYFavorable === false ? {text:'压力运', color:'#d94f4f'} : {text:'中性运', color:'#64748b'};
+
+    // 方法学分歧检测
+    var methodWxs = [];
+    if (r < 0.45){ methodWxs.push((dmWx+4)%5); }
+    else if (r > 0.55){ methodWxs.push((dmWx+1)%5); }
+    if (usefulGod.tiaohouWx !== undefined && usefulGod.tiaohouWx >= 0) methodWxs.push(usefulGod.tiaohouWx);
+    var uniqMethod = {};
+    methodWxs.forEach(function(w){ if (w!==useGod.w) uniqMethod[w]=true; });
+    var hasDivergence = Object.keys(uniqMethod).length > 0;
+
+    // 格局速读
+    var patternText = usefulGod.specialPattern || (usefulGod.primaryFormat || '正格');
+
+    // 行动建议（三条）
+    var advices = [];
+    var WX_DIR = ['东/东北','南/东南','中/西南','西/西北','北/东北'];
+    var WX_COLOR_NAME = ['青绿','红紫','黄棕','白银','黑蓝'];
+    var WX_INDUSTRY = ['林木/教育/文化','能源/媒体/电商','地产/农业/中介','金融/机械/法律','物流/水务/流通'];
+    // 十干分叉行业建议：同五行的阴阳干，气质和场域差异大，给命主更具体的落地锚点
+    var DM_INDUSTRY = {
+      0: '栋梁型：建筑、工程、教育、组织骨干', // 甲
+      1: '柔韧型：公关、文艺、花艺、服务业',   // 乙
+      2: '阳光型：媒体、品牌、公共表达、大舞台',  // 丙
+      3: '精准型：医疗、咨询、一对一服务、精细工艺', // 丁
+      4: '厚重型：房地产、基建、大宗商品、管理岗',  // 戊
+      5: '田园型：农业、餐饮、民宿、女性服务',  // 己
+      6: '铁器型：军警、机械、竞技、外科',   // 庚
+      7: '细金型：珠宝、金融精算、工艺设计、法律',  // 辛
+      8: '大水型：国际贸易、物流、娱乐、平台',  // 壬
+      9: '细水型：咨询、研究、创作、信息中介'   // 癸
+    };
+    advices.push('方位选 <strong>'+WX_DIR[useGod.w]+'</strong>，服色偏 <strong>'+WX_COLOR_NAME[useGod.w]+'</strong>');
+    var jobPrimary = WX_INDUSTRY[useGod.w];
+    var jobNuance = DM_INDUSTRY[pillars.dayMaster];
+    advices.push('职业方向近 <strong>'+jobPrimary+'</strong>'+(secondGod?'，辅 '+WX_INDUSTRY[secondGod.w]:'')+'<br><span style="color:var(--sub);font-size:.88em">· 按你日主气质（'+TG[pillars.dayMaster]+'）进一步分叉：<strong>'+jobNuance+'</strong></span>');
+    if (enemyName) advices.push('避开 <strong>'+WX_INDUSTRY[usefulGod.enemy]+'</strong>方向的重仓投入，'+enemyName+'旺之年低调为守');
+
+    html += '<div class="card" style="padding:16px 18px;background:linear-gradient(135deg,rgba(46,107,197,0.04),rgba(124,58,237,0.04));border:1.5px solid rgba(46,107,197,0.18)">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:1.3em">📌</span><h2 style="margin:0;padding:0;border:0;font-size:1.15em">一页速览</h2><span style="margin-left:auto;font-size:.78em;color:var(--sub)">结论页 · 详解在下方</span></div>';
+
+    // ── 命盘一句话：日主意象 + 季节 + 结构 + 行动隐喻 ──
+    (function renderOneLiner(){
+      var dmTg = pillars.dayMaster;
+      // 日主意象：十干画面化
+      var TG_IMAGE = ['参天大木','藤蔓花草','太阳/炉火','烛火/星辉','高山大地','田园沃土','顽金利剑','珠玉首饰','江河湖海','雨露溪流'];
+      var TG_IMAGE2 = ['需水润、忌金伐','需阳光、宜缠绕','需万物吸纳、忌云遮','需恰当引柴、忌风吹熄','需木疏通、忌过刚','需水养、忌过湿','需火炼、忌埋没','需水洗、忌火伤','需堤岸约束、忌泛滥','需聚而不散'];
+      // 季节结构
+      var monthWx = getSeasonWx(pillars.branches[1]);
+      var dmWx = pillars.dayMasterWx;
+      var dmSeasonName = ['春','夏','长夏/秋','秋','冬'][monthWx];
+      var isInSeason = (dmWx === monthWx);
+      var isKeSeason = (wxKe(monthWx) === dmWx); // 季节克日主
+      // 身强弱
+      var r = strength.r;
+      var strKey = r<0.35?'weak':r>0.65?'strong':'medium';
+      // 用神五行
+      var useWx = usefulGod.candidates[0].w;
+      var useName = WX[useWx];
+
+      // 生成一句话：「日主意象」 + 「生在某季的处境」 + 「用神的行动隐喻」
+      var situationPart = '';
+      if (isInSeason && strKey === 'strong') situationPart = '生在当令之时，本就气旺';
+      else if (isInSeason) situationPart = '虽得月令本气，但力道中和';
+      else if (isKeSeason && strKey === 'weak') situationPart = '生在不利的季节里';
+      else if (!isInSeason && strKey === 'weak') situationPart = '生在远离本家的季节';
+      else if (strKey === 'strong') situationPart = '虽非月令当令，却自有气势';
+      else situationPart = '生在中和之时，进退有余';
+
+      // 用神隐喻
+      var USE_METAPHOR = {
+        0: '木是你的光——你需要生长的空间与持续投入，不适合被突然压制',
+        1: '火是你的光——你需要热度与被看见，适合表达型、照明型的场域',
+        2: '土是你的光——你需要扎根与稳定，适合建设型、承载型的角色',
+        3: '金是你的光——你需要规则与磨砺，适合精准、制度、技术型的岗位',
+        4: '水是你的光——你需要流动与润泽，适合信息、连接、知识型的路径'
+      };
+      var useMetaphor = USE_METAPHOR[useWx];
+
+      // 命盘一句话用原五行（意象）+ 合化注，避免出现"乙金·藤蔓花草"这类矛盾
+      var dmWxOrig = (pillars.dayMasterWxOrig!==undefined) ? pillars.dayMasterWxOrig : pillars.dayMasterWx;
+      var huaTagOL = (pillars.dayMasterWxOrig!==undefined && pillars.dayMasterWxOrig!==pillars.dayMasterWx) ? '<span style="font-size:.85em;color:#d94f4f">(合化→'+WX[pillars.dayMasterWx]+')</span>' : '';
+      var sentence = '<strong>'+TG[dmTg]+WX[dmWxOrig]+'·'+TG_IMAGE[dmTg]+'</strong>'+huaTagOL+'，'+situationPart+'。'+useMetaphor+'。';
+
+      html += '<div style="padding:12px 14px;margin-bottom:12px;background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(236,72,153,0.06));border-left:3px solid #6366f1;border-radius:6px">';
+      html += '<div style="font-size:.75em;color:#6366f1;font-weight:600;margin-bottom:4px">🪞 命盘一句话</div>';
+      html += '<p style="margin:0;font-size:.95em;line-height:1.65;color:var(--text)">'+sentence+'</p>';
+      html += '</div>';
+    })();
+
+    // 核心卡片：3项
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
+    // 身强弱
+    html += '<div style="padding:10px 12px;background:#fff;border-radius:8px;border-left:3px solid '+strengthColor+'">';
+    html += '<div style="font-size:.75em;color:var(--sub);margin-bottom:3px">日主 · 身强弱</div>';
+    var dmWxOrigShow = (pillars.dayMasterWxOrig!==undefined) ? pillars.dayMasterWxOrig : pillars.dayMasterWx;
+    var huaNoteSummary = (pillars.dayMasterWxOrig!==undefined && pillars.dayMasterWxOrig!==pillars.dayMasterWx) ? ' <span style="font-size:.78em;color:#d94f4f">(合化→'+WX[pillars.dayMasterWx]+')</span>' : '';
+    html += '<div style="font-size:1.05em;font-weight:700">'+TG[pillars.dayMaster]+WX[dmWxOrigShow]+huaNoteSummary+' · <span style="color:'+strengthColor+'">'+strengthLabel+'</span></div>';
+    html += '<div style="font-size:.8em;color:var(--sub);margin-top:2px">r* = '+r.toFixed(2)+' · '+patternText+'</div>';
+    html += '</div>';
+    // 用神忌神
+    var useColor = ['#2d8a4e','#d94f4f','#b7892e','#6aa0c8','#2e6bc5'][useGod.w];
+    html += '<div style="padding:10px 12px;background:#fff;border-radius:8px;border-left:3px solid '+useColor+'">';
+    html += '<div style="font-size:.75em;color:var(--sub);margin-bottom:3px">用神 / 忌神</div>';
+    html += '<div style="font-size:1.05em;font-weight:700"><span style="color:'+useColor+'">'+useGodName+'</span>'+(secondGod?' · <span style="color:var(--sub);font-size:.88em">喜 '+WX[secondGod.w]+'</span>':'')+'</div>';
+    html += '<div style="font-size:.8em;color:var(--sub);margin-top:2px">'+(enemyName?'忌 <span style="color:var(--red)">'+enemyName+'</span>':'无明显忌神')+(hasDivergence?' · <span style="color:#d97706">多法分歧⚠</span>':'')+'</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // 当前大运
+    html += '<div style="padding:10px 12px;background:#fff;border-radius:8px;border-left:3px solid '+curDYTone.color+';margin-bottom:12px">';
+    html += '<div style="font-size:.75em;color:var(--sub);margin-bottom:3px">当前大运（'+age+'岁）</div>';
+    html += '<div style="font-size:1.0em;font-weight:600">'+curDYText+' · <span style="color:'+curDYTone.color+'">'+curDYTone.text+'</span></div>';
+    html += '</div>';
+
+    // 行动建议
+    html += '<div style="padding:10px 12px;background:#fff;border-radius:8px">';
+    html += '<div style="font-size:.75em;color:var(--sub);margin-bottom:6px">💡 行动建议</div>';
+    html += '<ul style="margin:0;padding-left:20px;font-size:.88em;line-height:1.7">';
+    advices.forEach(function(a){ html += '<li>'+a+'</li>'; });
+    html += '</ul>';
+    html += '<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:.74em;color:var(--sub);line-height:1.6">以下 22 节为量化推演细节，可按兴趣展开；参考而非绝对。<br>⚠ 以上方位/颜色/行业建议基于传统命理五行映射的生活化落地，<strong>不构成投资、就业、医疗或任何重大决策建议</strong>；请与你自己的实际情况交叉判断。</div>';
+    html += '</div>';
+    html += '</div>';
+  })();
+
+  // ── STEP 1: 时空坐标初始化 ──
+  html += '<div class="card"><div class="step-section">';
+  html += '<div class="step-header"><div class="step-num">1</div><div class="step-title">时空坐标初始化</div><div class="step-desc">排盘 · 四柱八字</div></div>';
+  html += renderPillars(pillars);
+  html += '<p style="text-align:center;color:var(--sub);font-size:.85em;margin-top:8px">' +
+    'B = ('+TG[pillars.stems[0]]+DZ[pillars.branches[0]]+', '+TG[pillars.stems[1]]+DZ[pillars.branches[1]]+', '+
+    TG[pillars.stems[2]]+DZ[pillars.branches[2]]+', '+TG[pillars.stems[3]]+DZ[pillars.branches[3]]+')</p>';
+
+  var pillarNames = ['年','月','日','时'];
+  var yyNames = ['阴','阳'];
+
+  html += '<h3>排盘计算步骤 '+tipHtml('时空坐标初始化','','把你的出生年、月、日、时转换成天干地支的"时间密码"。先用真太阳时修正钟表时间（因为中国横跨5个时区却统一用北京时间），再按古历法规则逐一推算出年柱、月柱、日柱、时柱，最终得到你独一无二的四柱八字。')+'</h3>';
+
+  var adj = pillars.tsAdj;
+  var trueHH = adj.trueHH, trueMM = adj.trueMM;
+  var trueBranch = adj.trueBranch;
+
+  if(adj.dst && adj.dst.isDST){
+    html += '<div class="detail-box" style="margin-bottom:14px;border-left:4px solid var(--red);background:#fff5f5">';
+    html += '<h4 style="color:var(--red)">⚠ 夏令时修正 (1986–1991)</h4>';
+    html += '<p>该出生日期处于中国夏令时期间，钟表时间比北京标准时间快1小时。</p>';
+    html += '<p>钟表时间 <strong>'+(hh<10?'0':'')+hh+':'+(mm<10?'0':'')+mm+'</strong> → 标准时间 <strong>'+(adj.dst.stdHH<10?'0':'')+adj.dst.stdHH+':'+(adj.dst.stdMM<10?'0':'')+adj.dst.stdMM+'</strong>（−1小时）</p>';
+    html += '</div>';
+  }
+
+  html += '<div class="detail-box" style="margin-bottom:14px">';
+  html += '<h4>真太阳时修正</h4>';
+  html += '<div class="detail-grid" style="margin:8px 0 0">';
+  html += '<div><p>出生地经度：<strong>'+lon+'°E</strong></p>';
+  html += '<p>经度差修正：('+lon+' − 120) × 4 = <strong>'+(adj.lonAdj>=0?'+':'')+adj.lonAdj.toFixed(1)+' 分钟</strong></p></div>';
+  html += '<div><p>均时差 (EoT)：<strong>'+(adj.eot>=0?'+':'')+adj.eot.toFixed(1)+' 分钟</strong></p>';
+  html += '<p>总修正：<strong>'+(adj.totalMin>=0?'+':'')+adj.totalMin.toFixed(1)+' 分钟</strong></p></div>';
+  html += '</div>';
+  var stdLabel = (adj.dst && adj.dst.isDST) ? '标准时间' : '北京时间';
+  var stdHHShow = (adj.dst && adj.dst.isDST) ? adj.dst.stdHH : hh;
+  var stdMMShow = (adj.dst && adj.dst.isDST) ? adj.dst.stdMM : mm;
+  html += '<p style="margin-top:8px">'+stdLabel+' <strong>'+(stdHHShow<10?'0':'')+stdHHShow+':'+(stdMMShow<10?'0':'')+stdMMShow+'</strong> → 真太阳时 <strong>'+(trueHH<10?'0':'')+trueHH+':'+(trueMM<10?'0':'')+trueMM+'</strong>';
+  var origHour = hourMinToBranch(hh, mm);
+  if(trueBranch !== origHour){
+    html += ' <span style="color:var(--red);font-weight:700">（时辰变更：'+DZ[origHour]+'时 → '+DZ[trueBranch]+'时，已按修正后时辰排盘）</span>';
+  } else {
+    html += ' （仍为 '+DZ[origHour]+'时）';
+  }
+  html += '</p>';
+  if(adj.isLateZi){
+    var isNextDay = adj.lateZiMode === 'nextDay';
+    var urlSame = new URL(window.location.href); urlSame.searchParams.set('lateZi','sameDay');
+    var urlNext = new URL(window.location.href); urlNext.searchParams.set('lateZi','nextDay');
+    html += '<div style="margin-top:8px;padding:8px 10px;background:rgba(124,58,237,0.06);border-left:3px solid #7c3aed;border-radius:6px">';
+    html += '<p style="margin:0;color:#7c3aed;font-weight:600">🌙 晚子时派别选择 '+tipHtml('夜子时','','子时跨日(23:00-01:00)的日柱归属有两派：<br>① 晚子时归本日(主流)：23:xx 日柱仍用当日<br>② 子初换日派：23:xx 日柱推进一天<br>两派日主可能完全不同，结论差异大。')+'</p>';
+    html += '<div style="margin-top:6px;font-size:.88em">';
+    html += '<label style="margin-right:14px;cursor:pointer"><input type="radio" name="lateZiMode" value="sameDay" '+(isNextDay?'':'checked')+' onchange="location.href=\''+urlSame.search+'\'" style="vertical-align:middle"> 晚子时归本日<span style="color:var(--sub)">(主流·默认)</span></label>';
+    html += '<label style="cursor:pointer"><input type="radio" name="lateZiMode" value="nextDay" '+(isNextDay?'checked':'')+' onchange="location.href=\''+urlNext.search+'\'" style="vertical-align:middle"> 子初换日派<span style="color:var(--sub)">(JDN+1)</span></label>';
+    html += '</div>';
+    html += '<p style="margin:6px 0 0;font-size:.82em;color:var(--sub)">当前：<strong style="color:#7c3aed">'+(isNextDay?'子初换日派 · 日柱按次日':'晚子时归本日 · 日柱按当日')+'</strong>。切换派别会改变日柱/日主，整盘结论可能翻转。</p>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html += '<div class="detail-grid">';
+  html += '<div class="detail-box"><h4>儒略日号 JDN</h4><p class="big-val">'+pillars.jd+'</p><p>公历 '+Y+'/'+M+'/'+D+(adj.advanceDay?' <span style="color:#7c3aed">(日柱按次日)</span>':'')+'</p>';
+  html += '<p class="formula" style="margin-top:6px">日柱序 n_日 = ('+(adj.advanceDay?'JDN+1':'JDN')+' + 49) mod 60 = '+pillars.day.n+'</p></div>';
+  html += '<div class="detail-box"><h4>立春年界</h4><p>排盘年份 = <strong>'+pillars.yearForPillar+'</strong></p>';
+  html += '<p>干支序 n = ('+pillars.yearForPillar+' − 4) mod 60 = '+pillars.year.n+'</p>';
+  html += '<p>年干 = n mod 10 = '+pillars.year.t+' → <strong>'+TG[pillars.year.t]+'</strong></p>';
+  html += '<p>年支 = n mod 12 = '+pillars.year.d+' → <strong>'+DZ[pillars.year.d]+'</strong></p></div>';
+  html += '</div>';
+  html += '<div class="detail-grid">';
+  html += '<div class="detail-box"><h4>月柱推算</h4>';
+  html += '<p>月支 = <strong>'+DZ[pillars.month.d]+'</strong>（太阳黄经定节气）</p>';
+  html += '<p>月干 = (2×(年干%5) + 2 + 月序) mod 10 = <strong>'+TG[pillars.month.t]+'</strong></p></div>';
+  html += '<div class="detail-box"><h4>时柱推算</h4>';
+  html += '<p>时支 = <strong>'+DZ[pillars.hour.d]+'</strong>（'+DZ[hour]+'时 = '+hh+':00 段）</p>';
+  html += '<p>时干 = (2×(日干%5) + 时支) mod 10 = <strong>'+TG[pillars.hour.t]+'</strong></p></div>';
+  html += '</div>';
+
+  html += '<h3>八字五行 '+tipHtml('八字与五行','中国传统命理学基础','八字就是你出生那一刻的"时间密码"——用年、月、日、时四组天干地支（共八个字）记录。每个字都对应金、木、水、火、土五种能量之一，这张表展示了你八字中每个字的五行属性和力量分布。')+'</h3>';
+  html += '<table><tr><th>柱</th><th>五行</th><th>天干</th><th>地支</th><th>本气</th><th>中气</th><th>余气</th></tr>';
+  for(var i=0;i<4;i++){
+    var t=pillars.stems[i], d=pillars.branches[i], cg=CANG_GAN[d];
+    var tYY = yyNames[tgYy(t)]+WX[tgWx(t)];
+    html += '<tr>';
+    html += '<td><strong>'+pillarNames[i]+'柱</strong></td>';
+    html += '<td style="color:'+WX_COLOR[tgWx(t)]+'">'+tYY+'</td>';
+    html += '<td style="font-size:1.3em;font-weight:700;color:'+WX_COLOR[tgWx(t)]+'">'+TG[t]+'</td>';
+    html += '<td style="font-size:1.3em;font-weight:700;color:'+WX_COLOR[dzWx(d)]+'">'+DZ[d]+'</td>';
+    for(var j=0;j<3;j++){
+      if(j<cg.length){
+        var ct=cg[j].t;
+        var cgYY = yyNames[tgYy(ct)]+WX[tgWx(ct)];
+        html += '<td><span style="color:'+WX_COLOR[tgWx(ct)]+'">'+TG[ct]+' '+cgYY+'</span> <span style="color:#999">α='+cg[j].w+'</span></td>';
+      } else {
+        html += '<td>—</td>';
+      }
+    }
+    html += '</tr>';
+  }
+  html += '</table>';
+
+  html += '</div></div>';
+
+  // ── STEP 2: 命局张量化与基础五行计算 ──
+  html += '<div class="card"><div class="step-section">';
+  html += '<div class="step-header"><div class="step-num">2</div><div class="step-title">命局张量化与基础五行计算</div><div class="step-desc">五行向量 V</div></div>';
+  html += '<div class="formula">V = Σ λ<sup>T</sup><sub>i</sub> · φ(天干<sub>i</sub>) + Σ λ<sup>D</sup><sub>j</sub> · α<sub>k</sub> · ε<sub>空</sub> · φ(藏干<sub>jk</sub>)</div>';
+
+  html += '<h3>2a. 位置权重 λ '+tipHtml('月柱权重最高','《子平真诠》："八字用神，专求月令"；《渊海子平》："月令为最紧要"','月令为提纲，古籍共识最强。月干1.2、月支1.5为现代量化设计。')+'</h3>';
+  html += '<table><tr><th></th><th>年柱</th><th>月柱 '+tipHtml('月柱加权','《三命通会》："月令乃提纲之府，譬之宅也，人元为用事之神"','月令（月支）掌当令之气，决定五行旺衰大局，故λ最高。月干为月令透出，亦加权。')+'</th><th>日柱 '+tipHtml('日支加权','现代经验设计','日支为夫妻宫，与日主紧邻关系密切，略高于年支/时支。古书无直接数值依据。')+'</th><th>时柱</th></tr>';
+  html += '<tr><td>天干 λ<sup>T</sup></td>';
+  for(var i=0;i<4;i++) html += '<td'+(POS_WT[i]>1?' style="color:var(--accent2);font-weight:700"':'')+'>'+POS_WT[i].toFixed(1)+'</td>';
+  html += '</tr><tr><td>地支 λ<sup>D</sup></td>';
+  for(var i=0;i<4;i++) html += '<td'+(POS_WT[i+4]>1?' style="color:var(--accent2);font-weight:700"':'')+'>'+POS_WT[i+4].toFixed(1)+'</td>';
+  html += '</tr></table>';
+  if(pillars.kongWang && pillars.kongWang.length>0){
+    html += '<div class="note">空亡地支：<strong>'+pillars.kongWang.map(function(d){return DZ[d];}).join('、')+'</strong>（藏干力量 × ε = 0.1）'+tipHtml('空亡减力','《三命通会·论空亡》专篇论述空亡之支"有减力"','古书对空亡分歧较大：有人主张"空则无用"(力=0)，有人认为"逢冲出空"可恢复。ε=0.1为折中设计——大幅减力但不灭。')+'</div>';
+  }
+
+  html += '<h3>2b. 天干五行贡献 '+tipHtml('天干贡献','','天干是八字中"明面上"的四个字（写在上面的），每个天干自带一种五行能量。这里计算每个天干给你的命局贡献了多少力量，月柱天干因为离"当令"最近所以权重略高。')+'</h3>';
+  var stemContrib = [0,0,0,0,0];
+  html += '<table><tr><th>位置</th><th>天干</th><th>五行</th><th>λ<sup>T</sup></th><th>贡献</th></tr>';
+  for(var i=0;i<4;i++){
+    var t=pillars.stems[i], w=tgWx(t);
+    stemContrib[w] += POS_WT[i];
+    html += '<tr><td>'+['年干','月干','日干','时干'][i]+'</td>';
+    html += '<td style="font-weight:700;color:'+WX_COLOR[w]+'">'+TG[t]+'</td>';
+    html += '<td style="color:'+WX_COLOR[w]+'">'+WX[w]+'</td>';
+    html += '<td>'+POS_WT[i].toFixed(1)+'</td>';
+    html += '<td style="font-weight:700">'+POS_WT[i].toFixed(2)+'</td></tr>';
+  }
+  html += '<tr style="border-top:2px solid var(--border);font-weight:700"><td colspan="4">天干小计</td><td>';
+  var stemTotal = stemContrib.reduce(function(s,v){return s+v;},0);
+  html += stemTotal.toFixed(2)+'</td></tr></table>';
+
+  html += '<h3>2c. 地支藏干贡献 '+tipHtml('地支藏干','《三命通会》','地支是八字中"暗面"的四个字（写在下面的），每个地支内部藏着1-3个天干（叫"藏干"），就像一个容器里装了几种能量。本气最强（60%），中气次之（30%），余气最弱（10%）。这里算出每个藏干贡献的力量。')+'</h3>';
+  var branchContrib = [0,0,0,0,0];
+  html += '<table><tr><th>位置</th><th>地支</th><th>藏干</th><th>五行</th><th>α '+tipHtml('藏干力量比例','《三命通会》《渊海子平》明确区分本气、中气、余气的主次','古书定性共识：本气 > 中气 > 余气。0.6/0.3/0.1（或0.7/0.3双藏干）为现代量化设计，约束为α之和=1.0（力量守恒）。')+'</th><th>λ<sup>D</sup></th><th>ε<sub>空</sub></th><th>贡献</th></tr>';
+  for(var i=0;i<4;i++){
+    var d=pillars.branches[i], cg=CANG_GAN[d];
+    var isKw = pillars.kongWang.indexOf(d)>=0;
+    var kwMul = isKw ? 0.1 : 1.0;
+    for(var j=0;j<cg.length;j++){
+      var ct=cg[j].t, w=tgWx(ct);
+      var val = POS_WT[i+4]*cg[j].w*kwMul;
+      branchContrib[w] += val;
+      html += '<tr>';
+      if(j===0) html += '<td rowspan="'+cg.length+'">'+['年支','月支','日支','时支'][i]+'</td><td rowspan="'+cg.length+'" style="font-weight:700;color:'+WX_COLOR[dzWx(d)]+'">'+DZ[d]+(isKw?' <span style="color:var(--red);font-size:.8em">空</span>':'')+'</td>';
+      html += '<td style="color:'+WX_COLOR[w]+'">'+TG[ct]+' <span style="color:#999;font-size:.85em">'+['本气','中气','余气'][j]+'</span></td>';
+      html += '<td style="color:'+WX_COLOR[w]+'">'+WX[w]+'</td>';
+      html += '<td>'+cg[j].w.toFixed(1)+'</td>';
+      html += '<td>'+POS_WT[i+4].toFixed(1)+'</td>';
+      if(isKw) html += '<td style="color:var(--red);font-weight:700">0.1</td>';
+      else html += '<td>1.0</td>';
+      html += '<td style="font-weight:700'+(isKw?';color:var(--red)':'')+'">'+val.toFixed(2)+'</td></tr>';
+    }
+  }
+  html += '<tr style="border-top:2px solid var(--border);font-weight:700"><td colspan="7">地支小计</td><td>';
+  var branchTotal = branchContrib.reduce(function(s,v){return s+v;},0);
+  html += branchTotal.toFixed(2)+'</td></tr></table>';
+
+  html += '<h3>2d. 五行力量汇总 '+tipHtml('五行力量总表','','把上面天干和地支藏干的贡献加在一起，得到你命局中金、木、水、火、土五种能量各有多少。这就是你的"先天五行能量分布图"——哪个多、哪个少，决定了你命局的基本格局。')+'</h3>';
+  html += renderHBars(V, '原始五行向量 V', Math.max.apply(null,V));
+  html += '<table><tr><th>五行</th><th style="color:var(--green)">木</th><th style="color:var(--red)">火</th><th style="color:var(--gold)">土</th><th style="color:var(--metal)">金</th><th style="color:var(--blue)">水</th><th>合计</th></tr>';
+  html += '<tr><td>天干</td>'+stemContrib.map(function(v){return '<td>'+(v>0?v.toFixed(2):'—')+'</td>';}).join('')+'<td>'+stemTotal.toFixed(2)+'</td></tr>';
+  html += '<tr><td>地支藏干</td>'+branchContrib.map(function(v){return '<td>'+(v>0?v.toFixed(2):'—')+'</td>';}).join('')+'<td>'+branchTotal.toFixed(2)+'</td></tr>';
+  html += '<tr style="font-weight:700;border-top:2px solid var(--border)"><td>V</td>'+V.map(function(v){return '<td>'+v.toFixed(2)+'</td>';}).join('')+'<td>'+(stemTotal+branchTotal).toFixed(2)+'</td></tr></table>';
+  html += '</div></div>';
+
+  // ── STEP 3: 四时用事与非线性网络修正 ──
+  var wsName = WX[mc.ws];
+  html += '<div class="card"><div class="step-section">';
+  html += '<div class="step-header"><div class="step-num">3</div><div class="step-title">四时用事与非线性网络修正</div><div class="step-desc">月令 · 合冲刑害 · 藏干修正</div></div>';
+
+  html += '<h3>3a. 合冲刑害关系检测 '+tipHtml('合冲刑害','《渊海子平》','八字中的天干和地支之间会发生"化学反应"：合=两个字互相吸引结合（力量可能变化）；冲=两个字正面对抗（互相削弱）；刑=暗中较劲（隐性摩擦）；害=背后捣乱（破坏原有组合）。这些关系会改变五行力量的实际分布。')+'</h3>';
+  if(tgCombos.length>0){
+    var _pc={};
+    tgCombos.forEach(function(c){_pc[c.i]=(_pc[c.i]||0)+1;_pc[c.j]=(_pc[c.j]||0)+1;});
+    html += '<p class="note"><strong>天干五合：</strong>'+tgCombos.map(function(c){
+      var isZH = (_pc[c.i]>1||_pc[c.j]>1);
+      return TG[c.t1]+TG[c.t2]+'合化'+WX[c.chi]+(isZH?' <span style="color:var(--red)">(争合失败)</span>':'');
+    }).join('；')+'</p>';
+  } else {
+    html += '<p class="note">天干五合：无</p>';
+  }
+  var tgChongs = dzEffects.tgChongs || [];
+  if(tgChongs.length>0){
+    html += '<p class="note"><strong>天干相冲：</strong>'+tgChongs.map(function(c){
+      if(c.resolved) return TG[c.t1]+TG[c.t2]+'冲 <span style="color:var(--green)">(被五合解冲)</span>';
+      return TG[c.t1]+TG[c.t2]+'冲';
+    }).join('；')+'</p>';
+  } else {
+    html += '<p class="note">天干相冲：无</p>';
+  }
+  var dzRelsSummary = dzRels.filter(function(r){return r.type!=='三合'&&r.type!=='半三合'&&r.type!=='三会'&&r.type!=='自刑'&&r.type!=='暗合'&&r.type!=='破';});
+  var dzZiXing = dzRels.filter(function(r){return r.type==='自刑';});
+  var dzSanHe = dzRels.filter(function(r){return r.type==='三合'||r.type==='半三合'||r.type==='三会';});
+  var dzAnHePo = dzRels.filter(function(r){return r.type==='暗合'||r.type==='破';});
+  html += (dzRelsSummary.length>0 ? '<p class="note"><strong>地支关系：</strong>'+dzRelsSummary.map(function(r){return DZ[r.d1]+DZ[r.d2]+' <strong>'+r.type+'</strong>';}).join('、')+'</p>':'<p class="note">地支六合/六冲/相刑/六害：无</p>');
+  html += (dzSanHe.length>0 ? '<p class="note"><strong>地支三合：</strong>'+dzSanHe.map(function(r){return r.branches.map(function(b){return DZ[b];}).join('')+r.type+WX[r.huaWx]+'局';}).join('、')+'</p>':'');
+  html += (dzZiXing.length>0 ? '<p class="note"><strong>地支自刑：</strong>'+dzZiXing.map(function(r){return DZ[r.d1]+DZ[r.d2]+'自刑';}).join('、')+'</p>':'');
+  html += (dzAnHePo.length>0 ? '<p class="note"><strong>暗合/破：</strong>'+dzAnHePo.map(function(r){return DZ[r.d1]+DZ[r.d2]+' <strong>'+r.type+'</strong>'+(r.desc?' ('+r.desc+')':'');}).join('、')+'</p>':'');
+
+  // 《五行结构论》地支六气分类
+  var LIU_QI_COLOR = { '冷':'#2e6bc5','温':'#5fa858','热':'#d94f4f','凉':'#6aa0c8','湿':'#7a8fa5','燥':'#c88a4e' };
+  html += '<p class="note" style="margin-top:8px"><strong>地支六气 '+tipHtml('六气','《五行结构论》(闻晨植)','按温度+湿燥二维对十二地支分类：亥子=冷、寅卯=温、巳午=热、申酉=凉、辰丑=湿、戌未=燥。同气地支之间有相互帮助的关系。')+'：</strong>';
+  var liuQiByBranch = pillars.branches.map(function(b,i){
+    var q = LIU_QI[b];
+    return ['年','月','日','时'][i]+'支'+DZ[b]+'<span style="color:'+LIU_QI_COLOR[q]+';font-weight:600">('+q+')</span>';
+  });
+  html += liuQiByBranch.join(' · ') + '</p>';
+
+  if(dzEffects.modNotes.length>0){
+    html += '<h3>3b. 藏干级修正详情 '+tipHtml('藏干修正','','合冲刑害不仅影响地支本身，还会影响地支里面"藏"的天干能量。比如两个地支相冲时，弱的那方藏干力量会被大幅削弱。这里详细列出每次合冲对藏干力量的具体影响数值。')+'</h3>';
+    html += '<div class="detail-box" style="border-left:4px solid var(--accent2)">';
+    for(var n=0;n<dzEffects.modNotes.length;n++){
+      html += '<p class="note" style="margin:4px 0">• '+dzEffects.modNotes[n]+'</p>';
+    }
+    html += '</div>';
+    html += '<table><tr><th>位置</th><th>年干</th><th>月干</th><th>日干</th><th>时干</th></tr>';
+    html += '<tr><td>天干</td>'+pillars.stems.map(function(t){return '<td>'+TG[t]+'</td>';}).join('')+'</tr>';
+    html += '<tr><td>天干乘数</td>'+dzEffects.stemMul.map(function(m,idx){
+      var color = m<1.0?'color:var(--red)':'color:var(--green)';
+      var note = dzEffects.stemTransform && dzEffects.stemTransform[idx] ? '(→'+WX[dzEffects.stemTransform[idx].targetWx]+')' : '';
+      return '<td style="'+color+';font-weight:700">×'+m.toFixed(2)+note+'</td>';
+    }).join('')+'</tr></table>';
+    html += '<table><tr><th>位置</th><th>年支</th><th>月支</th><th>日支</th><th>时支</th></tr>';
+    html += '<tr><td>地支</td>'+pillars.branches.map(function(d){return '<td>'+DZ[d]+'</td>';}).join('')+'</tr>';
+    html += '<tr><td>藏干乘数</td>'+dzEffects.branchMul.map(function(m){
+      var color = m<1.0?'color:var(--red)':'color:var(--green)';
+      return '<td style="'+color+';font-weight:700">×'+m.toFixed(2)+'</td>';
+    }).join('')+'</tr>';
+    html += '<tr><td>状态</td>'+dzEffects.branchMul.map(function(m,idx){
+      if(dzEffects.branchTransform[idx]) return '<td style="color:var(--accent2);font-weight:700">合化→'+WX[dzEffects.branchTransform[idx].targetWx]+'</td>';
+      if(m<1.0) return '<td style="color:var(--red)">减力</td>';
+      return '<td style="color:var(--green)">正常</td>';
+    }).join('')+'</tr></table>';
+  } else {
+    html += '<h3>3b. 藏干级修正</h3>';
+    html += '<p class="note">本命局未检测到合冲刑害关系，藏干力量不变。</p>';
+  }
+
+  html += '<h3>3c. 修正后五行向量 '+tipHtml('修正后五行','','经过合冲刑害的"化学反应"和月令旺衰（当前季节对五行的加成/衰减）修正后，得到最终的五行力量分布。这才是你命局中五行的"真实实力"，后续所有分析都基于这个修正后的数据。')+'</h3>';
+  html += '<p>V<sub>原始</sub> → V<sub>合冲修正</sub> → V\'（月令旺衰修正 '+tipHtml('旺相休囚死','《五行大义》（隋·萧吉）系统论述五态：当令者旺、令生者相、生令者休、克令者囚、令克者死','古书定性排序明确：旺 > 相 > 休 > 囚 > 死。具体乘数 旺1.5/相1.2/休1.0/囚0.7/死0.5 为现代量化，古人只言"旺者有力、死者无力"。')+'）</p>';
+
+  // ── 逐行计算表（每行一个五行，从左到右推导） ──
+  var WS_NAMES = ['旺','相','死','囚','休'];
+  var WS_COLORS = ['var(--red)','var(--green)','var(--metal)','var(--purple)','var(--sub)'];
+  var mcWs = mc.ws;
+  html += '<table style="font-size:.88em">';
+  html += '<tr><th style="width:50px">五行</th><th>V原始</th><th>合冲Δ</th><th>V合冲</th><th>×月令<br><span style="font-weight:400;font-size:.85em">'+wsName+'旺</span></th><th>V\'</th></tr>';
+  for(var w=0;w<5;w++){
+    var delta = VmodPreHidden[w] - V[w];
+    var dist = (w - mcWs + 5) % 5;
+    var wsState = WS_NAMES[dist];
+    var wsMul = WANG_SHUAI_MUL[dist];
+    var deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(2);
+    var deltaColor = delta > 0.01 ? 'var(--green)' : (delta < -0.01 ? 'var(--red)' : 'var(--sub)');
+    var mulColor = wsMul > 1 ? 'var(--red)' : (wsMul < 1 ? 'var(--blue)' : 'var(--sub)');
+    html += '<tr>';
+    html += '<td style="font-weight:700;color:'+WX_COLOR[w]+'">'+WX[w]+'</td>';
+    html += '<td>'+V[w].toFixed(2)+'</td>';
+    html += '<td style="color:'+deltaColor+'">'+deltaStr+'</td>';
+    html += '<td style="font-weight:600">'+VmodPreHidden[w].toFixed(2)+'</td>';
+    html += '<td style="color:'+mulColor+'">×'+wsMul.toFixed(1)+' <span style="font-size:.8em;opacity:.7">('+wsState+')</span></td>';
+    html += '<td style="font-weight:700">'+VfinalPreHidden[w].toFixed(2)+'</td>';
+    html += '</tr>';
+  }
+  html += '</table>';
+
+  // ── 最终 V' 横条图（暗合补完前） ──
+  var maxFinal = 0;
+  for(var i=0;i<5;i++) maxFinal = Math.max(maxFinal, Vfinal[i]);
+  if(!hasHiddenBoost){
+    html += renderHBars(Vfinal, '最终 V\'', maxFinal);
+  } else {
+    html += renderHBars(VfinalPreHidden, 'V\'（暗合补完前）', maxFinal);
+  }
+
+  // ── 3d: 暗物质三柱与暗合补完 ──
+  html += '<h3>3d. 暗物质三柱 '+tipHtml('胎元·命宫·身宫','《三命通会》','除了明面的四柱八字外，还有三个"隐藏柱"：胎元（受孕月的干支，代表先天禀赋）、命宫（你的灵魂定位，不随大运变化的固定坐标）、身宫（你的行为表现，后天发展方向）。若其地支能补全原局的三合/三会，则"暗中"增强对应五行力量，计入V向量。')+'</h3>';
+  html += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">';
+  var hpArr = [hiddenPillars.tai, hiddenPillars.ming, hiddenPillars.shen];
+  for(var hi=0;hi<3;hi++){
+    var hp = hpArr[hi];
+    var hpSS = shiShen(pillars.dayMaster, hp.t);
+    var hpMainSS = shiShen(pillars.dayMaster, CANG_GAN[hp.d][0].t);
+    html += '<div style="flex:1;min-width:120px;text-align:center;padding:12px;background:rgba(128,0,255,0.04);border:1px solid rgba(128,0,255,0.15);border-radius:8px">';
+    html += '<div style="font-size:.78em;color:#8b5cf6;margin-bottom:4px">'+hp.label+'</div>';
+    html += '<div style="font-size:1.3em;font-weight:700">'+TG[hp.t]+DZ[hp.d]+'</div>';
+    html += '<div style="font-size:.82em;color:var(--sub);margin-top:4px">天干: '+shiShenName(hpSS)+' · 地支: '+shiShenName(hpMainSS)+'</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  if(hiddenCombos.length > 0){
+    html += '<div style="padding:8px 12px;background:rgba(128,0,255,0.03);border-left:3px solid #8b5cf6;border-radius:4px;margin-bottom:12px;font-size:.88em">';
+    html += '<strong style="color:#8b5cf6">暗合补完</strong> '+tipHtml('暗合补完','传统命理辅参','胎元/命宫/身宫的地支若能补全原局差一支的三合局或三会局，则"暗中"增强该化气五行。暗三合 +0.30、暗三会 +0.40 是叠加在合冲后底层向量（V合冲）上的，再经月令旺衰系数（旺1.5/相1.2/休1.0/囚0.7/死0.5）筛选，才得到 V\' 上的实际增量。因此化气五行若在当季为死/囚，有效增量会被折扣；若在当季为旺/相，则被放大。')+'<br>';
+    var ws_note = getSeasonWx(pillars.branches[1]);
+    for(var hc=0;hc<hiddenCombos.length;hc++){
+      var note = hiddenCombos[hc];
+      var distN = (note.wx - ws_note + 5) % 5;
+      var mulN = WANG_SHUAI_MUL[distN];
+      var effDelta = note.boost * mulN;
+      html += '· '+note.desc+' <span style="color:var(--sub)">→ 经月令×'+mulN.toFixed(1)+'（'+WS_NAMES[distN]+'），V\'实际增量 +'+effDelta.toFixed(2)+'</span><br>';
+    }
+    html += '</div>';
+    html += renderHBars(Vfinal, '暗合补完后 V\'', maxFinal);
+  } else {
+    html += '<p class="note">暗物质三柱未能补全原局三合/三会，不影响V向量。</p>';
+  }
+  html += '</div></div>';
+
+  // ── STEP 4: 日主强弱评估与十神解析 ──
+  html += '<div class="card"><div class="step-section">';
+  html += '<div class="step-header"><div class="step-num">4</div><div class="step-title">日主强弱评估与十神解析</div><div class="step-desc">身强身弱 · 十神 · 格局</div></div>';
+  html += '<h3>4a. 日主强弱 '+tipHtml('日主强弱','《子平真诠》《渊海子平》','日主就是"你自己"——出生日的天干代表你本人。把帮助你的力量（同类+印星）和消耗你的力量（官杀+财星+食伤）做对比，就能知道你是"强"还是"弱"。身强的人扛得住压力，身弱的人需要外界扶持。r*值越接近0.5越平衡。')+'</h3>';
+  html += renderStrengthGauge(strength);
+
+  // ── γ̄₀ 计算分解 ──
+  var w0 = pillars.dayMasterWx;
+  var wYin = (w0 + 4) % 5;
+  var WX_COLORS = ['var(--green)','var(--red)','var(--gold)','var(--metal)','var(--blue)'];
+  var wKeWo = (w0 + 3) % 5;
+  var wWoKe = (w0 + 2) % 5;
+  var wWoSheng = (w0 + 1) % 5;
+  var STAGE_NAMES_4a = ['长生','沐浴','冠带','临官','帝旺','衰','病','死','墓','绝','胎','养'];
+  var PILLAR_LABELS = ['年支','月支','日支','时支'];
+  var GAMMA_WT = [0.05, 0.85, 0.05, 0.05];
+  var t0 = pillars.dayMaster;
+
+  html += '<div style="margin:12px 0;padding:10px 14px;background:rgba(0,102,255,0.03);border:1px solid rgba(0,102,255,0.12);border-radius:8px">';
+  html += '<div style="font-size:.9em;font-weight:600;color:var(--accent2);margin-bottom:8px">日主旺衰系数 γ̄₀ 计算 '+tipHtml('γ̄₀','《渊海子平》："日干为主，月令提纲，长生禄旺为根基"','γ̄₀ = 日主天干在四柱地支的十二长生状态加权平均。月支为提纲，权重85%；年/日/时支各5%。')+'</div>';
+  html += '<table style="font-size:.85em;margin-bottom:6px"><tr><th style="width:52px">柱位</th><th style="width:36px">地支</th><th>十二长生</th><th>γ 值</th><th>权重</th><th>贡献</th></tr>';
+  var gammaSum = 0;
+  for(var gi=0;gi<4;gi++){
+    var br = pillars.branches[gi];
+    var stageIdx = changShengStage(t0, br);
+    var gVal = gammaVal(t0, br, true);
+    var wt = GAMMA_WT[gi];
+    var contrib = gVal * wt;
+    gammaSum += contrib;
+    var isMonth = gi === 1;
+    var rowBg = isMonth ? 'background:rgba(0,102,255,0.05);' : '';
+    html += '<tr style="'+rowBg+'">';
+    html += '<td style="font-weight:600">'+PILLAR_LABELS[gi]+(isMonth?' <span style="font-size:.78em;color:var(--accent2)">提纲</span>':'')+'</td>';
+    html += '<td style="font-weight:700">'+DZ[br]+'</td>';
+    html += '<td>'+STAGE_NAMES_4a[stageIdx]+'</td>';
+    html += '<td>'+gVal.toFixed(2)+'</td>';
+    html += '<td>'+(wt*100).toFixed(0)+'%</td>';
+    html += '<td style="font-weight:600">'+contrib.toFixed(3)+'</td>';
+    html += '</tr>';
+  }
+  html += '<tr style="border-top:2px solid var(--border);font-weight:700"><td colspan="5" style="text-align:right">γ̄₀ =</td><td>'+gammaSum.toFixed(3)+'</td></tr>';
+  html += '</table></div>';
+
+  // ── 帮扶 / 克泄 简明计算 ──
+  html += '<div style="margin:10px 0;display:flex;gap:12px;flex-wrap:wrap">';
+  // 帮扶卡片
+  html += '<div style="flex:1;min-width:220px;padding:10px 14px;background:rgba(39,174,96,0.04);border:1px solid rgba(39,174,96,0.18);border-radius:8px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span style="font-weight:700;color:#27ae60">帮扶 S\'同</span><span style="font-size:1.15em;font-weight:800;color:#27ae60">'+strength.S_tong_adj.toFixed(2)+'</span></div>';
+  html += '<div style="font-size:.82em;color:var(--sub);line-height:1.6">';
+  html += 'V\'[<span style="color:'+WX_COLORS[w0]+'">'+WX[w0]+'</span>] × γ̄₀ + V\'[<span style="color:'+WX_COLORS[wYin]+'">'+WX[wYin]+'</span>]';
+  if(strength.yinFactor !== undefined && strength.yinFactor < 1) html += ' × '+strength.yinFactor.toFixed(2);
+  html += '<br>= <span style="color:'+WX_COLORS[w0]+'">'+Vfinal[w0].toFixed(2)+'</span> × '+strength.gamma0.toFixed(3)+' + <span style="color:'+WX_COLORS[wYin]+'">'+Vfinal[wYin].toFixed(2)+'</span>';
+  if(strength.yinFactor !== undefined && strength.yinFactor < 1) html += ' × '+strength.yinFactor.toFixed(2);
+  html += '</div></div>';
+  // 克泄卡片
+  html += '<div style="flex:1;min-width:220px;padding:10px 14px;background:rgba(231,76,60,0.04);border:1px solid rgba(231,76,60,0.18);border-radius:8px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span style="font-weight:700;color:#e74c3c">克泄 S异</span><span style="font-size:1.15em;font-weight:800;color:#e74c3c">'+strength.S_yi.toFixed(2)+'</span></div>';
+  html += '<div style="font-size:.82em;color:var(--sub);line-height:1.6">';
+  html += 'V\'[<span style="color:'+WX_COLORS[wKeWo]+'">'+WX[wKeWo]+'</span>] + V\'[<span style="color:'+WX_COLORS[wWoKe]+'">'+WX[wWoKe]+'</span>] + V\'[<span style="color:'+WX_COLORS[wWoSheng]+'">'+WX[wWoSheng]+'</span>]';
+  html += '<br>= <span style="color:'+WX_COLORS[wKeWo]+'">'+Vfinal[wKeWo].toFixed(2)+'</span> + <span style="color:'+WX_COLORS[wWoKe]+'">'+Vfinal[wWoKe].toFixed(2)+'</span> + <span style="color:'+WX_COLORS[wWoSheng]+'">'+Vfinal[wWoSheng].toFixed(2)+'</span>';
+  html += '</div></div>';
+  html += '</div>';
+
+  // ── r* 结论 ──
+  html += '<div style="text-align:center;margin:10px 0;padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">';
+  html += '<span style="font-size:.9em">r* = S\'同 / (S\'同 + S异) = '+strength.S_tong_adj.toFixed(2)+' / ('+strength.S_tong_adj.toFixed(2)+' + '+strength.S_yi.toFixed(2)+') = </span><strong style="font-size:1.15em">'+strength.r.toFixed(3)+'</strong>';
+  html += '</div>';
+
+  // ── 九级标度参考 ──
+  html += '<div style="margin:10px 0;padding:8px 12px;background:rgba(0,102,255,0.03);border:1px solid rgba(0,102,255,0.12);border-radius:6px">';
+  html += '<div style="font-size:.88em;color:var(--accent2);margin-bottom:6px">▸ 九级强弱标度参考（定义 5.5）</div>';
+  html += '<table style="font-size:.85em"><tr><th>等级</th><th>r* 范围</th><th>命理含义</th></tr>';
+  var scaleRows = [
+    ['极强','r &gt; 0.85','专旺格，顺势泄秀'],
+    ['很强','0.75 &lt; r ≤ 0.85','宜官杀克制或食伤泄秀'],
+    ['强','0.65 &lt; r ≤ 0.75','宜抑宜泄'],
+    ['稍强','0.55 &lt; r ≤ 0.65','略强，取用灵活'],
+    ['中和','0.45 ≤ r ≤ 0.55','平衡，用神灵活'],
+    ['稍弱','0.35 ≤ r &lt; 0.45','略弱，宜扶宜助'],
+    ['弱','0.25 ≤ r &lt; 0.35','宜印星生扶或比劫帮扶'],
+    ['很弱','0.15 ≤ r &lt; 0.25','急需扶助'],
+    ['极弱','r &lt; 0.15','从格，弃命从势']
+  ];
+  for(var si=0;si<scaleRows.length;si++){
+    var isActive = strength.name === scaleRows[si][0];
+    var rowStyle = isActive ? ' style="background:rgba(0,102,255,0.08);font-weight:bold"' : '';
+    html += '<tr'+rowStyle+'><td>'+scaleRows[si][0]+(isActive?' ◀':'')+'</td><td>'+scaleRows[si][1]+'</td><td>'+scaleRows[si][2]+'</td></tr>';
+  }
+  html += '</table></div>';
+  html += '<h3>五行旺衰向量 γ̄ '+tipHtml('五行旺衰系数','《渊海子平》十二长生','每种五行的阳干代表在四柱地支的十二长生状态等权平均（每支25%）。γ̄ > 0.5 表示该五行在此命局较活跃，< 0.5 则较衰弱。此向量用于大运流年的动态旺衰修正。')+'</h3>';
+  // ── γ̄ 分解表：每行一个五行，列出四支的十二长生及γ值 ──
+  var STAGE_NAMES_gv = ['长生','沐浴','冠带','临官','帝旺','衰','病','死','墓','绝','胎','养'];
+  var YANG_STEMS_GV = [0, 2, 4, 6, 8]; // 甲丙戊庚壬
+  html += '<div style="margin:8px 0;padding:10px 14px;background:rgba(0,102,255,0.03);border:1px solid rgba(0,102,255,0.12);border-radius:8px">';
+  html += '<table style="font-size:.84em"><tr><th style="width:40px">五行</th>';
+  for(var pi=0;pi<4;pi++) html += '<th>'+PILLAR_LABELS[pi]+' '+DZ[pillars.branches[pi]]+'</th>';
+  html += '<th style="font-weight:700">γ̄</th></tr>';
+  for(var wi=0;wi<5;wi++){
+    var tw = YANG_STEMS_GV[wi];
+    html += '<tr><td style="font-weight:700;color:'+WX_COLOR[wi]+'">'+WX[wi]+'</td>';
+    var rowSum = 0;
+    for(var pi=0;pi<4;pi++){
+      var br = pillars.branches[pi];
+      var stg = changShengStage(tw, br);
+      var gv = gammaVal(tw, br, false);
+      rowSum += gv;
+      var stgColor = gv >= 1.0 ? 'var(--red)' : (gv >= 0.7 ? 'var(--green)' : (gv <= 0.1 ? 'var(--sub)' : ''));
+      html += '<td><span style="'+(stgColor?'color:'+stgColor+';':'')+'">'+STAGE_NAMES_gv[stg]+'</span> <span style="font-size:.85em;opacity:.7">'+gv.toFixed(1)+'</span></td>';
+    }
+    var avg = rowSum / 4;
+    html += '<td style="font-weight:700">'+avg.toFixed(3)+'</td></tr>';
+  }
+  html += '</table>';
+  html += '<p style="font-size:.78em;color:var(--sub);margin:6px 0 0">每支等权（25%），γ̄ = 四支γ值的算术平均。用于大运流年动态修正。</p>';
+  html += '</div>';
+
+  // ── 墓库十神分型叙事 (《五行结构论》) ──
+  // 辰=水库, 戌=火库, 丑=金库, 未=木库
+  var MUKU_MAP = { 4: {wx: 4, name: '水库'}, 10: {wx: 1, name: '火库'}, 1: {wx: 3, name: '金库'}, 7: {wx: 0, name: '木库'} };
+  // 十神场景叙事（去除偏吉/偏凶的情感修饰，保留客观场景标签）
+  var SS_MUKU_SCENE = {
+    0: '比肩', 1: '羊刃／比劫',
+    2: '食神', 3: '伤官',
+    4: '偏财', 5: '正财',
+    6: '七杀', 7: '正官',
+    8: '偏印', 9: '正印'
+  };
+  var SS_MUKU_PLACE = {
+    0: '团队/兄弟结盟', 1: '军团、营业部、团队基地',
+    2: '学校、寺庙、思想与才艺沉淀',
+    3: '演艺、技艺、创造表达的养成地',
+    4: '银行、保险柜、意外之财储备',
+    5: '固定资产、稳定收入积累',
+    6: '权力中心、组织部、军政机构',
+    7: '管理层、组织纪律、规范体系',
+    8: '图书馆、档案馆、玄学资料',
+    9: '图书馆、学术殿堂、知识传承'
+  };
+  // 根据"库藏五行对日主的十神"+身强弱，判定吉凶倾向
+  // 原则：
+  //   比劫库(同我)    身弱虚助(负·归藏乏力) / 身强过旺(中性·泄化)
+  //   食伤库(我生)    身强顺泄(正·才华外显) / 身弱被泄(负·耗气)
+  //   财库  (我克)    身强控财(正) / 身弱难担(负·守不住)
+  //   官杀库(克我)    身强用官(正·权力) / 身弱压身(负·压力)
+  //   印库  (生我)    身弱得救(正·靠山) / 身强印旺(负·雍塞)
+  function mukuValence(dWx, r){
+    var strong = r > 0.55;
+    var weak = r < 0.45;
+    if (dWx === 0) return strong ? {tag:'中性', note:'比劫归藏，身强得泄缓'} : {tag:'偏负', note:'自身入库，力量虚浮难发用'};
+    if (dWx === 1) return strong ? {tag:'偏正', note:'身强顺势泄秀'} : {tag:'偏负', note:'身弱被泄，需防耗气过度'};
+    if (dWx === 2) return strong ? {tag:'偏正', note:'身强可控财库'} : {tag:'偏负', note:'身弱难担财，守而非取'};
+    if (dWx === 3) return strong ? {tag:'偏正', note:'身强用官，权力有成'} : {tag:'偏负', note:'官杀压身，忌触其锋'};
+    if (dWx === 4) return weak ? {tag:'偏正', note:'印库得用，关键时有靠山'} : {tag:'中性', note:'印旺入库，注意不要雍塞'};
+    return {tag:'中性', note:''};
+  }
+  var muKuEntries = [];
+  var posLabelsMK = ['年','月','日','时'];
+  for (var mki = 0; mki < 4; mki++) {
+    var mb = pillars.branches[mki];
+    if (MUKU_MAP[mb]) {
+      var mukuWx = MUKU_MAP[mb].wx;
+      var w0mk = pillars.dayMasterWx;
+      var dWx = (mukuWx - w0mk + 5) % 5;
+      var ssIdx = dWx * 2;
+      if (dWx === 0) ssIdx = 1;
+      var val = mukuValence(dWx, strength.r);
+      muKuEntries.push({
+        pos: posLabelsMK[mki]+'支', branch: DZ[mb],
+        kuName: MUKU_MAP[mb].name, wx: WX[mukuWx],
+        shiShen: SS_MUKU_SCENE[ssIdx],
+        place: SS_MUKU_PLACE[ssIdx] || '',
+        valence: val
+      });
+    }
+  }
+  if (muKuEntries.length > 0) {
+    html += '<div style="margin:8px 0;padding:10px 14px;background:rgba(139,92,246,0.04);border-left:3px solid var(--purple);border-radius:6px">';
+    html += '<strong style="color:var(--purple)">墓库叙事 '+tipHtml('墓库十神','《五行结构论》(闻晨植)','辰戌丑未四库，不同十神入库有不同含义。库的吉凶不由"墓"字决定，而由藏干十神性质 × 日主身强弱共同决定 — 同样是比劫库，身弱时偏负（自身虚藏），身强时中性（过旺得泄）。')+'</strong>';
+    html += '<ul style="margin:6px 0 0;padding-left:20px">';
+    muKuEntries.forEach(function(e){
+      var tagColor = e.valence.tag==='偏正'?'#10b981':e.valence.tag==='偏负'?'#d97706':'#64748b';
+      html += '<li style="font-size:.9em;margin:4px 0">'+e.pos+' <strong>'+e.branch+'</strong>（'+e.kuName+'·藏'+e.wx+'·'+e.shiShen+'库）';
+      html += ' <span style="display:inline-block;padding:1px 6px;background:'+tagColor+'1a;color:'+tagColor+';border-radius:3px;font-size:.82em;font-weight:600">'+e.valence.tag+'</span>';
+      html += '<br><span style="color:var(--sub);font-size:.9em">· 场景联想：'+e.place+'</span>';
+      if (e.valence.note) html += '<br><span style="color:'+tagColor+';font-size:.88em">· '+e.valence.note+'（r*='+strength.r.toFixed(2)+'）</span>';
+      html += '</li>';
+    });
+    html += '</ul></div>';
+  }
+
+  html += '<h3>4b. 十神标注 '+tipHtml('十神','《子平真诠》','十神是八字中最重要的"角色分配系统"。以日主为中心，其他七个字各自扮演一个角色：比肩（兄弟）、劫财（竞争者）、食神（才华）、伤官（叛逆创造）、偏财（意外之财）、正财（稳定收入）、七杀（压力危机）、正官（规矩权威）、偏印（偏门学问）、正印（正统教育）。')+'</h3>';
+  html += '<table><tr><th></th><th>年柱</th><th>月柱</th><th>日柱</th><th>时柱</th></tr>';
+  html += '<tr><td><strong>天干</strong></td>';
+  for(var i=0;i<4;i++){
+    var t=pillars.stems[i];
+    var ss = i===2?'日主':shiShenName(shiShen(pillars.dayMaster,t));
+    html += '<td>'+TG[t]+' <span style="color:var(--accent2)">('+ss+')</span></td>';
+  }
+  html += '</tr><tr><td><strong>地支本气</strong></td>';
+  for(var i=0;i<4;i++){
+    var d=pillars.branches[i], mainT=CANG_GAN[d][0].t;
+    html += '<td>'+DZ[d]+' <span style="color:var(--accent2)">('+shiShenName(shiShen(pillars.dayMaster,mainT))+')</span></td>';
+  }
+  html += '</tr></table>';
+
+  html += '<h3>4c. 格局判定 '+tipHtml('格局','《子平真诠》格局篇','格局就是你命局的"类型标签"，由月支本气对应的十神来决定。比如月支本气是正官就叫"正官格"、是七杀就叫"七杀格"。不同格局有不同的成功路径和注意事项，就像不同的棋局有不同的最优走法。')+'</h3>';
+  html += '<div class="detail-box" style="text-align:center"><p class="big-val">'+pattern.name+'</p>';
+  if(pattern.special){
+    html += '<p>月支 '+DZ[pillars.branches[1]]+' 为日主 '+TG[pillars.dayMaster]+' 之'+pattern.special+'（'+shiShenName(pattern.ss)+'），以'+pattern.name+'论</p>';
+  } else {
+    html += '<p>月支 '+DZ[pillars.branches[1]]+' 本气 '+TG[pattern.stem]+'，对日主 '+TG[pillars.dayMaster]+' 十神为 '+shiShenName(pattern.ss)+'</p>';
+  }
+  // ── 格局画像（《子平真诠》气质描述） ──
+  var patternName = pattern.name || '';
+  var isStrong = strength.r > 0.55;
+  var isWeak = strength.r < 0.45;
+  var PATTERN_PORTRAIT = {
+    '正官格': { base:'天生带秩序感：尊重规则、在意声誉、适合在有明确评价体系的环境中发展。正官格像一个"值得托付的人"，稳定可靠、条理清晰。', strong:'身强见正官——你能稳稳扛住责任，越大的舞台越吃得下，忌见伤官来冲撞权威。', weak:'身弱见正官——你对权威既敏感又容易被它消耗，年轻时容易在"想证明自己"和"想自由"之间拉扯，宜走印星路径把压力转成学习。' },
+    '七杀格': { base:'带刀的人：直接、有锋芒、在冲突中更能看清自己。七杀格适合竞争性强、边界清晰的环境，不适合扯皮和和稀泥。', strong:'身强任杀——你压得住刀，能在高强度环境里立威，宜做需要魄力的决策者。', weak:'身弱见杀——压力偏大，宜用食神制杀或印绶化杀，把锋芒用在自己身上而不是被它消耗。' },
+    '正财格': { base:'务实派：脚踏实地、偏爱稳定现金流，不容易被空谈打动。正财格的发展路径偏长线积累，慢但不塌。', strong:'身强担财——你能稳稳掌管资源，适合做运营、账房、长期经营型事业。', weak:'身弱难担——看到的多、守住的少，宜先练比劫（团队/同行）聚力再谈赚钱。' },
+    '偏财格': { base:'资源调度者：嗅觉灵敏、敢冒险、适合流动性强的事业（贸易、投资、平台）。偏财格喜动不喜静，擅长把信息差变成价值。', strong:'身强见财——财路宽阔，适合做中介、撮合、资源型生意。', weak:'身弱偏财——机会多但抓不住，宜定位"顾问/合伙"角色，借他人之力取财。' },
+    '食神格': { base:'才情型：语言、审美、创造力是天生优势。食神格的人更容易在表达型、教育型、创作型领域发光。', strong:'身强吐秀——才华自然流露，走文艺、教育、内容领域都顺。', weak:'身弱泄秀——灵气虽有但易耗，宜劳逸搭配，避免连续消耗自己的表达带宽。' },
+    '伤官格': { base:'叛逆的才华：创造力旺盛、规则感弱、对"应该怎样"有天然抵抗。伤官格是被低估的 MVP 类型，需要懂你的环境。', strong:'身强伤官——创造力+执行力双全，宜自主型事业、独立创作、技术专精。', weak:'身弱伤官——才华外显但易耗气，忌伤官见官，宜佩印护秀。' },
+    '正印格': { base:'学问与庇荫：心性温厚、喜学习、有长辈或师长资源。正印格适合积累型事业（学术、专业、传承型岗位）。', strong:'身强印旺——学养深厚但易拖延，宜食伤泄秀把所学变成作品。', weak:'身弱得印——印是最好的救应，学习、贵人、专业认证是你的最优路径。' },
+    '偏印格': { base:'偏门智慧：直觉强、对冷门领域敏感、常有独到见解。偏印格适合玄学、心理、技术、研究这类"小众但深"的领域。', strong:'身强枭神——独立思考能力极强但易孤僻，宜主动社交，避免完全内缩。', weak:'身弱偏印——灵感多但难转化，宜借财制印，把兴趣变成能变现的技能。' },
+    '比肩格': { base:'同行合伙型：独立、好面子、有领导潜质但不容易服人。比肩格适合团队共创、合伙创业、同业竞合。', strong:'身强比劫旺——自我意识强，忌争财夺权，宜往泄秀/制官方向发展。', weak:'身弱得比——兄弟姐妹/同道是你的稳定力量，宜合伙而非单干。' },
+    '劫财格': { base:'竞争型体质：行动力强、抗压高、但不宜涉赌/投机。劫财格在竞争环境里能发光，在安稳环境里反而容易内耗。', strong:'身强劫旺——争胜心强，宜去打硬仗的地方，避开平和的小池塘。', weak:'身弱得劫——劫财来帮身，但仍忌见比劫过旺夺财。' },
+    '羊刃格': { base:'锋芒毕露：能力强、敢作敢当、适合需要"狠劲"的岗位。羊刃格在军警、急诊、竞赛、极限运动等高强度领域最容易出头。', strong:'身强羊刃——锋芒太盛，宜正官/七杀来制衡。', weak:'身弱羊刃——刃不成器，反而成为情绪负担，宜在团队中找归属。' }
+  };
+  var portrait = PATTERN_PORTRAIT[patternName];
+  if (portrait) {
+    var branchText = isStrong ? portrait.strong : (isWeak ? portrait.weak : '身强弱中和——' + patternName + '取中庸路径，灵活取用');
+    html += '<div style="margin-top:12px;padding:10px 14px;background:rgba(99,102,241,0.05);border-radius:6px;text-align:left;font-size:.9em;line-height:1.7">';
+    html += '<p style="margin:0 0 6px"><strong style="color:#6366f1">气质画像：</strong>'+portrait.base+'</p>';
+    html += '<p style="margin:0;color:var(--text)"><strong style="color:#6366f1">你这张盘：</strong>'+branchText+'</p>';
+    html += '</div>';
+  }
+  html += '</div>';
+
+  if(lifeEvents.length > 0){
+    html += '<h3>4d. 命局倾向报告 '+tipHtml('命局倾向','','基于四柱冲克、宫位格局、神煞组合，识别命局的结构性倾向——红色为重点关注领域，黄色为倾向提示，绿色为有利因素。均为"倾向性描述"而非必然事件，具体触发时点需结合大运流年与个人行动。')+'</h3>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">';
+    var levelConfig = {
+      alert: {icon:'&#9888;&#65039;', bg:'rgba(220,38,38,0.06)', border:'#dc2626', color:'#dc2626', label:'重点关注'},
+      warn:  {icon:'&#128161;', bg:'rgba(245,158,11,0.06)', border:'#f59e0b', color:'#d97706', label:'倾向提示'},
+      good:  {icon:'&#10024;', bg:'rgba(16,185,129,0.06)', border:'#10b981', color:'#059669', label:'有利因素'}
+    };
+    for(var ei=0;ei<lifeEvents.length;ei++){
+      var ev = lifeEvents[ei];
+      var lc = levelConfig[ev.level] || levelConfig.warn;
+      html += '<div style="padding:10px 14px;background:'+lc.bg+';border-left:3px solid '+lc.border+';border-radius:4px;font-size:.88em">';
+      html += '<span style="color:'+lc.color+';font-weight:700">'+lc.icon+' ['+lc.label+'] '+ev.palace+'</span>';
+      html += '<div style="margin-top:4px;color:var(--fg)">'+ev.desc+'</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  }
+
+  var shenSha = calcShenSha(pillars);
+  shenShaLinkage(shenSha, pillars);
+  html += '<h3>4e. 神煞 '+tipHtml('神煞','《三命通会》《协纪辨方书》','神煞是古人总结的一套"特殊标记"系统，标记命局中某些特殊的干支组合。比如"天乙贵人"代表容易遇到贵人帮助、"驿马"代表一生多奔波迁移、"桃花"代表异性缘旺。神煞是辅助参考，不能单独论断吉凶。')+'</h3>';
+  if(shenSha.length > 0){
+    // 按神煞名分组
+    var ssGroups = [];
+    var ssGroupMap = {};
+    shenSha.forEach(function(s){
+      if(!ssGroupMap[s.name]){
+        var g = {name:s.name, star:s.star, desc:s.desc, items:[]};
+        ssGroupMap[s.name] = g;
+        ssGroups.push(g);
+      }
+      ssGroupMap[s.name].items.push(s);
+    });
+    var ssColors = {'贵':'#d4a017','文':'#2e7d46','动':'#c0392b','情':'#e74c8b','孤':'#7a7a7a','权':'#c0392b','禄':'#b8860b','刃':'#d94f4f','德':'#2e6bc5','舆':'#d4a017','慧':'#9b59b6','医':'#2e7d46'};
+    html += '<table style="font-size:.88em"><tr><th style="width:100px">神煞</th><th>柱位</th><th>含义</th></tr>';
+    ssGroups.forEach(function(g){
+      var bg = ssColors[g.star] || '#666';
+      var posList = g.items.map(function(it){ return it.pos + (it.linkedSS ? '·'+it.linkedSS : ''); }).join('、');
+      // 收集去重的联动描述
+      var linkDescs = [];
+      var linkSeen = {};
+      g.items.forEach(function(it){
+        if(it.linkedDesc && !linkSeen[it.linkedDesc]){
+          linkSeen[it.linkedDesc] = true;
+          linkDescs.push(it.linkedDesc);
+        }
+      });
+      html += '<tr>';
+      html += '<td><strong style="color:'+bg+'">'+g.name+'</strong></td>';
+      html += '<td>'+posList+'</td>';
+      html += '<td>'+g.desc;
+      if(linkDescs.length > 0) html += '<br><span style="font-size:.9em;color:var(--fg);font-style:italic">→ '+linkDescs.join('；')+'</span>';
+      html += '</td></tr>';
+    });
+    html += '</table>';
+
+    // ── 神煞心理张力提示：驿马+桃花+七杀/伤官 组合叙事层说明 ──
+    (function renderShenShaTension(){
+      var ssNames = {};
+      shenSha.forEach(function(s){ ssNames[s.name] = true; });
+      var tensions = [];
+      // 驿马+桃花：动静拉扯
+      if (ssNames['驿马'] && ssNames['桃花']) {
+        tensions.push({ icon:'🌊', title:'驿马 × 桃花', note:'动静拉扯——一生多异地迁徙，情感上也易在不同环境中产生缘分起伏，心理需有"接纳变动"的韧性' });
+      }
+      // 桃花/日支 坐七杀或伤官：感情外部压力
+      var dayShiShen = shiShen(pillars.dayMaster, CANG_GAN[pillars.branches[2]][0].t);
+      if (ssNames['桃花'] && (dayShiShen === 6 || dayShiShen === 7 || dayShiShen === 5)) {
+        var stkName = dayShiShen===6?'七杀':dayShiShen===7?'正官':'伤官';
+        tensions.push({ icon:'💔', title:'桃花 × '+stkName+'坐日支', note:'情感关系容易承受外部压力或内在冲突——并非"缘薄"，而是"缘中有磨"，更需要开放沟通与调节情绪' });
+      }
+      // 华盖 + 孤辰/寡宿：孤高倾向
+      if (ssNames['华盖'] && (ssNames['孤辰'] || ssNames['寡宿'])) {
+        tensions.push({ icon:'🏔️', title:'华盖 × '+(ssNames['孤辰']?'孤辰':'寡宿'), note:'独立性强、天赋异禀，但易有与世隔离之感；可定期主动建立社交连接，避免完全内缩' });
+      }
+      if (tensions.length > 0) {
+        html += '<div style="margin-top:12px;padding:10px 12px;background:rgba(99,102,241,0.05);border-left:3px solid #6366f1;border-radius:6px">';
+        html += '<p style="margin:0 0 6px;font-size:.9em;color:#6366f1;font-weight:600">🧠 心理-生活张力解读（叙事层 · 不在 V 向量中）</p>';
+        tensions.forEach(function(t){
+          html += '<p style="margin:4px 0;font-size:.88em"><span style="margin-right:6px">'+t.icon+'</span><strong>'+t.title+'</strong>：<span style="color:var(--sub)">'+t.note+'</span></p>';
+        });
+        html += '<p style="margin:6px 0 0;font-size:.78em;color:var(--sub);font-style:italic">这些张力是神煞组合的结构性描述，量化分值里体现不全，但可能是日常体感里最明显的部分。</p>';
+        html += '</div>';
+      }
+    })();
+  } else {
+    html += '<p class="note">命局中无显著神煞</p>';
+  }
+
+  html += '</div></div>';
+
+  // ── STEP 5: 多维评价向量与用神求解 ──
+  html += '<div class="card"><div class="step-section">';
+  html += '<div class="step-header"><div class="step-num">5</div><div class="step-title">多维评价向量与用神求解</div><div class="step-desc">调候 · 用神 · 忌神</div></div>';
+  html += '<h3>5a. 调候检验 '+tipHtml('调候用神','《穷通宝鉴》（余春台）专论调候：冬月用火暖局，夏月用水润局','调候为急——寒暖失衡比身强身弱更紧迫。冬生急需火、夏生急需水，此为古书共识。H值寒暖指标及boost权重为现代量化。')+'</h3>';
+  var hColor = temp.H<-5?'#2e6bc5':(temp.H>5?'#d94f4f':'#2d8a4e');
+  html += '<div class="detail-box" style="text-align:center"><h4>命局寒暖总分 H</h4><p class="big-val" style="color:'+hColor+'">'+temp.H+'</p><p>'+temp.level+'</p>';
+  if (temp.kwNotes && temp.kwNotes.length > 0) {
+    html += '<div style="margin-top:8px;padding:6px 10px;background:rgba(124,58,237,0.06);border-left:3px solid #7c3aed;border-radius:6px;text-align:left;font-size:.82em;color:var(--sub)">';
+    html += '<strong style="color:#7c3aed">空亡折损（ε=0.1）</strong><br>';
+    temp.kwNotes.forEach(function(n){ html += '· '+n+'<br>'; });
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<div class="formula">H = Σ η_T(天干) + Σ η_D(地支) + η_M(月支)</div>';
+
+  html += '<h3>5b. 用神候选集 '+tipHtml('用神候选','','用神就是你最需要的那种五行能量——命局的"药方"。系统根据你的身强身弱、寒暖状况、格局需要，计算出每种五行对你的帮助程度（权重p），权重最高的就是你的首选用神。忌神则是对你最不利的五行，要尽量避开。')+'</h3>';
+
+  // ── 按维度分类用神：扶抑 / 调候 / 从格/泄秀/通关 ──
+  var FUYI_KEYS = ['印星','比劫','食伤','官杀','财星','泄秀','克制','从印'];
+  var CONG_KEYS = ['从旺','从势','从强','从儿','从财','从官','从杀','专旺','助势','顺象'];
+  var SPECIAL_KEYS = ['通关','护秀','夺食','财制印'];
+  var fuyiList = [], congList = [], tiaohouList = [], specialList = [];
+  // 优先顺序：从格 → 调候 → 特殊 → 扶抑
+  // 用 Set 防重复（同一候选若同时匹配多类，按优先级归一类）
+  // ★ 用性情修正前的候选集做分类，避免性情注入的候选被误判到扶抑里
+  var baseCands = usefulGod.candidatesPreNature || usefulGod.candidates;
+  // 归一化 p 值以供显示
+  var baseSum = 0; baseCands.forEach(function(c){ baseSum += c.p; });
+  var seen = {};
+  baseCands.forEach(function(c){
+    var nm = c.name || '';
+    var matched = null;
+    if (CONG_KEYS.some(function(k){return nm.indexOf(k)>=0;})) matched = 'cong';
+    else if (nm.indexOf('调候')>=0) matched = 'tiaohou';
+    else if (SPECIAL_KEYS.some(function(k){return nm.indexOf(k)>=0;})) matched = 'special';
+    else if (FUYI_KEYS.some(function(k){return nm.indexOf(k)>=0;})) matched = 'fuyi';
+    else matched = 'fuyi'; // 默认归扶抑
+    var key = matched + ':' + c.w;
+    if (seen[key]) return;
+    seen[key] = true;
+    if (matched === 'cong') congList.push(c);
+    else if (matched === 'tiaohou') tiaohouList.push(c);
+    else if (matched === 'special') specialList.push(c);
+    else fuyiList.push(c);
+  });
+  // 若 tiaohouList 为空但 tiaohouWx 有值，说明调候与扶抑用神方向一致（已合并到扶抑候选中），单独标注一下
+  var tiaohouSameAsFuyi = false;
+  if (tiaohouList.length === 0 && usefulGod.tiaohouWx !== undefined && usefulGod.tiaohouWx >= 0) {
+    tiaohouSameAsFuyi = true;
+  }
+
+  // 身强弱文字
+  var rVal = strength.r;
+  var strLabel = rVal<0.15?'极弱':rVal<0.25?'很弱':rVal<0.35?'偏弱':rVal<0.45?'弱':rVal<0.55?'中和':rVal<0.65?'偏强':rVal<0.75?'强':rVal<0.85?'很强':'极强';
+  // 寒暖文字
+  var hVal = temp.H;
+  var hLabel = hVal<-20?'极寒':hVal<-10?'寒':hVal<-5?'偏寒':hVal<5?'中和':hVal<10?'偏暖':hVal<20?'暖':'极热';
+
+  html += '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">';
+
+  // ── 扶抑用神 ──
+  html += '<div style="padding:10px 14px;background:rgba(45,138,78,0.05);border-left:3px solid var(--green);border-radius:6px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">';
+  html += '<strong style="color:var(--green)">扶抑用神</strong>';
+  html += '<span style="font-size:.85em;color:var(--sub)">依据：r* = '+rVal.toFixed(3)+'（'+strLabel+'）</span>';
+  html += '</div>';
+  if (fuyiList.length > 0) {
+    html += '<div style="margin-top:6px">';
+    fuyiList.forEach(function(c,idx){
+      html += '<span style="margin-right:10px"><strong style="color:'+WX_COLOR[c.w]+'">'+WX[c.w]+'</strong> <span style="color:var(--sub);font-size:.9em">· '+c.name.replace(/^.+\(/,'').replace(/\)$/,'')+' · p='+(baseSum>0?(c.p/baseSum).toFixed(2):c.p.toFixed(2))+'</span></span>';
+    });
+    html += '</div>';
+    var fuyiLogic = rVal<0.45?'身弱 → 取印星生扶、比劫助身':rVal>0.55?'身强 → 取食伤泄秀 / 官杀克制 / 财星耗身':'中和 → 维稳为主';
+    html += '<p class="note" style="margin:4px 0 0;font-size:.85em">'+fuyiLogic+'</p>';
+  } else {
+    html += '<p style="margin:6px 0 0;color:var(--sub)">（已被从格/专旺覆盖）</p>';
+  }
+  html += '</div>';
+
+  // ── 调候用神 ──
+  html += '<div style="padding:10px 14px;background:rgba(217,79,79,0.05);border-left:3px solid '+(hVal<0?'var(--blue)':'var(--red)')+';border-radius:6px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">';
+  html += '<strong style="color:'+(hVal<0?'var(--blue)':'var(--red)')+'">调候用神</strong>';
+  html += '<span style="font-size:.85em;color:var(--sub)">依据：H = '+hVal+'（'+hLabel+'）</span>';
+  html += '</div>';
+  if (tiaohouList.length > 0) {
+    html += '<div style="margin-top:6px">';
+    tiaohouList.forEach(function(c){
+      html += '<span style="margin-right:10px"><strong style="color:'+WX_COLOR[c.w]+'">'+WX[c.w]+'</strong> <span style="color:var(--sub);font-size:.9em">· p='+c.p.toFixed(2)+'</span></span>';
+    });
+    html += '</div>';
+  } else if (tiaohouSameAsFuyi) {
+    html += '<div style="margin-top:6px"><strong style="color:'+WX_COLOR[usefulGod.tiaohouWx]+'">'+WX[usefulGod.tiaohouWx]+'</strong> <span style="color:var(--sub);font-size:.9em">· 与扶抑方向一致，已合并到扶抑候选（+'+(usefulGod.tiaohouBoost||0).toFixed(2)+'）</span></div>';
+  } else {
+    html += '<p style="margin:6px 0 0;color:var(--sub)">寒暖中和，无需调候</p>';
+  }
+  if (usefulGod.tiaohouNote) html += '<p class="note" style="margin:4px 0 0;font-size:.85em">'+usefulGod.tiaohouNote+'</p>';
+  html += '</div>';
+
+  // ── 从格/特殊用神 ──
+  html += '<div style="padding:10px 14px;background:rgba(139,92,246,0.05);border-left:3px solid var(--purple);border-radius:6px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">';
+  html += '<strong style="color:var(--purple)">从格 / 特殊用神</strong>';
+  html += '<span style="font-size:.85em;color:var(--sub)">';
+  if (usefulGod.specialPattern) html += '格局：'+usefulGod.specialPattern;
+  else html += '判定：r* = '+rVal.toFixed(3)+'（'+(rVal<0.15?'极弱':rVal>0.85?'极强':'常规')+'）';
+  html += '</span></div>';
+  if (congList.length > 0 || specialList.length > 0) {
+    html += '<div style="margin-top:6px">';
+    congList.forEach(function(c){
+      html += '<span style="margin-right:10px"><strong style="color:'+WX_COLOR[c.w]+'">'+WX[c.w]+'</strong> <span style="color:var(--sub);font-size:.9em">· '+c.name.replace(/^.+\(/,'').replace(/\)$/,'')+' · p='+(baseSum>0?(c.p/baseSum).toFixed(2):c.p.toFixed(2))+'</span></span>';
+    });
+    specialList.forEach(function(c){
+      html += '<span style="margin-right:10px"><strong style="color:'+WX_COLOR[c.w]+'">'+WX[c.w]+'</strong> <span style="color:var(--sub);font-size:.9em">· '+c.name.replace(/^.+\(/,'').replace(/\)$/,'')+' · p='+(baseSum>0?(c.p/baseSum).toFixed(2):c.p.toFixed(2))+'</span></span>';
+    });
+    html += '</div>';
+  } else {
+    // 不入从格的三种情况
+    var reasonHtml = '';
+    if (rVal < 0.15 && strength.hasRoot) {
+      // 有根不从 — 传统命理铁律
+      var rootDesc = (strength.rootInfo && strength.rootInfo.length > 0) ? strength.rootInfo.join('、') : '某地支';
+      reasonHtml = '<strong style="color:var(--purple)">有根不从</strong>（r* = '+rVal.toFixed(3)+' 虽达"极弱"阈值，但日主通根于 '+rootDesc+'，按传统命理"从格必须无根"铁律，按身弱扶抑论，非从格）';
+    } else if (rVal > 0.85 && !usefulGod.specialPattern) {
+      // 理论上 r*>0.85 应进专旺，如果没进说明逻辑有异常
+      reasonHtml = '<strong>常规格局</strong>（r* 极强但未触发专旺判定）';
+    } else {
+      reasonHtml = '<strong>常规格局</strong>（r* 在 0.15~0.85 区间内，按扶抑用神论，无通关/泄秀等特殊格局）';
+    }
+    html += '<p style="margin:6px 0 0;color:var(--sub)">'+reasonHtml+'</p>';
+  }
+  html += '</div>';
+
+  html += '</div>';  // end flex column
+
+  // ── 完整候选表 ──
+  html += '<details style="margin-bottom:10px"><summary style="cursor:pointer;color:var(--sub);font-size:.9em">展开：完整候选集与 p 值</summary>';
+  html += '<table style="margin-top:8px"><tr><th>用神</th><th>五行属性</th><th>权重 p</th></tr>';
+  usefulGod.candidates.forEach(function(c){
+    html += '<tr><td><strong>'+c.name+'</strong></td><td>'+WX[c.w]+'</td><td>'+c.p.toFixed(2)+'</td></tr>';
+  });
+  html += '</table></details>';
+
+  if(usefulGod.enemy!==null)
+    html += '<p class="note"><strong>忌神：</strong>'+WX[usefulGod.enemy]+'（评价权重 w = −1）</p>';
+
+  if(usefulGod.natureNotes && usefulGod.natureNotes.length > 0){
+    html += '<h3>5c. 十干性情修正 '+tipHtml('十干性情','《滴天髓》《穷通宝鉴》逐干论述每一天干的独特喜忌','每一天干有其"性情"——甲为大树、乙为花草、丙为太阳……对特定干支的喜忌超越五行生克的一般规律，需专项修正。')+'</h3>';
+
+    // ── Step 1: 修正前候选集（粗选） ──
+    html += '<p style="margin:8px 0 4px"><strong>① 修正前候选集</strong>（扶抑/从格/调候粗选，归一化前 p 值）</p>';
+    html += '<table style="font-size:.88em"><tr><th>候选</th><th>五行</th><th>原始 p</th></tr>';
+    var sumPre = 0;
+    usefulGod.candidatesPreNature.forEach(function(c){ sumPre += c.p; });
+    usefulGod.candidatesPreNature.forEach(function(c){
+      html += '<tr><td>'+c.name+'</td><td style="color:'+WX_COLOR[c.w]+';font-weight:700">'+WX[c.w]+'</td><td>'+c.p.toFixed(2)+'</td></tr>';
+    });
+    html += '<tr style="border-top:1px solid var(--border)"><td colspan="2">合计</td><td><strong>'+sumPre.toFixed(2)+'</strong></td></tr>';
+    html += '</table>';
+
+    // 修正前归一化权重
+    html += '<p style="margin:6px 0;font-size:.88em;color:var(--sub)">归一化后权重向量（未含忌神）：';
+    var wPreNoEnemy = [0,0,0,0,0];
+    usefulGod.candidatesPreNature.forEach(function(c){ if(sumPre>0) wPreNoEnemy[c.w] += c.p/sumPre; });
+    wPreNoEnemy.forEach(function(v,i){
+      if(v > 0.001) html += '<span style="margin:0 4px;color:'+WX_COLOR[i]+'">'+WX[i]+'='+v.toFixed(2)+'</span>';
+    });
+    html += '</p>';
+
+    // ── Step 2: 性情规则逐条 ──
+    html += '<p style="margin:10px 0 4px"><strong>② 触发的性情规则</strong>（对候选集 p 值的调整）</p>';
+
+    // 辅助：从 effect 字符串里解析目标五行 + 是否声明了数值操作
+    var WX_CHAR_TO_IDX = { '木':0, '火':1, '土':2, '金':3, '水':4 };
+    var preWxSet = {};
+    usefulGod.candidatesPreNature.forEach(function(c){ preWxSet[c.w] = true; });
+
+    function analyzeEffect(effectStr) {
+      // 检测"+目标"（boostCandidate 加分）vs "×目标"（乘法折扣）
+      var addMatch = /[+＋]\s*([木火土金水])/.exec(effectStr);
+      var mulMatch = /([木火土金水])权重\s*[×x]/.exec(effectStr);
+      var hasAdd = !!addMatch, hasMul = !!mulMatch;
+      // 抽取所有五行
+      var targets = {};
+      var re = /[木火土金水]/g, m;
+      while ((m = re.exec(effectStr)) !== null) { targets[WX_CHAR_TO_IDX[m[0]]] = true; }
+      // 急需型（如"急需火"）视为 add
+      if (!hasAdd && !hasMul && /急需/.test(effectStr)) hasAdd = true;
+      return {
+        hasAdd: hasAdd, hasMul: hasMul,
+        targets: Object.keys(targets).map(function(k){return parseInt(k);})
+      };
+    }
+
+    usefulGod.natureNotes.forEach(function(n){
+      var info = analyzeEffect(n.effect || '');
+      // 判定状态：
+      //   effective：数值操作对某候选直接生效
+      //   dilute：add 的目标是忌神/新五行，会通过稀释间接影响其他候选
+      //   noop：× 的目标不存在（如忌神 -1 无法折扣）
+      //   pure_note：无数值操作，仅文字提示
+      var status;
+      if (!info.hasAdd && !info.hasMul) {
+        status = 'pure_note';
+      } else if (info.hasMul) {
+        // 乘法：目标必须在候选池里才生效
+        var mulTargetIn = info.targets.some(function(wx){ return preWxSet[wx]; });
+        status = mulTargetIn ? 'effective' : 'noop';
+      } else {
+        // 加法：目标若为忌神则只能稀释其他候选，否则直接生效
+        var addDirectTargets = info.targets.filter(function(wx){ return usefulGod.enemy !== wx; });
+        status = addDirectTargets.length > 0 ? 'effective' : 'dilute';
+      }
+
+      var borderColor, badge, badgeColor;
+      if (status === 'effective') {
+        borderColor = info.hasAdd ? 'var(--green)' : 'var(--red)';
+        badge = '✓ 已生效';
+        badgeColor = 'var(--green)';
+      } else if (status === 'dilute') {
+        borderColor = 'var(--orange)';
+        var enemyName = usefulGod.enemy !== null ? WX[usefulGod.enemy] : '';
+        badge = '◑ 目标为忌神('+enemyName+' w=-1)，仅间接稀释其他候选';
+        badgeColor = 'var(--orange)';
+      } else if (status === 'noop') {
+        borderColor = 'var(--sub)';
+        var noopReasons = info.targets.map(function(wx){
+          if (usefulGod.enemy === wx) return WX[wx]+'为忌神(w=-1)';
+          return WX[wx]+'不在候选池';
+        });
+        badge = '⊘ 本盘无数值影响（' + noopReasons.join('，') + '）';
+        badgeColor = 'var(--sub)';
+      } else {
+        borderColor = 'var(--accent2)';
+        badge = '◐ 仅提示（无数值操作）';
+        badgeColor = 'var(--accent2)';
+      }
+
+      html += '<div class="note" style="border-left-color:'+borderColor+';margin:6px 0">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">';
+      html += '<strong>'+n.rule+'</strong>';
+      html += '<span style="font-size:.78em;color:'+badgeColor+';font-weight:600;white-space:nowrap">'+badge+'</span>';
+      html += '</div>';
+      html += '<div style="color:var(--text);margin-top:2px">'+n.desc+'</div>';
+      html += '<div style="font-size:.85em;margin-top:2px">';
+      html += '<span class="tip-src">'+n.src+'</span>';
+      html += ' · <span style="color:'+borderColor+';font-weight:600">古籍效应：'+n.effect+'</span>';
+      html += '</div>';
+      html += '</div>';
+    });
+
+    // ── Step 3: 修正后候选集 + 增量 ──
+    html += '<p style="margin:10px 0 4px"><strong>③ 修正后候选集</strong>（应用规则后的 p 值）</p>';
+    // 对齐 pre/post by wx
+    var preByWx = {}; usefulGod.candidatesPreNature.forEach(function(c){ preByWx[c.w] = c; });
+    var postByWx = {}; usefulGod.candidates.forEach(function(c){ postByWx[c.w] = c; });
+    // 注意：此处 candidates 已归一化。为展示绝对 p 变化，需用修正前 sum 反推修正后未归一化 p。
+    // 实际实现：在 bazi-core.js 中 candidates.p 已被 /=total 归一化过。
+    // 这里用归一化后的比值直接展示净变化。
+    var sumPost = 0;
+    usefulGod.candidates.forEach(function(c){ sumPost += c.p; });  // 归一化后应≈1
+    html += '<table style="font-size:.88em"><tr><th>五行</th><th>修正前 p (归一)</th><th>修正后 p (归一)</th><th>Δ (净变化)</th></tr>';
+    var allWx = {};
+    usefulGod.candidatesPreNature.forEach(function(c){ allWx[c.w] = true; });
+    usefulGod.candidates.forEach(function(c){ allWx[c.w] = true; });
+    Object.keys(allWx).forEach(function(k){
+      var w = parseInt(k);
+      var prePNorm = preByWx[w] ? (preByWx[w].p / (sumPre||1)) : 0;
+      var postPNorm = postByWx[w] ? postByWx[w].p : 0;
+      var d = postPNorm - prePNorm;
+      var dColor = d > 0.01 ? 'var(--green)' : (d < -0.01 ? 'var(--red)' : 'var(--sub)');
+      var dStr = (d >= 0 ? '+' : '') + d.toFixed(3);
+      html += '<tr>';
+      html += '<td style="color:'+WX_COLOR[w]+';font-weight:700">'+WX[w]+'</td>';
+      html += '<td>'+prePNorm.toFixed(3)+'</td>';
+      html += '<td style="font-weight:600">'+postPNorm.toFixed(3)+'</td>';
+      html += '<td style="color:'+dColor+';font-weight:700">'+dStr+'</td>';
+      html += '</tr>';
+    });
+    html += '</table>';
+
+    // ── Step 4: 评价向量 w 的最终变化 ──
+    html += '<p style="margin:10px 0 4px"><strong>④ 评价向量 w 的净变化</strong>（含忌神固定 w = −1）</p>';
+    html += '<table style="font-size:.88em"><tr><th>五行</th><th>木</th><th>火</th><th>土</th><th>金</th><th>水</th></tr>';
+    html += '<tr><td>w<sub>修正前</sub></td>';
+    usefulGod.weightsPreNature.forEach(function(v){ html += '<td>'+(v>=0?'+':'')+v.toFixed(2)+'</td>'; });
+    html += '</tr>';
+    html += '<tr><td><strong>w<sub>修正后</sub></strong></td>';
+    usefulGod.weights.forEach(function(v){ html += '<td style="font-weight:700">'+(v>=0?'+':'')+v.toFixed(2)+'</td>'; });
+    html += '</tr>';
+    html += '<tr><td>Δw</td>';
+    for(var wi=0;wi<5;wi++){
+      var dw = usefulGod.weights[wi] - usefulGod.weightsPreNature[wi];
+      var dwC = Math.abs(dw) < 0.005 ? 'var(--sub)' : (dw > 0 ? 'var(--green)' : 'var(--red)');
+      html += '<td style="color:'+dwC+';font-weight:600">'+(dw>=0?'+':'')+dw.toFixed(2)+'</td>';
+    }
+    html += '</tr></table>';
+    html += '<p class="note" style="margin-top:8px">性情修正只在"用神层"起作用——把命理古籍里甲木喜庚、丙火喜壬、丁火喜甲等特殊喜忌叠加到 p 值上，再归一化成 w。V 向量完全不变，变的是大运流年对命局的加权方式（F_综 = w<sup>T</sup>·ΔV + ...）。</p>';
+  }
+
+  html += '<h3>5'+(usefulGod.natureNotes&&usefulGod.natureNotes.length>0?'d':'c')+'. 评价向量 w '+tipHtml('评价向量','','这是一个五行"好坏评分表"——对你有利的五行得正分（如用神=+0.75），有害的五行得负分（如忌神=-1.00），中性的得零分。后续计算大运流年好坏时，就用这个评分表去评估每年带来的五行变化对你是利是弊。')+'</h3>';
+  html += '<table><tr><th>五行</th><th>木</th><th>火</th><th>土</th><th>金</th><th>水</th></tr><tr><td><strong>w</strong></td>';
+  usefulGod.weights.forEach(function(w){
+    var c = w<0?'color:var(--red)':'color:var(--green)';
+    html += '<td style="'+c+';font-weight:700">'+(w>=0?'+':'')+w.toFixed(2)+'</td>';
+  });
+  html += '</tr></table>';
+
+  var _5sub = (usefulGod.natureNotes&&usefulGod.natureNotes.length>0) ? 'e' : 'd';
+  html += '<h3>5'+_5sub+'. 用神结论 '+tipHtml('用神结论','','用神是你命局最需要的五行能量，就像身体缺什么就补什么。喜神是次要需要的五行，忌神是最要避开的五行。了解自己的用神，可以在择业、方位、颜色、合作对象等方面做出更有利的选择。')+'</h3>';
+
+  // ── 方法学分歧透视面板：把"扶抑/调候/格局/真神/最终"各法推荐并列展示 ──
+  (function renderMethodDivergence(){
+    var dmWx = pillars.dayMasterWx;
+    var wYinL = (dmWx + 4) % 5;
+    var wShiShangL = (dmWx + 1) % 5;
+    var wCaiL = (dmWx + 2) % 5;
+    var wGuanShaL = (dmWx + 3) % 5;
+    var wBiL = dmWx;
+    var wxColor = ['#2d8a4e','#d94f4f','#b7892e','#6aa0c8','#2e6bc5'];
+    function wxChip(wx, label){
+      return '<span style="display:inline-block;padding:2px 8px;border-radius:10px;background:'+wxColor[wx]+'1a;color:'+wxColor[wx]+';font-weight:700;font-size:.9em">'+WX[wx]+(label?' '+label:'')+'</span>';
+    }
+    var methods = [];
+    // 扶抑法
+    var r = strength.r;
+    var fuRec, fuDesc;
+    if (r < 0.35){ fuRec = [wYinL, wBiL]; fuDesc = 'r*='+r.toFixed(2)+' 身弱 → 印生扶为主、比劫帮扶为辅'; }
+    else if (r < 0.55){ fuRec = [wYinL, wBiL]; fuDesc = 'r*='+r.toFixed(2)+' 偏弱 → 印比兼取'; }
+    else if (r <= 0.65){ fuRec = [wShiShangL, wCaiL]; fuDesc = 'r*='+r.toFixed(2)+' 中和 → 食伤/财为主'; }
+    else if (r <= 0.85){ fuRec = [wGuanShaL, wShiShangL]; fuDesc = 'r*='+r.toFixed(2)+' 身强 → 官杀克制 / 食伤泄秀'; }
+    else { fuRec = [wShiShangL]; fuDesc = 'r*='+r.toFixed(2)+' 极强 → 顺势泄秀'; }
+    methods.push({label:'扶抑法', recs:fuRec, desc:fuDesc, color:'#2e6bc5'});
+
+    // 调候法
+    if (usefulGod.tiaohouWx !== undefined && usefulGod.tiaohouWx >= 0){
+      methods.push({label:'调候法', recs:[usefulGod.tiaohouWx], desc:(usefulGod.tiaohouNote||'')+'（H='+(temp&&temp.H!==undefined?temp.H:'?')+'）', color:'#d94f4f'});
+    }
+
+    // 格局法
+    if (usefulGod.specialPattern){
+      var gjRec = [], gjDesc = usefulGod.specialPattern;
+      if (usefulGod.xieXiuData){ gjRec = [usefulGod.xieXiuData.biW, usefulGod.xieXiuData.xieWx]; gjDesc = '泄秀格局 → 比劫护秀 / 食伤为秀'; }
+      else if (usefulGod.primary !== undefined && usefulGod.primary !== null){ gjRec = [usefulGod.primary]; if (usefulGod.secondary !== undefined && usefulGod.secondary !== null && usefulGod.secondary !== usefulGod.primary) gjRec.push(usefulGod.secondary); }
+      if (gjRec.length) methods.push({label:'格局法', recs:gjRec, desc:gjDesc, color:'#7c3aed'});
+    }
+
+    // 真假神（仅当有真神候选）
+    var trueCands = (usefulGod.candidates||[]).filter(function(c){return c.isTrue;});
+    if (trueCands.length > 0){
+      methods.push({label:'真神法', recs:trueCands.map(function(c){return c.w;}), desc:(usefulGod.zhenJiaSummary&&usefulGod.zhenJiaSummary.verdict)||'真神得用', color:'#10b981'});
+    }
+
+    // 最终结论
+    var finalWx = usefulGod.candidates[0].w;
+    methods.push({label:'最终取用', recs:[finalWx], desc:usefulGod.candidates[0].name+' (p='+usefulGod.candidates[0].p.toFixed(2)+')', color:'var(--accent2)', isFinal:true});
+
+    // 分歧检测：主推（每法首选）是否一致
+    var primaries = methods.filter(function(m){return !m.isFinal;}).map(function(m){return m.recs[0];});
+    var uniquePri = {};
+    primaries.forEach(function(p){uniquePri[p]=true;});
+    var diverge = Object.keys(uniquePri).length > 1;
+    var finalMatches = methods.filter(function(m){return !m.isFinal;}).every(function(m){return m.recs.indexOf(finalWx) >= 0;});
+
+    var boxColor = diverge ? '#f59e0b' : '#10b981';
+    var headerText = diverge ? '⚠️ 多法分歧 — 以下各法建议不同，最终按格局保护/真神优先级取' + WX[finalWx] : '✅ 多法一致 — 各法首选收敛到 ' + WX[finalWx];
+
+    html += '<div style="margin-bottom:12px;padding:10px 12px;background:'+boxColor+'0d;border-left:3px solid '+boxColor+';border-radius:6px">';
+    html += '<p style="margin:0 0 8px;font-weight:600;color:'+boxColor+';font-size:.95em">'+headerText+'</p>';
+    html += '<div style="font-size:.88em">';
+    methods.forEach(function(m){
+      var chips = m.recs.map(function(w,i){return wxChip(w, i===0&&m.recs.length>1?'(首)':'');}).join(' ');
+      var miss = (!m.isFinal && m.recs.indexOf(finalWx) < 0) ? ' <span style="color:var(--orange);font-size:.82em">· 与最终不一致</span>' : '';
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:4px 0;border-bottom:1px dashed rgba(0,0,0,0.06)">';
+      html += '<div style="min-width:68px;font-weight:600;color:'+m.color+'">'+m.label+'</div>';
+      html += '<div style="flex:1"><div>'+chips+miss+'</div><div style="color:var(--sub);font-size:.88em;margin-top:2px">'+m.desc+'</div></div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  })();
+
+  var primaryGod = usefulGod.candidates[0];
+  var secondaryGod = usefulGod.candidates.length>1 ? usefulGod.candidates[1] : null;
+  html += '<div class="detail-box" style="text-align:center;border-left:4px solid var(--accent2)">';
+  var strengthLabel = (strength.r<0.15 && !strength.hasRoot)?'极弱(从格)':(strength.r<0.15 && strength.hasRoot)?'极弱(有根不从)':strength.r<0.45?'身弱':strength.r>0.85?'极强(专旺)':strength.r>0.55?'身强':'中和';
+  // 日主显示：合化时用原五行 + "(合化→X)" 标注；未合化直接显示
+  var dmWxShow = (pillars.dayMasterWxOrig!==undefined) ? pillars.dayMasterWxOrig : pillars.dayMasterWx;
+  var dmHuaNote = (pillars.dayMasterWxOrig!==undefined && pillars.dayMasterWxOrig!==pillars.dayMasterWx) ? ' <span style="color:var(--red)">(合化→'+WX[pillars.dayMasterWx]+')</span>' : '';
+  html += '<p style="font-size:1.1em;margin-bottom:8px">命局 <strong>'+strengthLabel+'</strong>（r* = '+strength.r.toFixed(3)+'），日主 '+TG[pillars.dayMaster]+WX[dmWxShow]+dmHuaNote+'</p>';
+  if(usefulGod.specialPattern) html += '<p style="font-size:1em;color:var(--purple);margin-bottom:6px">特殊格局：<strong>'+usefulGod.specialPattern+'</strong></p>';
+  // 天干偏好查表（《穷通宝鉴》十干喜忌简表）
+  // pref[dmTg][candWx] = 优选天干（在该五行里哪个阴阳更合日主胃口）
+  var STEM_PREF = {
+    0:{1:2,2:4,3:6,4:9}, 1:{1:3,2:4,3:6,4:9}, // 甲/乙
+    2:{0:0,2:4,3:7,4:8}, 3:{0:0,2:4,3:7,4:8}, // 丙/丁
+    4:{0:0,1:3,3:7,4:8}, 5:{0:0,1:3,3:7,4:8}, // 戊/己
+    6:{0:0,1:3,4:8}, 7:{0:0,1:3,4:8},         // 庚/辛
+    8:{1:2,3:6,0:0,2:4}, 9:{1:2,3:6,0:0,2:4}  // 壬/癸
+  };
+  var prefNote = '';
+  var prefTg = STEM_PREF[pillars.dayMaster] && STEM_PREF[pillars.dayMaster][primaryGod.w];
+  if (prefTg !== undefined) prefNote = ' <span style="font-size:.7em;color:var(--sub);font-weight:400">（《穷通宝鉴》更喜 '+TG[prefTg]+'）</span>';
+  html += '<p class="big-val" style="color:var(--accent2)">用神：'+primaryGod.name+prefNote+'</p>';
+  if(secondaryGod) html += '<p style="font-size:1em;margin-top:4px">喜神：'+secondaryGod.name+'</p>';
+  if(usefulGod.enemy!==null){
+    var enemyW = usefulGod.enemy;
+    var dmW = pillars.dayMasterWx;
+    var relName = '';
+    if(enemyW===dmW) relName='比劫';
+    else if(enemyW===wxSheng(dmW)) relName='食伤';
+    else if(enemyW===wxKe(dmW)) relName='财星';
+    else if(enemyW===(dmW+3)%5) relName='官杀';
+    else if(enemyW===wxFanSheng(dmW)) relName='印星';
+    html += '<p style="font-size:1em;color:var(--red);margin-top:4px">忌神：'+WX[enemyW]+'（'+relName+'）</p>';
+  }
+  if(usefulGod.tiaohouNote){
+    var thWxName = usefulGod.candidates.filter(function(c){return c.name&&c.name.indexOf('调候')>=0;}).map(function(c){return WX[c.w];}).join('');
+    if(thWxName) html += '<p style="margin-top:8px">调候需要：<strong>'+thWxName+'</strong>（'+usefulGod.tiaohouNote+'，H='+temp.H+'）</p>';
+  }
+  // 泄秀格局保护显示
+  if(usefulGod.xieXiuNote){
+    html += '<div style="margin-top:8px;padding:8px 12px;background:linear-gradient(135deg,rgba(45,138,78,0.06),rgba(46,107,197,0.06));border-radius:8px;border-left:3px solid var(--accent2)">';
+    html += '<p style="margin:0 0 4px"><span style="font-size:1.1em">✨</span> <strong style="color:var(--accent2)">泄秀格局</strong></p>';
+    html += '<p style="margin:0;font-size:.92em;color:var(--text)">'+usefulGod.xieXiuNote+'</p>';
+    html += '</div>';
+  }
+  // 印旺夺食显示
+  if(usefulGod.yinDuoShiNote){
+    html += '<div style="margin-top:8px;padding:8px 12px;background:linear-gradient(135deg,rgba(217,79,79,0.06),rgba(183,137,46,0.06));border-radius:8px;border-left:3px solid var(--orange)">';
+    html += '<p style="margin:0 0 4px"><span style="font-size:1.1em">🛡️</span> <strong style="color:var(--orange)">印旺夺食</strong></p>';
+    html += '<p style="margin:0;font-size:.92em;color:var(--text)">'+usefulGod.yinDuoShiNote+'</p>';
+    html += '</div>';
+  }
+  // 通关十神化显示
+  if(usefulGod.tongguanNote){
+    html += '<p style="margin-top:8px;padding:6px 10px;background:rgba(var(--accent2-rgb,99,102,241),0.08);border-radius:6px">';
+    html += '<span style="font-size:1.1em">⚖️</span> <strong>通关取用：</strong>'+usefulGod.tongguanNote;
+    if(usefulGod.tongguanWar){
+      var wr = usefulGod.tongguanWar.warRatio;
+      html += '<br><span style="font-size:.85em;color:var(--sub)">交战烈度：'+(wr>0.7?'势均力敌（'+Math.round(wr*100)+'%），通关极关键':wr>0.5?'中度对峙（'+Math.round(wr*100)+'%）':'轻度偏胜（'+Math.round(wr*100)+'%）')+'</span>';
+    }
+    html += '</p>';
+  }
+  html += '</div>';
+
+  // ── 真假神判定 ──
+  if(usefulGod.zhenJiaSummary){
+    var _zjSub = String.fromCharCode(_5sub.charCodeAt(0)+1);
+    html += '<h3>5'+_zjSub+'. 真假神判定 '+tipHtml('真假神','《滴天髓》真假论','原文："真神得用平生贵，用若无情绝不灵。"真神=用神得月令本气之力且透出天干；假神=用神不得月令或不透干。真神格局高，假神需大运补救。')+'</h3>';
+    var zjColor = usefulGod.zhenJiaSummary.tone === 'good' ? 'var(--green)' : (usefulGod.zhenJiaSummary.tone === 'neutral' ? '#6366f1' : 'var(--orange)');
+    html += '<div class="detail-box" style="border-left:4px solid '+zjColor+'">';
+    html += '<p style="font-size:1.05em;margin-bottom:8px"><strong style="color:'+zjColor+'">'+usefulGod.zhenJiaSummary.verdict+'</strong></p>';
+    html += '<div style="font-size:.92em">';
+    usefulGod.candidates.forEach(function(c){
+      if(c.zhenJiaNote){
+        var icon = c.isTrue ? '✅' : '⚠️';
+        var nColor = c.isTrue ? 'var(--green)' : 'var(--orange)';
+        html += '<p style="margin:4px 0;padding:4px 8px;border-left:3px solid '+nColor+';background:rgba(0,0,0,.02)">';
+        html += icon+' <strong>'+c.name+'</strong>（p='+c.p.toFixed(2)+'）';
+        html += '<br><span style="color:var(--sub)">'+c.zhenJiaNote+'</span></p>';
+      }
+    });
+    html += '</div></div>';
+    _5sub = _zjSub; // update for next section numbering
+  }
+
+  // ── 清浊评分 ──
+  if(clarity && clarity.notes && clarity.notes.length > 0){
+    var _clSub = String.fromCharCode(_5sub.charCodeAt(0)+1);
+    html += '<h3>5'+_clSub+'. 清浊评分 '+tipHtml('清浊','《滴天髓》清浊理论','原文："一清到底有精神，管取平生富贵真。"清指用神专一、十神纯粹、五行流通；浊指用神杂乱、官杀混杂、气势对峙。')+'</h3>';
+    var clColor = clarity.score>=80?'var(--green)':clarity.score>=60?'var(--accent2)':clarity.score>=40?'var(--orange)':'var(--red)';
+    html += '<div class="detail-box" style="text-align:center;border-left:4px solid '+clColor+'">';
+    html += '<p style="font-size:1.3em;margin-bottom:8px">清浊度：<strong style="color:'+clColor+'">'+clarity.score+'/100</strong>（<strong>'+clarity.level+'</strong>）</p>';
+    html += '<div style="background:#f0f0f0;border-radius:8px;height:12px;overflow:hidden;margin:0 auto 12px;max-width:300px">';
+    html += '<div style="width:'+clarity.score+'%;height:100%;background:'+clColor+';border-radius:8px;transition:width 0.3s"></div></div>';
+    html += '<div style="text-align:left;font-size:0.92em">';
+    clarity.notes.forEach(function(n){
+      var icon = n.type==='清' ? '🟢' : '🔴';
+      var deltaStr = n.delta > 0 ? '<span style="color:var(--green)">+'+n.delta+'</span>' : '<span style="color:var(--red)">'+n.delta+'</span>';
+      html += '<p style="margin:4px 0">'+icon+' '+deltaStr+' '+n.desc+' '+tipHtml(n.type==='清'?'清·加分':'浊·减分', n.src, n.desc)+'</p>';
+    });
+    html += '</div></div>';
+    _5sub = _clSub; // update for next section numbering
+  }
+
+  // ── 阴阳乘位 ──
+  if(yyPos){
+    var _yySub = String.fromCharCode(_5sub.charCodeAt(0)+1);
+    html += '<h3>5'+_yySub+'. 阴阳乘位 '+tipHtml('阴阳乘位','《滴天髓》阴阳论','原文："阳乘阳位阳气昌，最要行程安顿。阴乘阴位阴气盛，切忌锋芒太露。"阳干坐阳支为得位，阴干坐阴支为得位。')+'</h3>';
+    var yyColor = yyPos.purityScore>=75?'var(--green)':yyPos.purityScore>=50?'var(--accent2)':'var(--orange)';
+    html += '<div class="detail-box" style="border-left:4px solid '+yyColor+'">';
+    html += '<p style="font-size:1.05em;margin-bottom:10px;text-align:center"><strong style="color:'+yyColor+'">'+yyPos.purity+'</strong></p>';
+    // 四柱乘位图示
+    html += '<div style="display:flex;justify-content:center;gap:12px;margin-bottom:10px;flex-wrap:wrap">';
+    yyPos.details.forEach(function(d){
+      var bg = d.deWei ? 'rgba(45,138,78,0.08)' : 'rgba(217,79,79,0.06)';
+      var border = d.deWei ? '#2d8a4e' : '#d9a04f';
+      var icon = d.deWei ? '✅' : '↔️';
+      html += '<div style="text-align:center;padding:8px 12px;border-radius:8px;background:'+bg+';border:1px solid '+border+';min-width:80px">';
+      html += '<div style="font-size:.82em;color:var(--sub)">'+d.pillar+'</div>';
+      html += '<div style="font-size:1.2em;font-weight:700;margin:4px 0">'+d.ganZhi+'</div>';
+      html += '<div style="font-size:.85em">'+d.ganYy+'干·'+d.posYy+'</div>';
+      html += '<div style="font-size:.82em;margin-top:2px">'+icon+' '+d.type+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    // 纯阳/纯阴说明
+    if(yyPos.pureNote){
+      html += '<p style="font-size:.92em;text-align:center;color:var(--accent2);margin-top:6px"><strong>'+yyPos.pureNote+'</strong></p>';
+    }
+    // 日柱特别说明
+    var dayColor = yyPos.dayDeWei ? 'var(--green)' : 'var(--orange)';
+    html += '<p style="font-size:.9em;padding:4px 8px;border-left:3px solid '+dayColor+';margin-top:6px"><strong>'+yyPos.dayNote+'</strong></p>';
+    html += '</div>';
+    _5sub = _yySub;
+  }
+
+  // ── 源流检测 ──
+  if(sourceFlow){
+    var _sfSub = String.fromCharCode(_5sub.charCodeAt(0)+1);
+    html += '<h3>5'+_sfSub+'. 源流检测 '+tipHtml('源流','《滴天髓》源流论','原文："何知其人富，财气通门户。"又："始其所始，终其所终。"命局五行如河流，从源头(印)经日主到终点(财官)，源流通畅则格局通达。')+'</h3>';
+    html += '<p style="font-size:.88em;color:var(--sub);margin-bottom:8px">五行按 木→火→土→金→水 循环相生。从日主出发，向前（我生的）和向后（生我的）各延伸，看相生链能走多远。V\' 占比不足 5% 的五行视为缺失，链到此断裂。链越长、断点越少、用神在链上，评分越高。</p>';
+    var sfColor = sourceFlow.flowScore>=80?'var(--green)':sourceFlow.flowScore>=60?'var(--accent2)':sourceFlow.flowScore>=40?'var(--orange)':'var(--red)';
+    html += '<div class="detail-box" style="border-left:4px solid '+sfColor+'">';
+    var qpStr = sourceFlow.qualityPenalty>0 ? ' <span style="font-size:.78em;color:var(--orange)">（气通扣'+sourceFlow.qualityPenalty+'分 · 原拓扑得'+sourceFlow.rawScore+'）</span>' : '';
+    html += '<p style="font-size:1.1em;text-align:center;margin-bottom:8px">源流评级：<strong style="color:'+sfColor+'">'+sourceFlow.flowLevel+'</strong>（'+sourceFlow.flowScore+'/100）'+qpStr+'</p>';
+    // 流链图示
+    html += '<div style="text-align:center;margin:12px 0;padding:10px;background:rgba(0,0,0,.02);border-radius:8px">';
+    html += '<div style="font-size:1.15em;letter-spacing:2px">';
+    sourceFlow.chainLabels.forEach(function(label, idx){
+      if(idx > 0) html += ' <span style="color:var(--accent2)">→</span> ';
+      var isDay = sourceFlow.fullChain[idx] === pillars.dayMasterWx;
+      html += '<strong style="color:'+WX_COLOR[sourceFlow.fullChain[idx]]+';'+(isDay?'text-decoration:underline;font-size:1.15em':'')+'">'+label+'</strong>';
+    });
+    html += '</div>';
+    html += '<div style="font-size:.82em;color:var(--sub);margin-top:4px">链长 '+sourceFlow.chainLength+' 节（源推 '+sourceFlow.backSteps+' 步 + 日主 + 顺生 '+sourceFlow.forwardSteps+' 步）</div>';
+    html += '</div>';
+    // 断流点
+    if(sourceFlow.breaks.length > 0){
+      html += '<div style="font-size:.9em;margin-top:6px">';
+      sourceFlow.breaks.forEach(function(b){
+        html += '<p style="margin:3px 0;padding:3px 8px;border-left:3px solid var(--red)">⛔ '+b.desc+'</p>';
+      });
+      html += '</div>';
+    }
+    // 用神连通
+    if(sourceFlow.ugConnectNote){
+      var ugcIcon = sourceFlow.ugInChain ? '✅' : '⚠️';
+      var ugcColor = sourceFlow.ugInChain ? 'var(--green)' : 'var(--orange)';
+      html += '<p style="font-size:.9em;margin-top:6px;padding:4px 8px;border-left:3px solid '+ugcColor+'">'+ugcIcon+' '+sourceFlow.ugConnectNote+'</p>';
+    }
+    // 财官通达
+    var caiGuanNote = [];
+    if(sourceFlow.reachesCai) caiGuanNote.push('💰 财星在链上——财路通达');
+    if(sourceFlow.reachesGuan) caiGuanNote.push('🎓 官星在链上——事业通道畅通');
+    if(caiGuanNote.length > 0){
+      html += '<p style="font-size:.9em;margin-top:4px;color:var(--green)">'+caiGuanNote.join('　')+'</p>';
+    }
+    // 气通力不足：节点质量提示
+    if(sourceFlow.qualityNote){
+      var qnColor = sourceFlow.paperNodes && sourceFlow.paperNodes.length>0 ? 'var(--orange)' : (sourceFlow.mediumNodes && sourceFlow.mediumNodes.length>0 ? '#d97706' : 'var(--green)');
+      var qnIcon = sourceFlow.paperNodes && sourceFlow.paperNodes.length>0 ? '⚠️' : (sourceFlow.mediumNodes && sourceFlow.mediumNodes.length>0 ? '💡' : '✅');
+      html += '<p style="font-size:.88em;margin-top:6px;padding:6px 10px;background:'+qnColor+'0d;border-left:3px solid '+qnColor+';border-radius:4px">'+qnIcon+' <strong>气-力质量</strong>：'+sourceFlow.qualityNote+'</p>';
+    }
+    html += '</div>';
+    _5sub = _sfSub;
+  }
+
+  // ── 恩怨标注 ──
+  if(enYuan && enYuan.relations){
+    var _eySub = String.fromCharCode(_5sub.charCodeAt(0)+1);
+    html += '<h3>5'+_eySub+'. 恩怨标注 '+tipHtml('恩怨','《滴天髓》恩怨论','原文："生平只见恩中怨，几个能知怨是恩。"天干之间的生克关系结合十神性质、位置远近、身强身弱综合判定恩(助力)与怨(阻力)。')+'</h3>';
+    html += '<p style="font-size:.88em;color:var(--sub);margin-bottom:8px">其他三柱天干与日主的关系：生我者（印星）为恩，克我者（官杀）为怨，但身强时印反为忌（恩变怨），正官克身却主名誉（怨中有恩）。紧贴日主的柱位（月干/时干）为"有情"，隔柱（年干）为"薄情"。天干之间的相生相克也一并标注。</p>';
+    var eyMainColor = enYuan.enCount > enYuan.yuanCount ? 'var(--green)' : enYuan.yuanCount > enYuan.enCount ? 'var(--red)' : 'var(--accent2)';
+    html += '<div class="detail-box" style="border-left:4px solid '+eyMainColor+'">';
+    html += '<p style="font-size:1.05em;text-align:center;margin-bottom:10px"><strong style="color:'+eyMainColor+'">'+enYuan.verdict+'</strong></p>';
+    // 恩怨统计
+    html += '<div style="display:flex;justify-content:center;gap:20px;margin-bottom:12px;font-size:.95em">';
+    html += '<span style="color:var(--green)">🤝 恩 ×'+enYuan.enCount+'</span>';
+    html += '<span style="color:var(--red)">⚔️ 怨 ×'+enYuan.yuanCount+'</span>';
+    if(enYuan.mixCount > 0) html += '<span style="color:var(--accent2)">🔄 恩怨兼 ×'+enYuan.mixCount+'</span>';
+    html += '</div>';
+    // 逐条关系
+    html += '<div style="font-size:.9em">';
+    enYuan.relations.forEach(function(r){
+      if(r.isPair){
+        html += '<p style="margin:3px 0;padding:3px 8px;color:var(--sub);font-size:.88em;border-left:2px solid #ddd">'+r.pairNote+'</p>';
+        return;
+      }
+      var eyColor = r.enYuan==='恩'?'var(--green)':r.enYuan==='怨'?'var(--red)':'var(--accent2)';
+      var eyIcon = r.enYuan==='恩'?'🤝':r.enYuan==='怨'?'⚔️':'🔄';
+      html += '<div style="margin:5px 0;padding:5px 8px;border-left:3px solid '+eyColor+';background:rgba(0,0,0,.015);border-radius:0 4px 4px 0">';
+      html += '<strong>'+r.from+'</strong> '+r.stem+'（<span style="color:'+eyColor+'">'+r.shiShen+'</span>） → 日主';
+      html += ' <span style="font-size:.85em;color:var(--sub)">'+r.qingFen+'</span>';
+      html += ' '+eyIcon+' <strong style="color:'+eyColor+'">'+r.enYuan+'</strong>';
+      html += '<br><span style="color:var(--sub);font-size:.88em">'+r.detail+'</span>';
+      if(r.flipNote) html += '<br><span style="font-size:.85em;color:var(--accent2);font-style:italic">↻ '+r.flipNote+'</span>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+    _5sub = _eySub;
+  }
+
+  var _fSub = String.fromCharCode(_5sub.charCodeAt(0)+1);
+  html += '<h3>5'+_fSub+'. 五行力场势图 '+tipHtml('力场势图','','用五角星图直观展示你命局中五行的力量对比。节点越大代表该五行越强，绿色连线代表相生（互助），红色虚线代表相克（对抗）。星标标注用神和忌神位置，让你一眼看清命局的核心矛盾和助力方向。')+'</h3>';
+  html += '<canvas id="wxForceField" width="520" height="520" style="display:block;margin:0 auto;max-width:100%"></canvas>';
+  window._wxFieldData = {Vfinal:Vfinal, dmWx:pillars.dayMasterWx, dm:pillars.dayMaster, usefulGod:usefulGod, strength:strength, temp:temp};
+
+  var curYear = new Date().getFullYear();
+  var curDYperiod = null;
+  for(var di=0; di<daYun.periods.length; di++){
+    if(curYear >= daYun.periods[di].yr0 && curYear <= daYun.periods[di].yr1){
+      curDYperiod = daYun.periods[di]; break;
+    }
+  }
+  if(!curDYperiod && daYun.periods.length>0){
+    if(curYear < daYun.periods[0].yr0) curDYperiod = daYun.periods[0];
+    else curDYperiod = daYun.periods[daYun.periods.length-1];
+  }
+  if(curDYperiod){
+    var dyDelta = [0,0,0,0,0];
+    dyDelta[tgWx(curDYperiod.t)] += 1.0;
+    var cgDyPeriod = CANG_GAN[curDYperiod.d];
+    for(var dk=0; dk<cgDyPeriod.length; dk++) dyDelta[tgWx(cgDyPeriod[dk].t)] += cgDyPeriod[dk].w;
+    var VfinalDY = [];
+    for(var dw=0; dw<5; dw++) VfinalDY.push(Vfinal[dw] + dyDelta[dw]);
+
+    var _gSub = String.fromCharCode(_fSub.charCodeAt(0)+1);
+    html += '<h3 style="margin-top:28px">5'+_gSub+'. 当前大运修正后五行力场 '+tipHtml('大运修正力场','','大运就是你人生每10年一换的"大环境"。这张图把当前大运带来的五行能量叠加到你的原局上，展示"现在这10年"你的五行实际分布。对比原局图，可以看出大运给你补了什么、加重了什么。')+'</h3>';
+    html += '<p style="text-align:center;font-size:.88em;color:#888;margin-bottom:4px">当前大运：'+curDYperiod.name+'（'+curDYperiod.god+'）· '+curDYperiod.yr0+'–'+curDYperiod.yr1+'</p>';
+    html += '<canvas id="wxForceFieldDY" width="520" height="520" style="display:block;margin:0 auto;max-width:100%"></canvas>';
+    window._wxFieldDataDY = {Vfinal:VfinalDY, dmWx:pillars.dayMasterWx, dm:pillars.dayMaster, usefulGod:usefulGod, strength:strength, temp:temp, dyName:curDYperiod.name+'('+curDYperiod.god+')'};
+
+    // ── 当前大运信号分析 ──
+    if(daYunSignals && daYunSignals.signals.length > 0){
+      var curSignals = daYunSignals.signals.filter(function(s){ return s.periodIdx === (curDYperiod._idx !== undefined ? curDYperiod._idx : (function(){
+        for(var qi=0;qi<daYun.periods.length;qi++) if(daYun.periods[qi]===curDYperiod) return qi;
+        return -1;
+      })()); });
+      if(curSignals.length > 0){
+        html += '<div style="margin-top:16px">';
+        html += '<div style="font-weight:700;font-size:.92em;color:var(--accent);margin-bottom:8px">📡 当前大运信号</div>';
+        curSignals.forEach(function(sig){
+          var sigColors = {
+            good: {bg:'rgba(16,185,129,0.08)', border:'#10b981', icon:'✨', color:'#059669'},
+            warn: {bg:'rgba(245,158,11,0.08)', border:'#f59e0b', icon:'⚠️', color:'#d97706'}
+          };
+          var sc = sigColors[sig.level] || sigColors.warn;
+          html += '<div style="padding:10px 14px;background:'+sc.bg+';border-left:3px solid '+sc.border+';border-radius:4px;margin-bottom:6px;font-size:.85em">';
+          html += '<span style="color:'+sc.color+';font-weight:700">'+sc.icon+' '+sig.title+'</span>';
+          html += '<div style="margin-top:4px;color:var(--fg);line-height:1.6">'+sig.desc+'</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+    }
+  }
+
+  html += '</div></div>';
+
+  // ── STEP 6: 大运流年动态推演 ──
+  html += '<div class="card"><div class="step-section">';
+  html += '<div class="step-header"><div class="step-num">6</div><div class="step-title">大运流年动态推演系统</div><div class="step-desc">大运 · 流年 · 综合系数</div></div>';
+  html += '<h3>6a. 大运排列 '+tipHtml('大运','《渊海子平》','大运是根据你出生月份推算出的人生运程时间表，每10年换一步。顺排还是逆排取决于性别和出生年的阴阳。大运决定了你人生不同阶段的"大气候"——走好运时顺风顺水，走坏运时逆水行舟。')+'</h3>';
+  html += renderDaYunTimeline(daYun, pillars);
+
+  // ── 6a+. 大运信号总览 ──
+  if(daYunSignals && daYunSignals.signals.length > 0){
+    html += '<h3 style="margin-top:20px">6b. 大运关键信号 '+tipHtml('关键信号','','系统自动分析每步大运中的重要信号：比如用神被大运补救（利好）、财星引发官杀压力（警示）、大运天干能合住七杀化解混杂（治理时机）等。这些信号帮助你在对应的10年中做出更明智的人生决策。')+'</h3>';
+    var sigColors2 = {
+      good: {bg:'rgba(16,185,129,0.06)', border:'#10b981', icon:'✨', color:'#059669', tag:'利好'},
+      warn: {bg:'rgba(245,158,11,0.06)', border:'#f59e0b', icon:'⚠️', color:'#d97706', tag:'警示'}
+    };
+    // 按大运分组
+    var sigByPeriod = {};
+    daYunSignals.signals.forEach(function(sig){
+      var key = sig.periodIdx;
+      if(!sigByPeriod[key]) sigByPeriod[key] = [];
+      sigByPeriod[key].push(sig);
+    });
+    html += '<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">';
+    Object.keys(sigByPeriod).forEach(function(pidx){
+      var sigs = sigByPeriod[pidx];
+      var p = sigs[0].period;
+      var pCol = SS_COLOR[p.ss];
+      html += '<div style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden">';
+      html += '<div style="background:'+pCol+'0d;padding:6px 12px;border-bottom:1px solid #e5e7eb;font-size:.85em">';
+      html += '<strong style="color:'+pCol+'">'+p.name+'</strong>';
+      html += ' <span style="color:var(--sub)">'+p.god+' · '+p.yr0+'–'+p.yr1+'</span>';
+      html += '</div>';
+      sigs.forEach(function(sig){
+        var sc = sigColors2[sig.level] || sigColors2.warn;
+        html += '<div style="padding:8px 12px;background:'+sc.bg+';border-left:3px solid '+sc.border+';margin:4px 6px;border-radius:4px;font-size:.82em">';
+        html += '<span style="color:'+sc.color+';font-weight:700">'+sc.icon+' '+sig.title+'</span>';
+        html += ' <span style="background:'+sc.color+'18;color:'+sc.color+';font-size:.75em;padding:1px 6px;border-radius:3px">'+sc.tag+'</span>';
+        html += '<div style="margin-top:3px;color:var(--fg);line-height:1.5">'+sig.desc+'</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<h3>6c. 逐年运势 '+tipHtml('逐年运势','','每一年的综合运势评分，由大运+流年带来的五行变化乘以评价向量（好坏评分表）计算得出。正值为顺利（越大越好），负值为困难（越小越差）。点击每一行可以展开查看12个月的逐月运势细节。')+'</h3>';
+  } else {
+    html += '<h3>6b. 逐年运势 '+tipHtml('逐年运势','','每一年的综合运势评分，由大运+流年带来的五行变化乘以评价向量（好坏评分表）计算得出。正值为顺利（越大越好），负值为困难（越小越差）。点击每一行可以展开查看12个月的逐月运势细节。')+'</h3>';
+  }
+
+  html += '<div class="formula">F综 = w<sup>T</sup> · ΔV（极性反转饱和修正后）</div>';
+  // 反直觉提示：同为官杀大运，壬(阳水)/庚申(阳金生水)比癸(阴水)/辛酉评分更严厉——非系统任性，而是阳干旺 + 生扶关系更猛
+  html += '<p class="note" style="font-size:.82em;margin:6px 0 10px">💡 <strong>关于大运评分的阴阳差异</strong>：同是官杀或同是印比，阳干（庚/壬/甲/丙/戊）往往比阴干（辛/癸/乙/丁/己）评分更极端。阳干力量更集中、作用更直接；若阳干还与大运地支构成"金水相生"或"木火通明"等生扶链（如庚申、壬子、甲寅），压力或助力会放大，表里单看十神名（正官/七杀）可能反直觉。</p>';
+  // 置信区间说明
+  html += '<p class="note" style="font-size:.82em;margin:6px 0 10px">📊 <strong>综合系数后的 [min, max]</strong> 是对用神权重缩放（±20%，反映各法分歧）与极性反转强度 μ ∈ {0.5, 0.8, 1.1} 扰动后的 9 组采样区间。<strong>区间宽 = 模型不确定性大</strong>。判定列的 <code>*</code> 号表示区间跨越 0——这一年的"吉凶"其实在模型误差范围内，是参考而非定论。</p>';
+  html += renderFlowYearTable(pillars, daYun, strength, usefulGod, gammaVec, Y, daYunSignals);
+  html += '</div></div>';
+
+  html += '<div class="card"><div class="step-section">';
+  html += '<div class="step-header"><div class="step-num">★</div><div class="step-title">十神运势多维进展图</div><div class="step-desc">交互式 · 可切换维度</div></div>';
+  html += '</div></div>';
+
+  document.getElementById('res-steps').innerHTML = html;
+
+  DIM_META[3].name = gender ? '婚姻感情（正财）' : '婚姻感情（正官）';
+
+  initChart(fortuneData, pillars, daYun, Y);
+
+  setTimeout(function(){ drawWxForceField(); drawWxForceFieldDY(); }, 50);
+}
+
+// ══════════════════════════════════════
+// §11 五行力场势图
+// ══════════════════════════════════════
+function drawWxForceField(){
+  var c = document.getElementById('wxForceField');
+  if(!c || !window._wxFieldData) return;
+  var d = window._wxFieldData;
+  var ctx = c.getContext('2d');
+  var dp = window.devicePixelRatio||1;
+  var W = 520, H = 520;
+  c.width = W*dp; c.height = H*dp;
+  c.style.width = W+'px'; c.style.height = H+'px';
+  ctx.scale(dp, dp);
+
+  var V = d.Vfinal, dmWx = d.dmWx, ug = d.usefulGod, str = d.strength;
+  var Vmax = Math.max.apply(null, V) || 1;
+
+  var wxColors = ['#2d8a4e','#d94f4f','#b8860b','#c0c0c0','#2e6bc5'];
+  var wxBg    = ['rgba(45,138,78,.12)','rgba(217,79,79,.12)','rgba(184,134,11,.12)','rgba(192,192,192,.12)','rgba(46,107,197,.12)'];
+
+  var order = [1,2,3,4,0];
+  var cx = W/2, cy = H/2 + 5, R = 170;
+  var pts = [];
+  for(var i=0;i<5;i++){
+    var a = -Math.PI/2 + i * 2*Math.PI/5;
+    pts.push({x: cx + R*Math.cos(a), y: cy + R*Math.sin(a), wx: order[i]});
+  }
+
+  ctx.fillStyle = '#fafbfc';
+  ctx.fillRect(0,0,W,H);
+
+  for(var i=0;i<5;i++){
+    var from = pts[i], to = pts[(i+1)%5];
+    var srcV = V[from.wx];
+    var lw = Math.max(1, srcV/Vmax * 5);
+    drawArrow(ctx, from.x, from.y, to.x, to.y, lw, 'rgba(45,138,78,0.35)', R, Vmax, srcV);
+  }
+
+  for(var i=0;i<5;i++){
+    var from = pts[i], to = pts[(i+2)%5];
+    var srcV = V[from.wx];
+    var lw = Math.max(0.5, srcV/Vmax * 3);
+    drawArrow(ctx, from.x, from.y, to.x, to.y, lw, 'rgba(217,79,79,0.25)', R, Vmax, srcV);
+  }
+
+  for(var i=0;i<5;i++){
+    var p = pts[i], w = p.wx;
+    var r = 22 + V[w]/Vmax * 28;
+    var isDay = (w === dmWx);
+    var isGod = false, isEnemy = false;
+    if(ug.candidates.length>0 && ug.candidates[0].w === w) isGod = true;
+    if(ug.enemy === w) isEnemy = true;
+
+    if(isGod){
+      ctx.save();
+      var grd = ctx.createRadialGradient(p.x, p.y, r*0.6, p.x, p.y, r*1.8);
+      grd.addColorStop(0, 'rgba(255,200,50,0.35)');
+      grd.addColorStop(1, 'rgba(255,200,50,0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r*1.8, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+
+    if(isEnemy){
+      ctx.save();
+      ctx.setLineDash([4,3]);
+      ctx.strokeStyle = 'rgba(217,79,79,0.6)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r+8, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+    ctx.fillStyle = wxBg[w];
+    ctx.fill();
+    ctx.strokeStyle = isDay ? wxColors[w] : 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = isDay ? 3.5 : 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.fillStyle = wxColors[w];
+    ctx.font = 'bold '+(isDay?'18':'16')+'px system-ui,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(WX[w], p.x, p.y - 7);
+    ctx.font = '11px system-ui,sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.fillText(V[w].toFixed(2), p.x, p.y + 10);
+
+    if(isDay){
+      ctx.font = 'bold 11px system-ui,sans-serif';
+      ctx.fillStyle = wxColors[w];
+      ctx.fillText('▲ 日主', p.x, p.y + r + 15);
+    }
+    if(isGod){
+      ctx.font = 'bold 11px system-ui,sans-serif';
+      ctx.fillStyle = '#b8860b';
+      ctx.fillText('★ 用神', p.x, p.y - r - 10);
+    }
+    if(isEnemy){
+      ctx.font = 'bold 11px system-ui,sans-serif';
+      ctx.fillStyle = '#d94f4f';
+      ctx.fillText('⚠ 忌神', p.x, p.y - r - 10);
+    }
+  }
+
+  ctx.font = 'bold 14px system-ui,sans-serif';
+  ctx.fillStyle = '#333';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('r* = '+str.r.toFixed(3), cx, cy - 12);
+  ctx.font = '13px system-ui,sans-serif';
+  ctx.fillStyle = str.r < 0.45 ? '#d94f4f' : '#2d8a4e';
+  ctx.fillText(str.name, cx, cy + 6);
+
+  var dmName = WX[dmWx];
+  var godName = ug.candidates.length>0 ? WX[ug.candidates[0].w] : '';
+  var enemyName = ug.enemy!==null ? WX[ug.enemy] : '';
+  var maxWx = 0; for(var i=1;i<5;i++) if(V[i]>V[maxWx]) maxWx=i;
+  var summary = WX[maxWx]+'旺';
+  if(ug.enemy!==null && V[ug.enemy]>V[dmWx]) summary += '，'+enemyName+'(忌)压制'+dmName+'(日主)';
+  summary += '；需'+godName+'(用神)扶助';
+
+  ctx.font = '12px system-ui,sans-serif';
+  ctx.fillStyle = '#888';
+  ctx.fillText(summary, cx, H - 18);
+
+  ctx.font = '11px system-ui,sans-serif';
+  ctx.textAlign = 'left';
+  ctx.strokeStyle = 'rgba(45,138,78,0.5)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(30,H-48); ctx.lineTo(55,H-48); ctx.stroke();
+  ctx.fillStyle = '#2d8a4e'; ctx.fillText('相生', 58, H-44);
+  ctx.strokeStyle = 'rgba(217,79,79,0.5)'; ctx.lineWidth = 2;
+  ctx.setLineDash([3,2]);
+  ctx.beginPath(); ctx.moveTo(100,H-48); ctx.lineTo(125,H-48); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#d94f4f'; ctx.fillText('相克', 128, H-44);
+  ctx.fillStyle = '#999'; ctx.fillText('节点大小 = V\' 能量值', 175, H-44);
+}
+
+function drawWxForceFieldDY(){
+  var c = document.getElementById('wxForceFieldDY');
+  if(!c || !window._wxFieldDataDY) return;
+  var d = window._wxFieldDataDY;
+  var ctx = c.getContext('2d');
+  var dp = window.devicePixelRatio||1;
+  var W = 520, H = 520;
+  c.width = W*dp; c.height = H*dp;
+  c.style.width = W+'px'; c.style.height = H+'px';
+  ctx.scale(dp, dp);
+
+  var V = d.Vfinal, dmWx = d.dmWx, ug = d.usefulGod, str = d.strength;
+  var Vmax = Math.max.apply(null, V) || 1;
+
+  var wxColors = ['#2d8a4e','#d94f4f','#b8860b','#c0c0c0','#2e6bc5'];
+  var wxBg    = ['rgba(45,138,78,.12)','rgba(217,79,79,.12)','rgba(184,134,11,.12)','rgba(192,192,192,.12)','rgba(46,107,197,.12)'];
+
+  var order = [1,2,3,4,0];
+  var cx = W/2, cy = H/2 + 5, R = 170;
+  var pts = [];
+  for(var i=0;i<5;i++){
+    var a = -Math.PI/2 + i * 2*Math.PI/5;
+    pts.push({x: cx + R*Math.cos(a), y: cy + R*Math.sin(a), wx: order[i]});
+  }
+
+  ctx.fillStyle = '#fdf8f0';
+  ctx.fillRect(0,0,W,H);
+
+  ctx.fillStyle = 'rgba(108,92,231,0.08)';
+  ctx.fillRect(0, 0, W, 32);
+  ctx.font = 'bold 13px system-ui,sans-serif';
+  ctx.fillStyle = '#6c5ce7';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('大运 ' + d.dyName + ' 修正后', W/2, 16);
+
+  for(var i=0;i<5;i++){
+    var from = pts[i], to = pts[(i+1)%5];
+    var srcV = V[from.wx];
+    var lw = Math.max(1, srcV/Vmax * 5);
+    drawArrow(ctx, from.x, from.y, to.x, to.y, lw, 'rgba(45,138,78,0.35)', R, Vmax, srcV);
+  }
+
+  for(var i=0;i<5;i++){
+    var from = pts[i], to = pts[(i+2)%5];
+    var srcV = V[from.wx];
+    var lw = Math.max(0.5, srcV/Vmax * 3);
+    drawArrow(ctx, from.x, from.y, to.x, to.y, lw, 'rgba(217,79,79,0.25)', R, Vmax, srcV);
+  }
+
+  for(var i=0;i<5;i++){
+    var p = pts[i], w = p.wx;
+    var r = 22 + V[w]/Vmax * 28;
+    var isDay = (w === dmWx);
+    var isGod = false, isEnemy = false;
+    if(ug.candidates.length>0 && ug.candidates[0].w === w) isGod = true;
+    if(ug.enemy === w) isEnemy = true;
+
+    if(isGod){
+      ctx.save();
+      var grd = ctx.createRadialGradient(p.x, p.y, r*0.6, p.x, p.y, r*1.8);
+      grd.addColorStop(0, 'rgba(255,200,50,0.35)');
+      grd.addColorStop(1, 'rgba(255,200,50,0)');
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r*1.8, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    if(isEnemy){
+      ctx.save();
+      ctx.setLineDash([4,3]);
+      ctx.strokeStyle = 'rgba(217,79,79,0.6)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r+8, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+    ctx.fillStyle = wxBg[w];
+    ctx.fill();
+    ctx.strokeStyle = isDay ? wxColors[w] : 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = isDay ? 3.5 : 1.5;
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.fillStyle = wxColors[w];
+    ctx.font = 'bold '+(isDay?'18':'16')+'px system-ui,sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(WX[w], p.x, p.y - 7);
+    ctx.font = '11px system-ui,sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.fillText(V[w].toFixed(2), p.x, p.y + 10);
+
+    if(isDay){
+      ctx.font = 'bold 11px system-ui,sans-serif';
+      ctx.fillStyle = wxColors[w];
+      ctx.fillText('▲ 日主', p.x, p.y + r + 15);
+    }
+    if(isGod){
+      ctx.font = 'bold 11px system-ui,sans-serif';
+      ctx.fillStyle = '#b8860b';
+      ctx.fillText('★ 用神', p.x, p.y - r - 10);
+    }
+    if(isEnemy){
+      ctx.font = 'bold 11px system-ui,sans-serif';
+      ctx.fillStyle = '#d94f4f';
+      ctx.fillText('⚠ 忌神', p.x, p.y - r - 10);
+    }
+  }
+
+  ctx.font = 'bold 14px system-ui,sans-serif';
+  ctx.fillStyle = '#333';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('r* = '+str.r.toFixed(3), cx, cy - 12);
+  ctx.font = '13px system-ui,sans-serif';
+  ctx.fillStyle = str.r < 0.45 ? '#d94f4f' : '#2d8a4e';
+  ctx.fillText(str.name, cx, cy + 6);
+
+  var dmName = WX[dmWx];
+  var godName = ug.candidates.length>0 ? WX[ug.candidates[0].w] : '';
+  var enemyName = ug.enemy!==null ? WX[ug.enemy] : '';
+  var maxWxDY = 0; for(var i=1;i<5;i++) if(V[i]>V[maxWxDY]) maxWxDY=i;
+  var summaryDY = '大运加入后：'+WX[maxWxDY]+'旺';
+  if(ug.enemy!==null && V[ug.enemy]>V[dmWx]) summaryDY += '，'+enemyName+'(忌)仍压制'+dmName;
+  summaryDY += '；'+godName+'(用神)参考';
+
+  ctx.font = '12px system-ui,sans-serif';
+  ctx.fillStyle = '#888';
+  ctx.fillText(summaryDY, cx, H - 18);
+
+  ctx.font = '11px system-ui,sans-serif';
+  ctx.textAlign = 'left';
+  ctx.strokeStyle = 'rgba(45,138,78,0.5)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(30,H-48); ctx.lineTo(55,H-48); ctx.stroke();
+  ctx.fillStyle = '#2d8a4e'; ctx.fillText('相生', 58, H-44);
+  ctx.strokeStyle = 'rgba(217,79,79,0.5)'; ctx.lineWidth = 2;
+  ctx.setLineDash([3,2]);
+  ctx.beginPath(); ctx.moveTo(100,H-48); ctx.lineTo(125,H-48); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#d94f4f'; ctx.fillText('相克', 128, H-44);
+  ctx.fillStyle = '#999'; ctx.fillText('节点大小 = 大运修正后 V\' 值', 175, H-44);
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, lw, color, R, Vmax, srcV){
+  var dx = x2-x1, dy = y2-y1, dist = Math.sqrt(dx*dx+dy*dy);
+  var ux = dx/dist, uy = dy/dist;
+  var r1 = 22 + srcV/Vmax*28 + 4;
+  var r2 = 22 + 28*0.5 + 4;
+  var sx = x1 + ux*r1, sy = y1 + uy*r1;
+  var ex = x2 - ux*r2, ey = y2 - uy*r2;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey); ctx.stroke();
+  var al = 8, aa = Math.PI/6;
+  var angle = Math.atan2(ey-sy, ex-sx);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(ex, ey);
+  ctx.lineTo(ex - al*Math.cos(angle-aa), ey - al*Math.sin(angle-aa));
+  ctx.lineTo(ex - al*Math.cos(angle+aa), ey - al*Math.sin(angle+aa));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+// ══════════════════════════════════════
+// Auto-run on page load
+// ══════════════════════════════════════
+window.addEventListener('DOMContentLoaded', function(){
+  runCalculation();
+});
+</script>
+<footer style="text-align:center;padding:24px 16px;margin-top:40px;font-size:.78em;color:#999;border-top:1px solid #eee">
+  <div>八字命理计算系统 v2.1 · 更新于 2026-04-16</div>
+  <div style="margin-top:4px">基于《子平真诠》《滴天髓》《穷通宝鉴》《三命通会》等经典 · 现代量化建模</div>
+</footer>
+</body>
+</html>
